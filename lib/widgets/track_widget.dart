@@ -2,6 +2,7 @@ import 'package:first_project/model/player.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/now_playing_content.dart';
+import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,6 @@ class TrackWidget extends StatelessWidget {
               if (user != null) {
                 return Card(
                   child: ListTile(
-                    
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: AspectRatio(
@@ -66,10 +66,18 @@ class TrackWidget extends StatelessWidget {
                       ),
                     ),
                     subtitle: Text(user.name),
-                    trailing:
-                        isPersonal ? TrashButtonWidget(track: track) : null,
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16.0), // Adjust padding as needed
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize
+                          .min, // Ensures the row takes up only the necessary space
+                      children: [
+                        if (isPersonal) TrashButtonWidget(track: track),
+                        if (playlist.getName() == 'Favorites')
+                          RemoveFromPlaylistButton(
+                              playlist: playlist, track: track),
+                      ],
+                    ),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16.0),
                   ),
                 );
               } else {

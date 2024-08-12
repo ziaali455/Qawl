@@ -101,7 +101,7 @@ class _ExploreContentState extends State<ExploreContent> {
                 },
               ),
               SectionTitle(
-                title: "Popular Qaris",
+                title: "Popular Reciters",
                 press: () {},
               ),
               const QariCardRow(
