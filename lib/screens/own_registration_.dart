@@ -7,6 +7,7 @@ import 'package:first_project/screens/own_login_screen.dart';
 import 'package:first_project/screens/user_setup_page_content.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
+import 'package:google_sign_in/google_sign_in.dart';
 
 // class RegistrationPage extends StatelessWidget {
 //   RegistrationPage({super.key});
@@ -14,7 +15,6 @@ import 'package:firebase_auth/firebase_auth.dart' as fba;
 //   final emailController = TextEditingController();
 //   final passwordController = TextEditingController();
 //   final confirmPasswordController = TextEditingController();
-
 
 //   void registerUser(BuildContext context) async {
 //     if (passwordController.text != confirmPasswordController.text) {
@@ -62,7 +62,7 @@ import 'package:firebase_auth/firebase_auth.dart' as fba;
 //                   gender.isEmpty ||
 //                   country == null ||
 //                   country.isEmpty) {
-                
+
 //                 // print("here going to beforehomepage");
 //                 return UserSetupPage();
 //               } else {
@@ -75,7 +75,6 @@ import 'package:firebase_auth/firebase_auth.dart' as fba;
 //       ),
 //     );
 //   }
-
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -206,7 +205,6 @@ import 'package:firebase_auth/firebase_auth.dart' as fba;
 //   }
 // }
 
-
 //   void registerUser(BuildContext context) async {
 //   if (passwordController.text == confirmPasswordController.text) {
 //     try {
@@ -232,7 +230,6 @@ import 'package:firebase_auth/firebase_auth.dart' as fba;
 //     );
 //   }
 // }
-
 
 //    void registerUser(BuildContext context) async {
 //   if (passwordController.text != confirmPasswordController.text) {
@@ -303,7 +300,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
         email: emailController.text,
         password: passwordController.text,
       );
-      await QawlUser.createQawlUser(userCredential.user); // Ensure this is awaited if asynchronous
+      await QawlUser.createQawlUser(
+          userCredential.user); // Ensure this is awaited if asynchronous
 
       // Navigate based on user details
       await checkUserDetailsAndNavigate(userCredential.user, context);
@@ -317,7 +315,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
     _toggleLoading(false);
   }
 
-  Future<void> checkUserDetailsAndNavigate(User? user, BuildContext context) async {
+  Future<void> checkUserDetailsAndNavigate(
+      User? user, BuildContext context) async {
     final currentUser = await QawlUser.getCurrentQawlUser();
 
     if (currentUser == null) {
@@ -342,9 +341,56 @@ class _RegistrationPageState extends State<RegistrationPage> {
     }
   }
 
+  Future<void> signInWithGoogle(BuildContext context) async {
+    try {
+      _toggleLoading(true); // Start the loading indicator
+
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        _toggleLoading(false);
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // create Qawl user like normal
+      await QawlUser.createQawlUser(userCredential.user);
+
+      await checkUserDetailsAndNavigate(userCredential.user, context);
+    } catch (error) {
+      debugPrint("Google Sign-In failed: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Google Sign-In failed: $error")),
+      );
+    } finally {
+      _toggleLoading(false); // Stop the loading indicator
+    }
+  }
+
+  // add to ui stuff and make sure sign out works like before
+  Future<bool> signOutFromGoogle() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      return true;
+    } on Exception catch (_) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String logoImagePath = 'images/qawl-lime.png';
+    String GoogleLogoImagePath = 'assets/google_logo.png';
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -429,12 +475,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           ? CircularProgressIndicator(color: Colors.green)
                           : ElevatedButton(
                               style: const ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll<Color>(Colors.green),
+                                backgroundColor:
+                                    MaterialStatePropertyAll<Color>(
+                                        Colors.green),
                               ),
                               onPressed: () => registerUser(context),
                               child: const Text(
                                 'Create Account',
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.bold),
                               ),
                             ),
                       const SizedBox(height: 50),
@@ -453,7 +502,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => LoginPage()),
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()),
                               );
                             },
                             child: const Text(
@@ -465,6 +515,40 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             ),
                           ),
                         ],
+                      ),
+                      const SizedBox(
+                          height:
+                              16), // Space between "Log in" and Google button
+                      InkWell(
+                        onTap: () {
+                          signInWithGoogle(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                GoogleLogoImagePath, // Replace with the path to your Google icon asset
+                                height: 20.0, // Adjust size as needed
+                                width: 20.0, // Adjust size as needed
+                              ),
+                              const SizedBox(
+                                  width: 8), // Space between icon and text
+                              const Text(
+                                'Signup with Google',
+                                style: TextStyle(
+                                  color: Colors.black, // Text color
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   );
