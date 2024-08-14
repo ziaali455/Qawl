@@ -205,7 +205,7 @@ class _MyAppState extends State<MyApp> {
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
       ),
-      home: _isAuthenticated ? const HomePage() : LoginPage(),
+       home: _isAuthenticated ? const HomePage() : LoginPage(),
     );
   }
 }
