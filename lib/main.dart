@@ -100,7 +100,7 @@ Future<void> main() async {
   runApp(MyApp());
 }
   await Firebase.initializeApp(
-      // name: 'qawl-io',
+      name: 'qawl-io', // had to uncomment bc of firebase issues?
       options: DefaultFirebaseOptions.currentPlatform,
       );
   
@@ -205,7 +205,8 @@ class _MyAppState extends State<MyApp> {
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
       ),
-       home: _isAuthenticated ? const HomePage() : LoginPage(),
+      home: _isAuthenticated ? const HomePage() : LoginPage(),
+      // home: AuthGate(),
     );
   }
 }

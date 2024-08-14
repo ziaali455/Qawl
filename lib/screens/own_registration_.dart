@@ -1,6 +1,8 @@
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/model/user.dart';
+import 'package:first_project/own_auth_service.dart';
 import 'package:first_project/screens/auth_gate.dart';
 import 'package:first_project/screens/homepage.dart';
 import 'package:first_project/screens/own_login_screen.dart';
@@ -304,7 +306,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           userCredential.user); // Ensure this is awaited if asynchronous
 
       // Navigate based on user details
-      await checkUserDetailsAndNavigate(userCredential.user, context);
+      await AuthService().checkUserDetailsAndNavigate(userCredential.user, context);
     } catch (error) {
       debugPrint("Registration failed: $error");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -315,67 +317,73 @@ class _RegistrationPageState extends State<RegistrationPage> {
     _toggleLoading(false);
   }
 
-  Future<void> checkUserDetailsAndNavigate(
-      User? user, BuildContext context) async {
-    final currentUser = await QawlUser.getCurrentQawlUser();
+  // Future<void> checkUserDetailsAndNavigate(
+  //     User? user, BuildContext context) async {
+  //   final currentUser = await QawlUser.getCurrentQawlUser();
 
-    if (currentUser == null) {
-      // Handle error or navigate to error page
-      return;
-    }
+  //   if (currentUser == null) {
+  //     // Handle error or navigate to error page
+  //     return;
+  //   }
 
-    if (currentUser.gender == null ||
-        currentUser.gender == "" ||
-        currentUser.gender.isEmpty ||
-        currentUser.country == null ||
-        currentUser.country.isEmpty) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => UserSetupPage()),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    }
-  }
+  //   if (currentUser.gender == null ||
+  //       currentUser.gender == "" ||
+  //       currentUser.gender.isEmpty ||
+  //       currentUser.country == null ||
+  //       currentUser.country.isEmpty) {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => UserSetupPage()),
+  //     );
+  //   } else {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => const HomePage()),
+  //     );
+  //   }
+  // }
 
-  Future<void> signInWithGoogle(BuildContext context) async {
-    try {
-      _toggleLoading(true); // Start the loading indicator
+  // Future<void> LoginWithGoogle(BuildContext context) async {
+  //   try {
+  //     _toggleLoading(true); // Start the loading indicator
 
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      if (googleUser == null) {
-        _toggleLoading(false);
-        return;
-      }
+  //     if (googleUser == null) {
+  //       _toggleLoading(false);
+  //       return;
+  //     }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser.authentication;
 
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+  //     final OAuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
 
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+  //     UserCredential userCredential =
+  //         await FirebaseAuth.instance.signInWithCredential(credential);
 
-      // create Qawl user like normal
-      await QawlUser.createQawlUser(userCredential.user);
+  //     final String uid = userCredential.user!.uid;
 
-      await checkUserDetailsAndNavigate(userCredential.user, context);
-    } catch (error) {
-      debugPrint("Google Sign-In failed: $error");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Google Sign-In failed: $error")),
-      );
-    } finally {
-      _toggleLoading(false); // Stop the loading indicator
-    }
-  }
+  //     // check if user exists in firebase already, otherwise create the QawlUser and its collection
+  //     final users = FirebaseFirestore.instance.collection('QawlUsers');
+  //     final userDoc = await users.doc(uid).get();
+
+  //     if (!userDoc.exists) {
+  //       await QawlUser.createQawlUser(userCredential.user);
+  //     }
+  //     await checkUserDetailsAndNavigate(userCredential.user, context);
+  //   } catch (error) {
+  //     debugPrint("Google Sign-In failed: $error");
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Google Sign-In failed: $error")),
+  //     );
+  //   } finally {
+  //     _toggleLoading(false); // Stop the loading indicator
+  //   }
+  // }
 
   // add to ui stuff and make sure sign out works like before
   Future<bool> signOutFromGoogle() async {
@@ -521,7 +529,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               16), // Space between "Log in" and Google button
                       InkWell(
                         onTap: () {
-                          signInWithGoogle(context);
+                          AuthService().LoginWithGoogle(context);
                         },
                         child: Container(
                           padding: const EdgeInsets.all(8.0),
