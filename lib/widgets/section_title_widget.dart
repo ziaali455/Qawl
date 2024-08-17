@@ -14,7 +14,7 @@ class PlaylistSectionTitle extends StatelessWidget {
     required this.press,
     required this.playlist,
     this.qaris,
-    required this.isPlaylist,
+    required this.isPlaylist, required this.isPersonal,
   }) : super(key: key);
 
   final String title;
@@ -22,6 +22,7 @@ class PlaylistSectionTitle extends StatelessWidget {
   List<QawlUser>? qaris = [];
   final GestureTapCallback press;
   final bool isPlaylist;
+  final bool isPersonal;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class PlaylistSectionTitle extends StatelessWidget {
           ),
         ),
         isPlaylist
-            ? SeeMoreButton(playlist: playlist)
+            ? SeeMoreButton(playlist: playlist, isPersonal: isPersonal,)
             : SizedBox(
                 height: 0,
               ),
@@ -47,11 +48,13 @@ class PlaylistSectionTitle extends StatelessWidget {
 }
 
 class SeeMoreButton extends StatelessWidget {
+  final QawlPlaylist playlist;
+  final bool isPersonal;
+
   const SeeMoreButton({
     super.key,
-    required this.playlist,
+    required this.playlist, required this.isPersonal,
   });
-  final QawlPlaylist playlist;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -60,7 +63,7 @@ class SeeMoreButton extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => PlaylistScreenContent(
-                      playlist: playlist,
+                      playlist: playlist, isPersonal: isPersonal,
                     )),
           );
         },

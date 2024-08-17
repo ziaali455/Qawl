@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_project/model/playlist.dart';
+import 'package:first_project/model/track.dart';
 import 'package:first_project/widgets/search_field.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
+import 'package:first_project/widgets/track_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/deprecated/fake_user_data.dart';
 import 'package:first_project/model/user.dart';
@@ -22,7 +24,8 @@ class ExploreContent extends StatefulWidget {
 class _ExploreContentState extends State<ExploreContent> {
   Future<QawlPlaylist>? _top100PlaylistFuture;
   Future<QawlPlaylist>? _newReleasesPlaylistFuture;
-  Future<List<QawlUser>>? _searchResultsFuture;
+  Future<List<QawlUser>>? _searchQarisFuture;
+  Future<List<Track>>? _searchTracksFuture;
   String _searchQuery = '';
 
   @override
@@ -36,9 +39,11 @@ class _ExploreContentState extends State<ExploreContent> {
     setState(() {
       _searchQuery = newQuery;
       if (newQuery.isEmpty) {
-        _searchResultsFuture = null;
+        _searchQarisFuture = null;
+        _searchTracksFuture = null;
       } else {
-        _searchResultsFuture = getUsersBySearchQuery(newQuery);
+        _searchQarisFuture = getUsersBySearchQuery(newQuery);
+        _searchTracksFuture = getTracksBySearchQuery(newQuery);
       }
     });
   }
@@ -73,7 +78,7 @@ class _ExploreContentState extends State<ExploreContent> {
                   } else {
                     return ExploreTrackWidgetRow(
                       title: "Top 100",
-                      playlist: snapshot.data!,
+                      playlist: snapshot.data!, isPersonal: false,
                     );
                   }
                 },
@@ -90,13 +95,13 @@ class _ExploreContentState extends State<ExploreContent> {
                   } else {
                     return ExploreTrackWidgetRow(
                       title: "New Releases",
-                      playlist: snapshot.data!,
+                      playlist: snapshot.data!, isPersonal: false,
                     );
                   }
                 },
               ),
               SectionTitle(
-                title: "Popular Qaris",
+                title: "Popular Reciters",
                 press: () {},
               ),
               const QariCardRow(
@@ -104,41 +109,104 @@ class _ExploreContentState extends State<ExploreContent> {
               ),
             ] else ...[
               FutureBuilder<List<QawlUser>>(
-                future: _searchResultsFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+                future: _searchQarisFuture,
+                builder: (context, userSnapshot) {
+                  if (userSnapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
                         child: CircularProgressIndicator(color: Colors.green));
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (userSnapshot.hasError) {
+                    return Center(child: Text('Error: ${userSnapshot.error}'));
                   } else {
-                    final List<QawlUser>? users = snapshot.data;
-                    if (users != null && users.isNotEmpty) {
-                      return GridView.builder(
-                        padding: EdgeInsets.all(20.0),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 20.0,
-                          mainAxisSpacing: 20.0,
-                          childAspectRatio: 0.75,
-                        ),
-                        itemCount: users.length,
-                        itemBuilder: (context, index) {
-                          return QariColumnCard(
-                            user: users[index],
-                            width: width / 2 - 40,
-                          );
-                        },
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                    final List<QawlUser>? users = userSnapshot.data;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (users != null && users.isNotEmpty) ...[
+                          const Padding(
+                            padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0),
+                            child: Text(
+                              'Users',
+                              style: TextStyle(
+                                  fontSize: 32, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          GridView.builder(
+                            padding: const EdgeInsets.all(20.0),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 20.0,
+                              mainAxisSpacing: 20.0,
+                              childAspectRatio: 0.75,
+                            ),
+                            itemCount: users.length,
+                            itemBuilder: (context, index) {
+                              return QariColumnCard(
+                                user: users[index],
+                                width: width / 2 - 40,
+                              );
+                            },
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                          ),
+                        ],
+                      ],
+                    );
+                  }
+                },
+              ),
+              FutureBuilder<List<Track>>(
+                future: _searchTracksFuture,
+                builder: (context, trackSnapshot) {
+                  if (trackSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(
+                        child: CircularProgressIndicator(color: Colors.green));
+                  } else if (trackSnapshot.hasError) {
+                    return Center(child: Text('Error: ${trackSnapshot.error}'));
+                  } else {
+                    final List<Track>? tracks = trackSnapshot.data;
+                    if (tracks != null && tracks.isNotEmpty) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Uploads',
+                              style: TextStyle(
+                                  fontSize: 32, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          ListView.builder(
+                            padding: const EdgeInsets.all(16.0),
+                            itemCount: tracks.length,
+                            itemBuilder: (context, index) {
+                              return TrackWidget(
+                                track: tracks[index],
+                                isPersonal: false,
+                                playlist: QawlPlaylist(
+                                  author: 'Search',
+                                  name: 'Seach track results',
+                                  list: tracks,
+                                  id: 'search',
+                                ),
+                              );
+                            },
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                          ),
+                        ],
                       );
                     } else {
-                      return Center(child: Text('No users found!'));
+                      return const Center(child: Text('No results found'));
+
                     }
                   }
                 },
               ),
+              if ((_searchQarisFuture == null  && _searchTracksFuture == null))
+                const Center(child: Text('No results found')),
             ],
           ],
         ),
@@ -246,6 +314,45 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
   // }
 
   // return users;
+}
+
+Future<List<Track>> getTracksBySearchQuery(String query) async {
+  List<Track> tracks = [];
+  List<Track> allTracks = [];
+
+  try {
+    QawlUser? currentUser = await QawlUser.getCurrentQawlUser();
+    if (currentUser == null) {
+      throw Exception("Current user not found");
+    }
+    String currentUserGender = currentUser.gender;
+
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('QawlTracks').get();
+
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      allTracks
+          .add(Track.fromFirestore(doc.data() as Map<String, dynamic>, doc.id));
+    }
+
+    String lowercaseQuery = query.toLowerCase();
+
+    for (Track track in allTracks) {
+      QawlUser? trackUser = await QawlUser.getQawlUser(track.userId);
+      if (trackUser != null) {
+        bool notMe = track.userId != currentUser.id;
+        bool matchesQuery =
+            track.trackName.toLowerCase().contains(lowercaseQuery);
+        bool matchesGender = trackUser.gender == currentUserGender;
+        if (matchesQuery && matchesGender && notMe) {
+          tracks.add(track);
+        }
+      }
+    }
+  } catch (error) {
+    print("Error fetching tracks by search query: $error");
+  }
+  return tracks;
 }
 
 class QariCardRow extends StatefulWidget {

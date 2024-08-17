@@ -111,7 +111,7 @@ class _HomePageContentState extends State<HomePageContent> {
                   if (snapshot.data != null) {
                     // If playlist is not null, display it
                     return PlaylistListWidget(
-                        playlists_List: [favoritesPlaylist!]);
+                        playlists_List: [favoritesPlaylist!], isPersonal: false,);
                   } else {
                     // If playlist is null, display a message indicating no favorites playlist found
                     return WidgetAnimator(
@@ -127,10 +127,10 @@ class _HomePageContentState extends State<HomePageContent> {
                                 text: "To start your library, add a track to your favorites with the ",
                               ),
                               WidgetSpan(
-                                child: Icon(Icons.library_add, size: 18),
+                                child: Icon(Icons.favorite, size: 18),
                               ),
                               TextSpan(
-                                text: "button!",
+                                text: " button!",
                               ),
                             ],
                           ),

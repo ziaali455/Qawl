@@ -70,6 +70,7 @@ class QariCard extends StatelessWidget {
                           fontSize: getProportionateScreenWidth(20),
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
+                          overflow: TextOverflow.fade
                         ),
                       ),
                     ],

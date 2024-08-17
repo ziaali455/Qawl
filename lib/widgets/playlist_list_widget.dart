@@ -1,4 +1,5 @@
 import 'package:first_project/deprecated/fake_playlists_data.dart';
+import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:first_project/size_config.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +8,10 @@ import '../model/playlist.dart';
 
 class PlaylistListWidget extends StatelessWidget {
   final List<QawlPlaylist> playlists_List;
-
+  final bool isPersonal;
   const PlaylistListWidget({
     Key? key,
-    required this.playlists_List,
+    required this.playlists_List, required this.isPersonal,
     //required EdgeInsets padding, required List<Widget> children,
   }) : super(key: key);
 
@@ -22,7 +23,7 @@ class PlaylistListWidget extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       children: [
         for (QawlPlaylist item in playlists_List)
-          PlaylistItem(title: item.name, playlist: item),
+          PlaylistItem(title: item.name, playlist: item, isPersonal: isPersonal,),
       ],
     );
   }
@@ -30,6 +31,7 @@ class PlaylistListWidget extends StatelessWidget {
 
 class PlaylistItem extends StatelessWidget {
   final String title;
+  final bool isPersonal;
   final QawlPlaylist playlist;
   String image;
   String noimage =
@@ -40,7 +42,7 @@ class PlaylistItem extends StatelessWidget {
     required this.title,
     required this.playlist,
     this.image =
-        "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
+        "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3", required this.isPersonal,
   }) : super(key: key);
 
   @override
@@ -56,7 +58,7 @@ class PlaylistItem extends StatelessWidget {
             MaterialPageRoute(
                 builder: (context) => PlaylistScreenContent(
                       // Playlist: playlist,
-                      playlist: playlist,
+                      playlist: playlist, isPersonal: isPersonal, 
                     )),
           ),
           child: Stack(children: [

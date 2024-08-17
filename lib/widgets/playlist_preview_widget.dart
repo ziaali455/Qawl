@@ -1,5 +1,7 @@
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
+import 'package:first_project/model/user.dart';
+import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:first_project/size_config.dart';
 import 'package:first_project/widgets/section_title_widget.dart';
 import 'package:first_project/widgets/track_widget.dart';
@@ -41,21 +43,32 @@ class PlaylistPreviewWidget extends StatelessWidget {
     }
 
 
-    return Column(
+      return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section title
         PlaylistSectionTitle(
           title: playlist.name,
-          press: () {}, // Add your desired action here
+          press: () {
+            // Navigate to the expanded playlist with the correct isPersonal flag
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PlaylistScreenContent(
+                  playlist: playlist,
+                  isPersonal: isPersonal, // Pass this flag
+                ),
+              ),
+            );
+          },
           isPlaylist: true,
-          playlist: playlist,
+          playlist: playlist, isPersonal: isPersonal,
         ),
         // Track widgets
         ...tracks
             .map((track) => TrackWidget(
                   track: track,
-                  isPersonal: isPersonal,
+                  isPersonal: isPersonal, // Pass this flag
                   playlist: playlist,
                 ))
             .toList(),

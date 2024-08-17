@@ -69,13 +69,28 @@ class QawlPlaylist {
     }
   }
 
-  void removeTrack(Track track) {
+ void removeTrack(Track track) {
     if (!empty()) {
       list.remove(track);
     } else {
       print("you can't remove from an empty list!");
     }
   }
+
+ static Future<void> removeTrackFromPlaylist(QawlPlaylist playlist, Track track) async {
+  try {
+    await FirebaseFirestore.instance
+      .collection('QawlPlaylists')
+      .doc(playlist.id)
+      .update({
+        'tracklist': FieldValue.arrayRemove([track.id])
+      });
+      playlist.list.remove(track);
+    print('Track with ID ${track.id} deleted successfully from playlist ${playlist.id}');
+  } catch (e) {
+    print('Error deleting track: $e');
+  }
+}
 
   String getAuthor() {
     return author;

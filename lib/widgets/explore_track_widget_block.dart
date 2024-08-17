@@ -16,10 +16,11 @@ class ExploreTrackWidgetRow extends StatelessWidget {
   const ExploreTrackWidgetRow({
     Key? key,
     required this.title,
-    required this.playlist,
+    required this.playlist, required this.isPersonal,
   }) : super(key: key);
   final String title;
   final QawlPlaylist playlist;
+  final bool isPersonal;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class ExploreTrackWidgetRow extends StatelessWidget {
             title: title,
             isPlaylist: true,
             playlist: playlist,
-            press: () {},
+            press: () {}, isPersonal: isPersonal,
           ),
         ),
         SingleChildScrollView(

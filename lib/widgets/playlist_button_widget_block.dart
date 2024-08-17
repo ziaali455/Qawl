@@ -5,10 +5,11 @@ import '../screens/playlist_screen_content.dart';
 
 class PlaylistButtonWidget extends StatelessWidget {
 //  final String title;
+final bool isPersonal;
   final QawlPlaylist playlist;
   const PlaylistButtonWidget({
     Key? key,
-    required this.playlist,
+    required this.playlist, required this.isPersonal,
     //   required this.title,
   }) : super(key: key);
 
@@ -21,7 +22,7 @@ class PlaylistButtonWidget extends StatelessWidget {
           MaterialPageRoute(
               builder: (context) => PlaylistScreenContent(
                     //  Playlist: playlist,
-                    playlist: playlist,
+                    playlist: playlist, isPersonal: isPersonal,
                   )),
         );
       },

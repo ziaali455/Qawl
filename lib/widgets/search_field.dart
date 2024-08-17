@@ -33,7 +33,7 @@ class SearchField extends StatelessWidget {
               border: InputBorder.none,
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
-              hintText: "Search reciters",
+              hintText: "Search reciters and uploads",
               prefixIcon: const Icon(Icons.search)),
         ),
       ),

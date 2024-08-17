@@ -2,6 +2,7 @@ import 'package:first_project/model/player.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/now_playing_content.dart';
+import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -64,11 +65,20 @@ class TrackWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    subtitle: Text(user.name),
-                    trailing:
-                        isPersonal ? TrashButtonWidget(track: track) : null,
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16.0), // Adjust padding as needed
+                    subtitle: Text(user.name,
+                        style: TextStyle(overflow: TextOverflow.ellipsis)),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize
+                          .min, // Ensures the row takes up only the necessary space
+                      children: [
+                        if (isPersonal) TrashButtonWidget(track: track),
+                        if (playlist.getName() == 'Favorites')
+                          RemoveFromPlaylistButton(
+                              playlist: playlist, track: track),
+                      ],
+                    ),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16.0),
                   ),
                 );
               } else {
@@ -83,6 +93,7 @@ class TrackWidget extends StatelessWidget {
   }
 
   Widget buildCoverImage() {
+    // print("TRACK IMAGE PATH: " + track.coverImagePath);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10), // Image border
       child: SizedBox.fromSize(

@@ -31,8 +31,7 @@ class QawlUser {
       required this.following,
       required this.privateLibrary,
       required this.uploads,
-      this.gender = 'm'
-      });
+      this.gender = 'm'});
 
   static String? getCurrentUserUid() {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -479,6 +478,9 @@ class QawlUser {
       // print("THE DOWNLOAD URL IS: " + imagePath + '\n');
       // print("Image uploaded successfully. URL: $url");
     } on FirebaseException catch (e) {
+      String defaultPath =
+          "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3";
+      updateQawlUserImagePath(defaultPath);
       print("Error uploading image: ${e.message}");
     }
     debugPrint("Image path updated successfully.");
@@ -533,7 +535,8 @@ class QawlUser {
         'uid': firebaseUser.uid,
         'email': firebaseUser.email,
         'timestamp': DateTime.now(),
-        'imagePath': "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
+        'imagePath':
+            "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
 
         'name': "",
         'about': "",

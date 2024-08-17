@@ -100,7 +100,7 @@ Future<void> main() async {
   runApp(MyApp());
 }
   await Firebase.initializeApp(
-      // name: 'qawl-io',
+      name: 'qawl-io', // had to uncomment bc of firebase issues?
       options: DefaultFirebaseOptions.currentPlatform,
       );
   
@@ -200,12 +200,14 @@ class _MyAppState extends State<MyApp> {
       title: 'Qawl',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
-      theme: ThemeData(fontFamily: 'Cera'),
+      theme: ThemeData(fontFamily: 'PPTelegraf'),
       darkTheme: FlexThemeData.dark(
         scheme: FlexScheme.hippieBlue,
         darkIsTrueBlack: true,
+        fontFamily: 'PPTelegraf',
       ),
       home: _isAuthenticated ? const HomePage() : LoginPage(),
+      // home: AuthGate(),
     );
   }
 }

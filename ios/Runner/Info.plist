@@ -34,8 +34,10 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone permission is required to record your uploads that you post onto the app. We will use your 
 	data to save your audio upload to the app in our database, and your data will be wiped from the database after it
-	is deleted. For example, when you upload a recording, it is saved in the database untily ou delete your post. We do not access
+	is deleted. For example, when you upload a recording, it is saved in the database untily you delete your post. We do not access
 	Microphone data outside of this.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app uses speech recognition to parse the audio input provided when recording audio.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library to select a profile picture.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
@@ -63,5 +65,21 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.757975886517-jk3bd8al79dm0lkt6u6nelnj5hi0sr09</string>
+			</array>
+		</dict>
+	</array>
+
+	<key>GIDClientID</key>
+	<string>757975886517-jk3bd8al79dm0lkt6u6nelnj5hi0sr09.apps.googleusercontent.com</string>
+
 </dict>
 </plist>
