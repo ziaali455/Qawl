@@ -306,7 +306,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
           userCredential.user); // Ensure this is awaited if asynchronous
 
       // Navigate based on user details
-      await AuthService().checkUserDetailsAndNavigate(userCredential.user, context);
+      await AuthService()
+          .checkUserDetailsAndNavigate(userCredential.user, context);
     } catch (error) {
       debugPrint("Registration failed: $error");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -494,7 +495,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                     fontSize: 15, fontWeight: FontWeight.bold),
                               ),
                             ),
-                      const SizedBox(height: 50),
+                      const SizedBox(height: 10),
+
+                      isLoading
+                          ? CircularProgressIndicator(color: Colors.green)
+                          : SignupWithGoogleWidget(GoogleLogoImagePath: GoogleLogoImagePath),
+                          
+                      const SizedBox(height: 40),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -527,43 +534,55 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       const SizedBox(
                           height:
                               16), // Space between "Log in" and Google button
-                      InkWell(
-                        onTap: () {
-                          AuthService().LoginWithGoogle(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Image.asset(
-                                GoogleLogoImagePath, // Replace with the path to your Google icon asset
-                                height: 20.0, // Adjust size as needed
-                                width: 20.0, // Adjust size as needed
-                              ),
-                              const SizedBox(
-                                  width: 8), // Space between icon and text
-                              const Text(
-                                'Signup with Google',
-                                style: TextStyle(
-                                  color: Colors.black, // Text color
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                     ],
                   );
                 },
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SignupWithGoogleWidget extends StatelessWidget {
+  const SignupWithGoogleWidget({
+    super.key,
+    required this.GoogleLogoImagePath,
+  });
+
+  final String GoogleLogoImagePath;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        AuthService().LoginWithGoogle(context);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              GoogleLogoImagePath, // Replace with the path to your Google icon asset
+              height: 20.0, // Adjust size as needed
+              width: 20.0, // Adjust size as needed
+            ),
+            const SizedBox(width: 8), // Space between icon and text
+            const Text(
+              'Sign up with Google',
+              style: TextStyle(
+                color: Colors.black, // Text color
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -94,15 +94,16 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   fonts:
-    - family: Cera
+    - family: PPTelegraf
       fonts:
-        - asset: fonts/Cera-Pro-Black.otf
+        - asset: fonts/PPTelegraf-UltraBold.otf
 
 
   # To add assets to your application, add an assets section, like this:
   assets:
     - images/qawl-lime.png
     - assets/google_logo.png
+    - fonts/PPTelegraf-UltraBold.otf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

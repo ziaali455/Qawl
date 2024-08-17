@@ -112,7 +112,7 @@ class _ExploreContentState extends State<ExploreContent> {
                 future: _searchQarisFuture,
                 builder: (context, userSnapshot) {
                   if (userSnapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+                    return const Center(
                         child: CircularProgressIndicator(color: Colors.green));
                   } else if (userSnapshot.hasError) {
                     return Center(child: Text('Error: ${userSnapshot.error}'));
@@ -122,7 +122,7 @@ class _ExploreContentState extends State<ExploreContent> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (users != null && users.isNotEmpty) ...[
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0),
                             child: Text(
                               'Users',
@@ -131,7 +131,7 @@ class _ExploreContentState extends State<ExploreContent> {
                             ),
                           ),
                           GridView.builder(
-                            padding: EdgeInsets.all(20.0),
+                            padding: const EdgeInsets.all(20.0),
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
@@ -147,7 +147,7 @@ class _ExploreContentState extends State<ExploreContent> {
                               );
                             },
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                           ),
                         ],
                       ],
@@ -160,7 +160,7 @@ class _ExploreContentState extends State<ExploreContent> {
                 builder: (context, trackSnapshot) {
                   if (trackSnapshot.connectionState ==
                       ConnectionState.waiting) {
-                    return Center(
+                    return const Center(
                         child: CircularProgressIndicator(color: Colors.green));
                   } else if (trackSnapshot.hasError) {
                     return Center(child: Text('Error: ${trackSnapshot.error}'));
@@ -179,7 +179,7 @@ class _ExploreContentState extends State<ExploreContent> {
                             ),
                           ),
                           ListView.builder(
-                            padding: EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16.0),
                             itemCount: tracks.length,
                             itemBuilder: (context, index) {
                               return TrackWidget(
@@ -194,18 +194,19 @@ class _ExploreContentState extends State<ExploreContent> {
                               );
                             },
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                           ),
                         ],
                       );
                     } else {
-                      return SizedBox.shrink();
+                      return const Center(child: Text('No results found'));
+
                     }
                   }
                 },
               ),
-              if (_searchQarisFuture == null && _searchTracksFuture == null)
-                Center(child: Text('No results found')),
+              if ((_searchQarisFuture == null  && _searchTracksFuture == null))
+                const Center(child: Text('No results found')),
             ],
           ],
         ),

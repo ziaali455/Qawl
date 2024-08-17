@@ -220,11 +220,11 @@ class _ProfileContentState extends State<ProfileContent> {
                       },
                     ),
                   ),
-                if (!isPersonal)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 11.0),
-                    child: buildAbout(user),
-                  ),
+                // if (!isPersonal)
+                //   Padding(
+                //     padding: const EdgeInsets.only(top: 11.0),
+                //     child: buildAbout(user),
+                //   ),
                 if (!isPersonal)
                   Padding(
                     padding: const EdgeInsets.only(top: 0.0),

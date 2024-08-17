@@ -65,7 +65,8 @@ class TrackWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    subtitle: Text(user.name),
+                    subtitle: Text(user.name,
+                        style: TextStyle(overflow: TextOverflow.ellipsis)),
                     trailing: Row(
                       mainAxisSize: MainAxisSize
                           .min, // Ensures the row takes up only the necessary space
@@ -92,6 +93,7 @@ class TrackWidget extends StatelessWidget {
   }
 
   Widget buildCoverImage() {
+    // print("TRACK IMAGE PATH: " + track.coverImagePath);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10), // Image border
       child: SizedBox.fromSize(

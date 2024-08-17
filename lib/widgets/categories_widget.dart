@@ -112,7 +112,7 @@ class CategoryCard extends StatelessWidget {
         }
       },
       child: SizedBox(
-        width: getProportionateScreenWidth(65),
+        width: getProportionateScreenWidth(68),
         child: Column(
           children: [
             Container(

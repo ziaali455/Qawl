@@ -520,7 +520,7 @@ class Controls extends StatelessWidget {
           },
           iconSize: 35,
           color: Colors.white,
-           icon: const Icon(Icons.playlist_add_circle_outlined),
+           icon: const Icon(Icons.favorite),
           // icon: const Icon(Icons.library_add),
         ),
       ],

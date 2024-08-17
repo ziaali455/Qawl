@@ -127,10 +127,10 @@ class _HomePageContentState extends State<HomePageContent> {
                                 text: "To start your library, add a track to your favorites with the ",
                               ),
                               WidgetSpan(
-                                child: Icon(Icons.library_add, size: 18),
+                                child: Icon(Icons.favorite, size: 18),
                               ),
                               TextSpan(
-                                text: "button!",
+                                text: " button!",
                               ),
                             ],
                           ),

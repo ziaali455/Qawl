@@ -356,39 +356,8 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(height: 16), // Add space between the buttons
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
-                      minimumSize: const Size(30, 40), // Button size
-                    ),
-                    icon: Image.asset(
-                      'assets/google_logo.png', // Path to your Google logo asset
-                      height: 20,
-                      width: 20,
-                    ),
-                    label: const Text(
-                      'Sign in with Google',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () async {
-                      // note the LoginWithGoogle method already calls checkDetailsAndNavigate
-                        String result = await AuthService().LoginWithGoogle(context); 
-                      if (result.contains('Success')) {
-                        // Navigator.of(context).pushReplacement(
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const HomePage(), 
-                        //   ),
-                        // );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Google Sign-In failed'),
-                          ),
-                        );
-                      }
-                    },
-                  ),
+                  const SizedBox(height: 10), // Add space between the buttons
+                  SignInWithGoogleWidget(),
                   const SizedBox(height: 30), // Spacing before the "New User" section
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -426,4 +395,46 @@ class _LoginPageState extends State<LoginPage> {
   );
 }
 
+}
+
+class SignInWithGoogleWidget extends StatelessWidget {
+  const SignInWithGoogleWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
+        minimumSize: const Size(30, 40), // Button size
+      ),
+      icon: Image.asset(
+        'assets/google_logo.png', // Path to your Google logo asset
+        height: 20,
+        width: 20,
+      ),
+      label: const Text(
+        'Sign in with Google',
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+      ),
+      onPressed: () async {
+        // note the LoginWithGoogle method already calls checkDetailsAndNavigate
+          String result = await AuthService().LoginWithGoogle(context); 
+        if (result.contains('Success')) {
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => const HomePage(), 
+          //   ),
+          // );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Google Sign-In failed'),
+            ),
+          );
+        }
+      },
+    );
+  }
 }
