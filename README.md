@@ -4,13 +4,11 @@ A Quran app for everyone.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Frontend - Purely Flutter
+Backend - Firebase and hopefully AWS soon
 
-A few resources to get you started if this is your first Flutter project:
+Release - Available on iOS. Just type "Qawl" on the App Store
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Primary contributors: Ali Zia, Musa Waseem, Sayfuddeen Babayo
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Made with love!
