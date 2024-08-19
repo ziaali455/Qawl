@@ -171,6 +171,7 @@ class TrackCard extends StatelessWidget {
                             text: "$author\n",
                             style: TextStyle(
                               fontSize: getProportionateScreenWidth(18),
+                              fontWeight: FontWeight.normal,
                             ),
                           ),
                         ],

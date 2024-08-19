@@ -1,0 +1,6 @@
+framework module record {
+  umbrella header "record-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+2
+version: 1.0.1
 dependency_overrides:
       modal_bottom_sheet: ^3.0.0-pre
 environment:
@@ -66,7 +66,6 @@ dependencies:
   flutter_svg: ^2.0.10+1
   widget_and_text_animator: ^1.1.5
   translator: ^1.0.0
-  speech_to_text: ^6.6.0
   google_sign_in: ^6.2.1
 
 dev_dependencies:
@@ -97,6 +96,8 @@ flutter:
     - family: PPTelegraf
       fonts:
         - asset: fonts/PPTelegraf-UltraBold.otf
+        - asset: fonts/PPTelegraf-Regular.otf
+          style: normal
 
 
   # To add assets to your application, add an assets section, like this:
@@ -104,6 +105,7 @@ flutter:
     - images/qawl-lime.png
     - assets/google_logo.png
     - fonts/PPTelegraf-UltraBold.otf
+    - fonts/PPTelegraf-Regular.otf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

@@ -20,7 +20,6 @@ import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:translator/translator.dart';
 
 class PositionData {
@@ -43,7 +42,6 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
   late Track myTrack;
   late AudioPlayer _audioPlayer;
   late StreamSubscription<User?> _authStateChangesSubscription;
-  late stt.SpeechToText _speechToText;
   final translator = GoogleTranslator();
   String _translatedText = '';
 
@@ -52,7 +50,6 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
     super.initState();
     myTrack = widget.playedTrack;
     _audioPlayer = audioHandler.audioPlayer;
-    _speechToText = stt.SpeechToText();
     _authStateChangesSubscription =
         fba.FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
@@ -60,33 +57,9 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
       }
     });
 
-    _initializeSpeechRecognition();
   }
 
-  void _initializeSpeechRecognition() async {
-    bool available = await _speechToText.initialize(
-      onStatus: (status) => print('Speech recognition status: $status'),
-      onError: (errorNotification) =>
-          print('Speech recognition error: $errorNotification'),
-    );
 
-    if (available) {
-      _audioPlayer.play();
-      _speechToText.listen(
-        onResult: (result) async {
-          if (result.finalResult) {
-            String arabicText = result.recognizedWords;
-            Translation translation =
-                await translator.translate(arabicText, from: 'ar', to: 'en');
-            setState(() {
-              _translatedText = translation.text;
-            });
-          }
-        },
-        localeId: 'ar-EG', // Arabic (Egypt) - adjust as needed
-      );
-    }
-  }
 
   @override
   void dispose() {

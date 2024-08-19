@@ -349,14 +349,14 @@ class _FollowButtonState extends State<FollowButton> {
                       child: snapshot.data == true
                           ? const Text(
                               "Unfollow",
-                              style: TextStyle(
+                              style: TextStyle(fontFamily: "PPTelegraf",
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
                               ),
                             )
                           : const Text(
                               "Follow",
-                              style: TextStyle(
+                              style: TextStyle(fontFamily: "PPTelegraf",
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
                               ),
