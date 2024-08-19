@@ -4,6 +4,8 @@ A Quran app for everyone.
 
 Primary contributors: Ali Zia, Musa Waseem, Sayfuddeen Babayo
 
+Contact: qawlapp@gmail.com
+
 **Made with love!**
 
 ## File Structure
@@ -22,7 +24,8 @@ Frontend - Purely Flutter
 
 Backend - Firebase and hopefully AWS soon
 
-Release - Available on iOS. Just type "Qawl" on the App Store
+## Release
+Available on iOS. Just type "Qawl" on the App Store
 
 ## Quickstart
 
