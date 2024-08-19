@@ -2,6 +2,10 @@
 
 A Quran app for everyone.
 
+Primary contributors: Ali Zia, Musa Waseem, Sayfuddeen Babayo
+
+**Made with love!**
+
 ## File Structure
 
 📁 Folders
@@ -27,6 +31,3 @@ Release - Available on iOS. Just type "Qawl" on the App Store
 3. Type "flutter run" in terminal
 
 
-Primary contributors: Ali Zia, Musa Waseem, Sayfuddeen Babayo
-
-Made with love!
