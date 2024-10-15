@@ -2,7 +2,7 @@
 
 A Quran app for everyone.
 
-Primary contributors: Ali Zia, Musa Waseem, Sayfuddeen Babayo
+Primary contributors: Ali Zia, Musa Waseem
 
 Contact: qawlapp@gmail.com
 
