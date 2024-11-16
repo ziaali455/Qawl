@@ -67,6 +67,10 @@ dependencies:
   widget_and_text_animator: ^1.1.5
   translator: ^1.0.0
   google_sign_in: ^6.2.1
+  url_launcher: ^6.3.0
+  share_plus: ^10.0.0
+  app_links: ^6.3.2
+  go_router: ^14.4.1
 
 dev_dependencies:
   flutter_test:
