@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +20,7 @@ class QawlUser {
   Set<String> privateLibrary;
   Set<String> uploads;
   String gender;
+  bool isVerified;
 
   QawlUser(
       {required this.imagePath,
@@ -31,7 +33,9 @@ class QawlUser {
       required this.following,
       required this.privateLibrary,
       required this.uploads,
-      this.gender = 'm'});
+      this.gender = 'm',
+      this.isVerified = false
+      });
 
   static String? getCurrentUserUid() {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -52,6 +56,7 @@ class QawlUser {
       privateLibrary: Set<String>.from(data['privateLibrary'] ?? []),
       uploads: Set<String>.from(data['publicLibrary'] ?? []),
       gender: data['gender'] ?? '',
+      isVerified: data['isVerified'] ?? false
     );
   }
 
@@ -64,25 +69,55 @@ class QawlUser {
       return null;
     }
   }
+// does a check to see if isVerified field already exists
+static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
+    {QawlUser? user}) async {
+  if (isPersonal) {
+    final currentUserUid = QawlUser.getCurrentUserUid();
+    if (currentUserUid != null) {
+      final docRef = FirebaseFirestore.instance
+          .collection('QawlUsers')
+          .doc(currentUserUid);
 
-  static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
-      {QawlUser? user}) async {
-    if (isPersonal) {
-      final currentUserUid = QawlUser.getCurrentUserUid();
-      if (currentUserUid != null) {
-        final doc = await FirebaseFirestore.instance
-            .collection('QawlUsers')
-            .doc(currentUserUid)
-            .get();
-        if (doc.exists) {
-          return QawlUser.fromFirestore(doc);
+      final doc = await docRef.get();
+
+      if (doc.exists) {
+
+        // Check if the 'isVerified' field exists in the document
+        final data = doc.data();
+        if (data != null && !data.containsKey('isVerified')) {
+          //print("HERE GETT")
+          // Update the document to include 'isVerified' with a default value of false
+          await docRef.update({'isVerified': false});
         }
+        return QawlUser.fromFirestore(doc);
       }
-    } else {
-      return user;
     }
-    return null; // Return null if user not found or isPersonal is true but no user is logged in
+  } else {
+    return user;
   }
+  return null; // Return null if user not found or isPersonal is true but no user is logged in
+}
+
+
+  // static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
+  //     {QawlUser? user}) async {
+  //   if (isPersonal) {
+  //     final currentUserUid = QawlUser.getCurrentUserUid();
+  //     if (currentUserUid != null) {
+  //       final doc = await FirebaseFirestore.instance
+  //           .collection('QawlUsers')
+  //           .doc(currentUserUid)
+  //           .get();
+  //       if (doc.exists) {
+  //         return QawlUser.fromFirestore(doc);
+  //       }
+  //     }
+  //   } else {
+  //     return user;
+  //   }
+  //   return null; // Return null if user not found or isPersonal is true but no user is logged in
+  // }
 
   Future<List<Track>> getUploadedTracks() async {
     List<Track> uploadedTracks = [];
@@ -544,7 +579,8 @@ class QawlUser {
         'followers': 0,
         'following': [],
         'privateLibrary': [],
-        'gender': "m"
+        'gender': "m",
+        'isVerified': false
         // 'publicLibrary': [uploads],
       });
     }
