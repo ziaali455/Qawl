@@ -1,5 +1,3 @@
-
-import 'package:first_project/model/user.dart';
 import 'package:flutter/material.dart';
 
 class QuizHomePage extends StatelessWidget {
@@ -9,7 +7,7 @@ class QuizHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tajweed Quiz'),
+        title: const Text('Quiz App'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -39,7 +37,7 @@ class QuizDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Text(
-      'Welcome to the Quiz! You will have 5 minutes to answer a series of multiple-choice questions. '
+      'Welcome to the Quiz! You will have 10 minutes to answer a series of multiple-choice questions. '
       'Choose the correct answer for each question and click Submit to proceed to the next question. '
       'Good luck!',
       style: TextStyle(fontSize: 16),
@@ -62,9 +60,7 @@ class StartQuizButton extends StatelessWidget {
 }
 
 class QuizPage extends StatefulWidget {
-  final QawlUser? user; // Pass the user object to the quiz page
-
-  const QuizPage({Key? key, this.user}) : super(key: key);
+  const QuizPage({Key? key}) : super(key: key);
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -73,8 +69,7 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   final List<Question> _questions = [
     Question('What is 2 + 2?', ['3', '4', '5'], 1),
-    Question(
-        'What is the capital of France?', ['Berlin', 'Paris', 'Madrid'], 1),
+    Question('What is the capital of France?', ['Berlin', 'Paris', 'Madrid'], 1),
   ];
 
   int _currentQuestionIndex = 0;
@@ -83,8 +78,7 @@ class _QuizPageState extends State<QuizPage> {
   bool _passedTest = false;
 
   void _submitAnswer() {
-    if (_selectedAnswerIndex ==
-        _questions[_currentQuestionIndex].correctIndex) {
+    if (_selectedAnswerIndex == _questions[_currentQuestionIndex].correctIndex) {
       _correctAnswers++;
     }
 
@@ -97,27 +91,7 @@ class _QuizPageState extends State<QuizPage> {
       setState(() {
         _passedTest = _correctAnswers == _questions.length;
       });
-      _handleQuizCompletion();
-    }
-  }
-
-  Future<void> _handleQuizCompletion() async {
-    if (_passedTest) {
-      await _verifyUser();
-    }
-    _showResultsDialog();
-  }
-
-  Future<void> _verifyUser() async {
-    QawlUser? currentUser =
-        await QawlUser.getQawlUserOrCurr(true, user: widget.user);
-    if (currentUser != null) {
-      currentUser.isVerified = true;
-      await QawlUser.updateUserField(currentUser.id, 'isVerified', true);
-      print('User verified successfully.');
-      print("AFTER QUIZ VERIFICATION STATUS IS: " + currentUser.isVerified.toString());
-    } else {
-      print('User verification failed.');
+      _showResultsDialog();
     }
   }
 
@@ -133,8 +107,7 @@ class _QuizPageState extends State<QuizPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () =>
-                Navigator.popUntil(context, (route) => route.isFirst),
+            onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
             child: const Text('OK'),
           ),
         ],

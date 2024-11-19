@@ -33,6 +33,7 @@ class QawlRecordButton extends StatefulWidget {
 }
 
 class _QawlRecordButtonState extends State<QawlRecordButton> {
+
   bool isVerified = false; // Default verification status
   bool isLoading = true; // State to handle loading
 
@@ -81,7 +82,7 @@ class _QawlRecordButtonState extends State<QawlRecordButton> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TajweedVerificationContent(),
+                builder: (context) => QuizHomePage(),
               ),
             );
           }

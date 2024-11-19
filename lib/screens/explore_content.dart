@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
@@ -286,10 +287,11 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
     print("CURRENT GENDER IS " + currentUser.gender);
     // Filter users on client-side
     users = allUsers.where((user) {
-      bool notMe = user.name.toLowerCase() != currentUser.name;
+      bool notMe = user.id != currentUser.id;
       bool matchesQuery = user.name.toLowerCase().contains(lowercaseQuery);
       bool matchesGender = user.gender == currentUserGender;
-      return matchesQuery && matchesGender && notMe;
+      bool isVerified = user.isVerified == true;
+      return matchesQuery && matchesGender && notMe && isVerified;
     }).toList();
   } catch (error) {
     print("Error fetching users by search query: $error");
@@ -339,12 +341,15 @@ Future<List<Track>> getTracksBySearchQuery(String query) async {
 
     for (Track track in allTracks) {
       QawlUser? trackUser = await QawlUser.getQawlUser(track.userId);
+      print(trackUser!.name);
       if (trackUser != null) {
         bool notMe = track.userId != currentUser.id;
         bool matchesQuery =
             track.trackName.toLowerCase().contains(lowercaseQuery);
         bool matchesGender = trackUser.gender == currentUserGender;
-        if (matchesQuery && matchesGender && notMe) {
+        bool isVerified = trackUser.isVerified == true;
+        print("IS HE VERIFIED??: " + trackUser.isVerified.toString());
+        if (matchesQuery && matchesGender && notMe && isVerified) {
           tracks.add(track);
         }
       }
