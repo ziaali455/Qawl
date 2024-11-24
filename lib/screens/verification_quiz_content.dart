@@ -1,10 +1,11 @@
 
+import 'dart:async';
+
 import 'package:first_project/model/user.dart';
 import 'package:flutter/material.dart';
 
 class QuizHomePage extends StatelessWidget {
   const QuizHomePage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,9 +61,8 @@ class StartQuizButton extends StatelessWidget {
     );
   }
 }
-
 class QuizPage extends StatefulWidget {
-  final QawlUser? user; // Pass the user object to the quiz page
+  final QawlUser? user;
 
   const QuizPage({Key? key, this.user}) : super(key: key);
 
@@ -73,18 +73,67 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   final List<Question> _questions = [
     Question('What is 2 + 2?', ['3', '4', '5'], 1),
-    Question(
-        'What is the capital of France?', ['Berlin', 'Paris', 'Madrid'], 1),
+    Question('What is the capital of France?', ['Berlin', 'Paris', 'Madrid'], 1),
   ];
 
   int _currentQuestionIndex = 0;
   int _correctAnswers = 0;
   int _selectedAnswerIndex = -1;
   bool _passedTest = false;
+  int _remainingTime = 300; // 5 minutes in seconds
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingTime > 0) {
+        setState(() {
+          _remainingTime--;
+        });
+      } else {
+        timer.cancel();
+        _handleTimeUp();
+      }
+    });
+  }
+
+  void _handleTimeUp() {
+    // Called when the timer reaches 0
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Time is up!'),
+        content: const Text('You have run out of time to complete the quiz.'),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.popUntil(context, (route) => route.isFirst),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
 
   void _submitAnswer() {
-    if (_selectedAnswerIndex ==
-        _questions[_currentQuestionIndex].correctIndex) {
+    if (_selectedAnswerIndex == _questions[_currentQuestionIndex].correctIndex) {
       _correctAnswers++;
     }
 
@@ -115,7 +164,6 @@ class _QuizPageState extends State<QuizPage> {
       currentUser.isVerified = true;
       await QawlUser.updateUserField(currentUser.id, 'isVerified', true);
       print('User verified successfully.');
-      print("AFTER QUIZ VERIFICATION STATUS IS: " + currentUser.isVerified.toString());
     } else {
       print('User verification failed.');
     }
@@ -147,7 +195,16 @@ class _QuizPageState extends State<QuizPage> {
     final question = _questions[_currentQuestionIndex];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quiz'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Quiz'),
+            Text(
+              _formatTime(_remainingTime), // Display the timer in the AppBar
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
