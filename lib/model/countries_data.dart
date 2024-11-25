@@ -1,5 +1,6 @@
 class allcountries {
   static List<String> countries_new = [
+    '🇦🇫 Afghanistan'
     '🇦🇺 Australia',
     '🇦🇹 Austria',
     '🇦🇱 Albania',
@@ -73,12 +74,15 @@ class allcountries {
     '🇸🇬 Singapore',
     '🇸🇰 Slovakia',
     '🇸🇮 Slovenia',
+    '🇸🇴 Somalia',
     '🇿🇦 South Africa',
     '🇰🇷 South Korea',
     '🇪🇸 Spain',
     '🇱🇰 Sri Lanka',
+    '🇸🇩 Sudan',
     '🇸🇪 Sweden',
     '🇨🇭 Switzerland',
+    '🇹🇯 Tajikistan'
     '🇹🇼 Taiwan',
     '🇹🇭 Thailand',
     '🇹🇳 Tunisia',
@@ -95,6 +99,7 @@ class allcountries {
     '🇿🇼 Zimbabwe',
   ];
   static final Map<String, String> emojiToCountry = {
+    '🇦🇫': 'Afghanistan',
     '🇦🇺': 'Australia',
     '🇦🇹': 'Austria',
     '🇦🇱': 'Albania',
@@ -168,13 +173,16 @@ class allcountries {
     '🇸🇬': 'Singapore',
     '🇸🇰': 'Slovakia',
     '🇸🇮': 'Slovenia',
+    '🇸🇴': 'Somalia',
     '🇿🇦': 'South Africa',
     '🇰🇷': 'South Korea',
     '🇪🇸': 'Spain',
     '🇱🇰': 'Sri Lanka',
+    '🇸🇩': 'Sudan',
     '🇸🇪': 'Sweden',
     '🇨🇭': 'Switzerland',
     '🇹🇼': 'Taiwan',
+    '🇹🇯': 'Tajikistan',
     '🇹🇭': 'Thailand',
     '🇹🇳': 'Tunisia',
     '🇹🇷': 'Turkey',
@@ -192,6 +200,8 @@ class allcountries {
 
 
 static List<Map<String, dynamic>> countries = [
+  
+  {"emoji": "🇦🇫",  "countryName": "Afghanistan"},
   {"emoji": "🇦🇱",  "countryName": "Albania"},
     {"emoji": "🇦🇺", "countryName": "Australia"},
     {"emoji": "🇦🇹", "countryName": "Austria"},
@@ -265,13 +275,16 @@ static List<Map<String, dynamic>> countries = [
     {"emoji": "🇸🇬", "countryName": "Singapore"},
     {"emoji": "🇸🇰", "countryName": "Slovakia"},
     {"emoji": "🇸🇮", "countryName": "Slovenia"},
+    {"emoji": "🇸🇴", "countryName": "Somalia"},
     {"emoji": "🇿🇦", "countryName": "South Africa"},
     {"emoji": "🇰🇷", "countryName": "South Korea"},
     {"emoji": "🇪🇸", "countryName": "Spain"},
     {"emoji": "🇱🇰", "countryName": "Sri Lanka"},
+    {"emoji": "🇸🇩", "countryName": "Sudan"},
     {"emoji": "🇸🇪", "countryName": "Sweden"},
     {"emoji": "🇨🇭", "countryName": "Switzerland"},
     {"emoji": "🇹🇼", "countryName": "Taiwan"},
+    {"emoji": "🇹🇯", "countryName": "Tajikistan"},
     {"emoji": "🇹🇭", "countryName": "Thailand"},
     {"emoji": "🇹🇳", "countryName": "Tunisia"},
     {"emoji": "🇹🇷", "countryName": "Turkey"},

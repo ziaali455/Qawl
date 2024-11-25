@@ -37,7 +37,8 @@ class QuizDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Text(
-      'Welcome to the Quiz! You will have 10 minutes to answer a series of multiple-choice questions. '
+      'To ensure quality recitation on Qawl, we\'ve added a Tajweed test for all new users before they upload.'
+      'You will have 4 minutes to answer a series of MCQs on standard Tajweed concepts. '
       'Choose the correct answer for each question and click Submit to proceed to the next question. '
       'Good luck!',
       style: TextStyle(fontSize: 16),
@@ -102,13 +103,14 @@ class _QuizPageState extends State<QuizPage> {
         title: const Text('Quiz Completed'),
         content: Text(
           _passedTest
-              ? 'Congratulations! You passed the test.'
-              : 'You did not pass. Better luck next time!',
+              ? 'Congratulations! You passed the test. You are now a verified reciter'
+              : 'You did not pass. Please try again!',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-            child: const Text('OK'),
+            child: const Text('Ok'),
+            style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green), fixedSize: WidgetStateProperty.all(const Size(100, 25)))
           ),
         ],
       ),

@@ -17,8 +17,9 @@ class QuizHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 50),
             const QuizDescription(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 50),
             Center(child: StartQuizButton(onStart: _navigateToQuiz)),
           ],
         ),
@@ -40,10 +41,11 @@ class QuizDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Text(
-      'Welcome to the Quiz! You will have 5 minutes to answer a series of multiple-choice questions. '
+      'To ensure quality recitation on Qawl, we\'ve added a Tajweed test for all new users before they can upload. '
+      'You will have 4 minutes to answer a series of MCQs on standard Tajweed concepts. '
       'Choose the correct answer for each question and click Submit to proceed to the next question. '
       'Good luck!',
-      style: TextStyle(fontSize: 16),
+      style: TextStyle(fontSize: 25),
     );
   }
 }
@@ -56,8 +58,10 @@ class StartQuizButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
+      
       onPressed: () => onStart(context),
-      child: const Text('Start Quiz'),
+      child: const Text('Start Quiz', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+      style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green), fixedSize: WidgetStateProperty.all(const Size(200, 50)),)
     );
   }
 }
@@ -241,7 +245,9 @@ class _QuizPageState extends State<QuizPage> {
             Center(
               child: ElevatedButton(
                 onPressed: _selectedAnswerIndex == -1 ? null : _submitAnswer,
-                child: const Text('Submit'),
+                child: const Text('Submit',
+                ),
+                style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green), fixedSize: WidgetStateProperty.all(const Size(100, 25)))
               ),
             ),
           ],
