@@ -1,7 +1,9 @@
-
 import 'dart:async';
 
+import 'package:first_project/model/question.dart';
+import 'package:first_project/model/question_bank.dart';
 import 'package:first_project/model/user.dart';
+import 'package:first_project/screens/quiz_homepage.dart' hide Question;
 import 'package:flutter/material.dart';
 
 class QuizHomePage extends StatelessWidget {
@@ -58,13 +60,18 @@ class StartQuizButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      
-      onPressed: () => onStart(context),
-      child: const Text('Start Quiz', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-      style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green), fixedSize: WidgetStateProperty.all(const Size(200, 50)),)
-    );
+        onPressed: () => onStart(context),
+        child: const Text(
+          'Start Quiz',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(Colors.green),
+          fixedSize: WidgetStateProperty.all(const Size(200, 50)),
+        ));
   }
 }
+
 class QuizPage extends StatefulWidget {
   final QawlUser? user;
 
@@ -75,10 +82,7 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  final List<Question> _questions = [
-    Question('What is 2 + 2?', ['3', '4', '5'], 1),
-    Question('What is the capital of France?', ['Berlin', 'Paris', 'Madrid'], 1),
-  ];
+  late final List<Question> _questions;
 
   int _currentQuestionIndex = 0;
   int _correctAnswers = 0;
@@ -86,11 +90,171 @@ class _QuizPageState extends State<QuizPage> {
   bool _passedTest = false;
   int _remainingTime = 300; // 5 minutes in seconds
   Timer? _timer;
+  Set<int> _selectedAnswers = {}; // For Select All
+  Map<String, int> _selectedMatches = {}; // For Matching
+
+
+  Widget _buildOptions(List<String> options, int selectedIndex, ValueChanged<int> onSelect) {
+  return Column(
+    children: options.asMap().entries.map((entry) {
+      final index = entry.key;
+      final option = entry.value;
+      return ListTile(
+        title: Text(option),
+        leading: Radio<int>(
+          value: index,
+          groupValue: selectedIndex,
+          onChanged: (value) {
+            onSelect(value!);
+          },
+        ),
+      );
+    }).toList(),
+  );
+}
+
+
+Widget _buildMultipleChoice(MultipleChoiceQuestion question) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const SizedBox(height: 16),
+      Center(
+        child: Text(
+          question.verse,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Amiri', // Optional Arabic font
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      const SizedBox(height: 16),
+      ...question.options.asMap().entries.map((entry) {
+        final index = entry.key;
+        final option = entry.value;
+
+        return ListTile(
+          title: Text(option),
+          leading: Radio<int>(
+            value: index,
+            groupValue: _selectedAnswerIndex,
+            onChanged: (value) {
+              setState(() {
+                _selectedAnswerIndex = value!;
+              });
+            },
+          ),
+        );
+      }).toList(),
+    ],
+  );
+}
+
+
+
+
+  // Select All That Apply Widget
+  Widget _buildSelectAll(SelectAllQuestion question) {
+    return Column(
+      children: question.options.asMap().entries.map((entry) {
+        final index = entry.key;
+        final option = entry.value;
+        return CheckboxListTile(
+          title: Text(option),
+          value: _selectedAnswers.contains(index),
+          onChanged: (isChecked) {
+            setState(() {
+              if (isChecked!) {
+                _selectedAnswers.add(index);
+              } else {
+                _selectedAnswers.remove(index);
+              }
+            });
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  // Audio-Based Question Widget
+Widget _buildAudioQuestion(AudioQuestion question) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      ElevatedButton(
+        onPressed: () {
+          // Add your audio playing logic here
+        },
+        child: const Text('Play Audio'),
+      ),
+      const SizedBox(height: 16),
+      Text(
+        'Select all that apply:',
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 16),
+      Column(
+        children: question.options.asMap().entries.map((entry) {
+          final index = entry.key;
+          final option = entry.value;
+
+          return CheckboxListTile(
+            title: Text(option),
+            value: _selectedAnswers.contains(index),
+            onChanged: (isChecked) {
+              setState(() {
+                if (isChecked!) {
+                  _selectedAnswers.add(index);
+                } else {
+                  _selectedAnswers.remove(index);
+                }
+              });
+            },
+          );
+        }).toList(),
+      ),
+    ],
+  );
+}
+
+
+
+  // Matching Widget
+  Widget _buildMatching(MatchingQuestion question) {
+    return Column(
+      children: question.items.map((item) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(item),
+            DropdownButton<int>(
+              value: _selectedMatches[item],
+              items: question.items.asMap().entries.map((entry) {
+                return DropdownMenuItem<int>(
+                  value: entry.key,
+                  child: Text(entry.value),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedMatches[item] = value!;
+                });
+              },
+            ),
+          ],
+        );
+      }).toList(),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
+    _questions = QuestionBank.getQuestions();
     _startTimer();
+
   }
 
   @override
@@ -137,22 +301,31 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   void _submitAnswer() {
-    if (_selectedAnswerIndex == _questions[_currentQuestionIndex].correctIndex) {
+  final question = _questions[_currentQuestionIndex];
+
+  if (question is MultipleChoiceQuestion &&
+      _selectedAnswerIndex == question.correctIndex) {
+    _correctAnswers++;
+  } else if (question is SelectAllQuestion ||
+      question is AudioQuestion) { // Includes Select All and Audio Questions
+    final correctIndexes = (question as dynamic).correctIndexes; // Access correctIndexes dynamically
+    if (_selectedAnswers.toSet().containsAll(correctIndexes) &&
+        correctIndexes.toSet().containsAll(_selectedAnswers)) {
       _correctAnswers++;
     }
-
-    if (_currentQuestionIndex < _questions.length - 1) {
-      setState(() {
-        _currentQuestionIndex++;
-        _selectedAnswerIndex = -1;
-      });
-    } else {
-      setState(() {
-        _passedTest = _correctAnswers == _questions.length;
-      });
-      _handleQuizCompletion();
-    }
   }
+
+  if (_currentQuestionIndex < _questions.length - 1) {
+    setState(() {
+      _currentQuestionIndex++;
+      _selectedAnswerIndex = -1;
+      _selectedAnswers.clear();
+    });
+  } else {
+    _handleQuizCompletion();
+  }
+}
+
 
   Future<void> _handleQuizCompletion() async {
     if (_passedTest) {
@@ -197,6 +370,7 @@ class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     final question = _questions[_currentQuestionIndex];
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -204,7 +378,7 @@ class _QuizPageState extends State<QuizPage> {
           children: [
             const Text('Quiz'),
             Text(
-              _formatTime(_remainingTime), // Display the timer in the AppBar
+              _formatTime(_remainingTime),
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
@@ -225,29 +399,16 @@ class _QuizPageState extends State<QuizPage> {
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
-            ...question.options.asMap().entries.map((entry) {
-              final index = entry.key;
-              final option = entry.value;
-              return ListTile(
-                title: Text(option),
-                leading: Radio<int>(
-                  value: index,
-                  groupValue: _selectedAnswerIndex,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedAnswerIndex = value!;
-                    });
-                  },
-                ),
-              );
-            }).toList(),
+            if (question is MultipleChoiceQuestion)
+              _buildMultipleChoice(question),
+            if (question is SelectAllQuestion) _buildSelectAll(question),
+            if (question is AudioQuestion) _buildAudioQuestion(question),
+            if (question is MatchingQuestion) _buildMatching(question),
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
-                onPressed: _selectedAnswerIndex == -1 ? null : _submitAnswer,
-                child: const Text('Submit',
-                ),
-                style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.green), fixedSize: WidgetStateProperty.all(const Size(100, 25)))
+                onPressed: _canSubmitAnswer() ? _submitAnswer : null,
+                child: const Text('Submit'),
               ),
             ),
           ],
@@ -255,12 +416,10 @@ class _QuizPageState extends State<QuizPage> {
       ),
     );
   }
-}
 
-class Question {
-  final String text;
-  final List<String> options;
-  final int correctIndex;
-
-  Question(this.text, this.options, this.correctIndex);
+// Method to determine if an answer can be submitted
+  bool _canSubmitAnswer() {
+    // if (_selectedAnswerIndex == -1 && _selectedAnswers.isEmpty) return false;
+    return true;
+  }
 }
