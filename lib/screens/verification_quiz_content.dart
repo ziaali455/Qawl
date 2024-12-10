@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:first_project/model/player.dart';
 import 'package:first_project/model/question.dart';
 import 'package:first_project/model/question_bank.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/quiz_homepage.dart' hide Question;
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 
 class QuizHomePage extends StatelessWidget {
   const QuizHomePage({Key? key}) : super(key: key);
@@ -83,6 +85,8 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   late final List<Question> _questions;
+  final AudioPlayer _quizAudioPlayer =
+      AudioPlayer(); // Quiz-specific audio player
 
   int _currentQuestionIndex = 0;
   int _correctAnswers = 0;
@@ -93,67 +97,63 @@ class _QuizPageState extends State<QuizPage> {
   Set<int> _selectedAnswers = {}; // For Select All
   Map<String, int> _selectedMatches = {}; // For Matching
 
-
-  Widget _buildOptions(List<String> options, int selectedIndex, ValueChanged<int> onSelect) {
-  return Column(
-    children: options.asMap().entries.map((entry) {
-      final index = entry.key;
-      final option = entry.value;
-      return ListTile(
-        title: Text(option),
-        leading: Radio<int>(
-          value: index,
-          groupValue: selectedIndex,
-          onChanged: (value) {
-            onSelect(value!);
-          },
-        ),
-      );
-    }).toList(),
-  );
-}
-
-
-Widget _buildMultipleChoice(MultipleChoiceQuestion question) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const SizedBox(height: 16),
-      Center(
-        child: Text(
-          question.verse,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Amiri', // Optional Arabic font
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-      const SizedBox(height: 16),
-      ...question.options.asMap().entries.map((entry) {
+  Widget _buildOptions(
+      List<String> options, int selectedIndex, ValueChanged<int> onSelect) {
+    return Column(
+      children: options.asMap().entries.map((entry) {
         final index = entry.key;
         final option = entry.value;
-
         return ListTile(
           title: Text(option),
           leading: Radio<int>(
             value: index,
-            groupValue: _selectedAnswerIndex,
+            groupValue: selectedIndex,
             onChanged: (value) {
-              setState(() {
-                _selectedAnswerIndex = value!;
-              });
+              onSelect(value!);
             },
           ),
         );
       }).toList(),
-    ],
-  );
-}
+    );
+  }
 
+  Widget _buildMultipleChoice(MultipleChoiceQuestion question) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Center(
+          child: Text(
+            question.verse,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Amiri', // Optional Arabic font
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ...question.options.asMap().entries.map((entry) {
+          final index = entry.key;
+          final option = entry.value;
 
-
+          return ListTile(
+            title: Text(option),
+            leading: Radio<int>(
+              value: index,
+              groupValue: _selectedAnswerIndex,
+              onChanged: (value) {
+                setState(() {
+                  _selectedAnswerIndex = value!;
+                });
+              },
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
 
   // Select All That Apply Widget
   Widget _buildSelectAll(SelectAllQuestion question) {
@@ -179,47 +179,48 @@ Widget _buildMultipleChoice(MultipleChoiceQuestion question) {
   }
 
   // Audio-Based Question Widget
-Widget _buildAudioQuestion(AudioQuestion question) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      ElevatedButton(
-        onPressed: () {
-          // Add your audio playing logic here
-        },
-        child: const Text('Play Audio'),
-      ),
-      const SizedBox(height: 16),
-      Text(
-        'Select all that apply:',
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 16),
-      Column(
-        children: question.options.asMap().entries.map((entry) {
-          final index = entry.key;
-          final option = entry.value;
+  Widget _buildAudioQuestion(AudioQuestion question) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ElevatedButton(
+          onPressed: () async {
+            // Load and play the audio
+            //print("AUDIO PATH IS: " + question.audioUrl);
+            await _quizAudioPlayer.setAsset(question.audioUrl); 
+            _quizAudioPlayer.play();
+          },
+          child: const Text('Play Audio'),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Select all that apply:',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        Column(
+          children: question.options.asMap().entries.map((entry) {
+            final index = entry.key;
+            final option = entry.value;
 
-          return CheckboxListTile(
-            title: Text(option),
-            value: _selectedAnswers.contains(index),
-            onChanged: (isChecked) {
-              setState(() {
-                if (isChecked!) {
-                  _selectedAnswers.add(index);
-                } else {
-                  _selectedAnswers.remove(index);
-                }
-              });
-            },
-          );
-        }).toList(),
-      ),
-    ],
-  );
-}
-
-
+            return CheckboxListTile(
+              title: Text(option),
+              value: _selectedAnswers.contains(index),
+              onChanged: (isChecked) {
+                setState(() {
+                  if (isChecked!) {
+                    _selectedAnswers.add(index);
+                  } else {
+                    _selectedAnswers.remove(index);
+                  }
+                });
+              },
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
 
   // Matching Widget
   Widget _buildMatching(MatchingQuestion question) {
@@ -255,11 +256,16 @@ Widget _buildAudioQuestion(AudioQuestion question) {
     _questions = QuestionBank.getQuestions();
     _startTimer();
 
+    // pause the global audio handler, why is it disposed?
+    if (audioHandler.playbackState.value.playing) {
+      audioHandler.pause();
+    }
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _quizAudioPlayer.dispose();
     super.dispose();
   }
 
@@ -301,31 +307,31 @@ Widget _buildAudioQuestion(AudioQuestion question) {
   }
 
   void _submitAnswer() {
-  final question = _questions[_currentQuestionIndex];
+    final question = _questions[_currentQuestionIndex];
 
-  if (question is MultipleChoiceQuestion &&
-      _selectedAnswerIndex == question.correctIndex) {
-    _correctAnswers++;
-  } else if (question is SelectAllQuestion ||
-      question is AudioQuestion) { // Includes Select All and Audio Questions
-    final correctIndexes = (question as dynamic).correctIndexes; // Access correctIndexes dynamically
-    if (_selectedAnswers.toSet().containsAll(correctIndexes) &&
-        correctIndexes.toSet().containsAll(_selectedAnswers)) {
+    if (question is MultipleChoiceQuestion &&
+        _selectedAnswerIndex == question.correctIndex) {
       _correctAnswers++;
+    } else if (question is SelectAllQuestion || question is AudioQuestion) {
+      // Includes Select All and Audio Questions
+      final correctIndexes = (question as dynamic)
+          .correctIndexes; // Access correctIndexes dynamically
+      if (_selectedAnswers.toSet().containsAll(correctIndexes) &&
+          correctIndexes.toSet().containsAll(_selectedAnswers)) {
+        _correctAnswers++;
+      }
+    }
+
+    if (_currentQuestionIndex < _questions.length - 1) {
+      setState(() {
+        _currentQuestionIndex++;
+        _selectedAnswerIndex = -1;
+        _selectedAnswers.clear();
+      });
+    } else {
+      _handleQuizCompletion();
     }
   }
-
-  if (_currentQuestionIndex < _questions.length - 1) {
-    setState(() {
-      _currentQuestionIndex++;
-      _selectedAnswerIndex = -1;
-      _selectedAnswers.clear();
-    });
-  } else {
-    _handleQuizCompletion();
-  }
-}
-
 
   Future<void> _handleQuizCompletion() async {
     if (_passedTest) {

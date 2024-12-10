@@ -27,7 +27,7 @@ class QuestionBank {
       ),
       AudioQuestion(
         'Identify the Tajweed rules in this audio snippet.',
-        'https://example.com/audio.mp3',
+        'assets/100-KB-MP3.mp3', // LOAD IN HERE AND ADD TO PUBSPEC, THEN CLEAN/PUB GET
         ['Idgham', 'Ikhfa', 'Qalqala', 'Ghunna'],
         [0, 1], // Multiple correct answers: Idgham and Ikhfa
       ),

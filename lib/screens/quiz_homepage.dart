@@ -1,3 +1,5 @@
+import 'package:first_project/model/player.dart';
+import 'package:first_project/screens/verification_quiz_content.dart';
 import 'package:flutter/material.dart';
 
 class QuizHomePage extends StatelessWidget {
@@ -58,20 +60,27 @@ class StartQuizButton extends StatelessWidget {
       child: const Text('Start Quiz'),
     );
   }
+
+  
 }
 
-class QuizPage extends StatefulWidget {
-  const QuizPage({Key? key}) : super(key: key);
 
-  @override
-  _QuizPageState createState() => _QuizPageState();
-}
 
 class _QuizPageState extends State<QuizPage> {
   final List<Question> _questions = [
     Question('What is 2 + 2?', ['3', '4', '5'], 1),
     Question('What is the capital of France?', ['Berlin', 'Paris', 'Madrid'], 1),
   ];
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   // Pause the global audio handler if it's playing
+  //   if (audioHandler.playbackState.value.playing) {
+  //     audioHandler.pause();
+  //   }
+
+  //   }
 
   int _currentQuestionIndex = 0;
   int _correctAnswers = 0;
@@ -95,6 +104,9 @@ class _QuizPageState extends State<QuizPage> {
       _showResultsDialog();
     }
   }
+
+ 
+
 
   void _showResultsDialog() {
     showDialog(
