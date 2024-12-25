@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_project/model/player.dart';
 import 'package:first_project/model/question.dart';
 import 'package:first_project/model/question_bank.dart';
@@ -95,7 +96,7 @@ class _QuizPageState extends State<QuizPage> {
   int _remainingTime = 300; // 5 minutes in seconds
   Timer? _timer;
   Set<int> _selectedAnswers = {}; // For Select All
-  Map<String, int> _selectedMatches = {}; // For Matching
+  Map<String, dynamic> _selectedMatches = {}; // For Matching
 
   Widget _buildOptions(
       List<String> options, int selectedIndex, ValueChanged<int> onSelect) {
@@ -104,7 +105,7 @@ class _QuizPageState extends State<QuizPage> {
         final index = entry.key;
         final option = entry.value;
         return ListTile(
-          title: Text(option),
+          title: Text(option, style: TextStyle(fontSize: 20),),
           leading: Radio<int>(
             value: index,
             groupValue: selectedIndex,
@@ -118,79 +119,98 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Widget _buildMultipleChoice(MultipleChoiceQuestion question) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        Center(
-          child: Text(
-            question.verse,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Amiri', // Optional Arabic font
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 16),
+          Center(
+            child: Text(
+              question.verse,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Amiri', // Optional Arabic font
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
-        ),
-        const SizedBox(height: 16),
-        ...question.options.asMap().entries.map((entry) {
-          final index = entry.key;
-          final option = entry.value;
+          const SizedBox(height: 16),
+          ...question.options.asMap().entries.map((entry) {
+            final index = entry.key;
+            final option = entry.value;
 
-          return ListTile(
-            title: Text(option),
-            leading: Radio<int>(
-              value: index,
-              groupValue: _selectedAnswerIndex,
-              onChanged: (value) {
-                setState(() {
-                  _selectedAnswerIndex = value!;
-                });
-              },
-            ),
-          );
-        }).toList(),
-      ],
+            return ListTile(
+              title: Text(option, style: TextStyle(fontSize: 20),),
+              leading: Radio<int>(
+                value: index,
+                groupValue: _selectedAnswerIndex,
+                focusColor: Colors.green,
+                activeColor: Colors.green,
+                
+                onChanged: (value) {
+                  setState(() {
+                    _selectedAnswerIndex = value!;
+                  });
+                  print(
+                      "SELECTED INDEX IS: " + _selectedAnswerIndex.toString());
+                },
+              ),
+            );
+          }).toList(),
+        ],
+      ),
     );
   }
 
   // Select All That Apply Widget
   Widget _buildSelectAll(SelectAllQuestion question) {
-    return Column(
-      children: question.options.asMap().entries.map((entry) {
-        final index = entry.key;
-        final option = entry.value;
-        return CheckboxListTile(
-          title: Text(option),
-          value: _selectedAnswers.contains(index),
-          onChanged: (isChecked) {
-            setState(() {
-              if (isChecked!) {
-                _selectedAnswers.add(index);
-              } else {
-                _selectedAnswers.remove(index);
-              }
-            });
-          },
-        );
-      }).toList(),
+    return SingleChildScrollView(
+      child: Column(
+        children: question.options.asMap().entries.map((entry) {
+          final index = entry.key;
+          final option = entry.value;
+          return CheckboxListTile(
+            
+            activeColor: Colors.green,
+            checkColor: Colors.white,
+            title: Text(option, style: TextStyle(fontSize: 20),),
+            value: _selectedAnswers.contains(index),
+            onChanged: (isChecked) {
+              setState(() {
+                if (isChecked!) {
+                  _selectedAnswers.add(index);
+                } else {
+                  _selectedAnswers.remove(index);
+                }
+              });
+            },
+          );
+        }).toList(),
+      ),
     );
   }
 
-  // Audio-Based Question Widget
-  Widget _buildAudioQuestion(AudioQuestion question) {
+  // Select rules from audio
+  Widget _buildAudioSelectAllQuestion(SelectFromSingleAudioQuestion question) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ElevatedButton(
-          onPressed: () async {
-            // Load and play the audio
-            //print("AUDIO PATH IS: " + question.audioUrl);
-            await _quizAudioPlayer.setAsset(question.audioUrl); 
-            _quizAudioPlayer.play();
-          },
-          child: const Text('Play Audio'),
+        Center(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+            ),
+ 
+            onPressed: () async {
+              // Load and play the audio
+              print("AUDIO PATH IS: " + question.audioUrl);
+              await _quizAudioPlayer.stop();
+              await _quizAudioPlayer.setAsset(question.audioUrl);
+              _quizAudioPlayer.play();
+            },
+            child: const Text('Play Audio', style: TextStyle(fontSize: 20),),
+          ),
         ),
         const SizedBox(height: 16),
         Text(
@@ -204,7 +224,9 @@ class _QuizPageState extends State<QuizPage> {
             final option = entry.value;
 
             return CheckboxListTile(
-              title: Text(option),
+              activeColor: Colors.green,
+              checkColor: Colors.white,
+              title: Text(option, style: TextStyle(fontSize: 20),),
               value: _selectedAnswers.contains(index),
               onChanged: (isChecked) {
                 setState(() {
@@ -221,34 +243,90 @@ class _QuizPageState extends State<QuizPage> {
       ],
     );
   }
+//inactive but works
+  // Widget _buildMultipleChoiceAudio(SelectCorrectAudioQuestion question) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       const SizedBox(height: 16),
+  //       Center(
+  //         child: Text(
+  //           question.arabicText,
+  //           style: const TextStyle(
+  //             fontSize: 24,
+  //             fontWeight: FontWeight.bold,
+  //             fontFamily: 'Amiri',
+  //           ),
+  //           textAlign: TextAlign.center,
+  //         ),
+  //       ),
+  //       const SizedBox(height: 16),
+  //       ...question.audioURLs.asMap().entries.map((entry) {
+  //         final index = entry.key;
+  //         final audioUrl = entry.value;
+
+  //         return ListTile(
+  //           title: ElevatedButton(
+  //             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+  //             onPressed: () async {
+  //               await _quizAudioPlayer.stop();
+  //               await _quizAudioPlayer.setAsset(audioUrl ?? '');
+  //               _quizAudioPlayer.play();
+  //             },
+  //             child: Text('Play Option ${index + 1}'),
+  //           ),
+  //           leading: Radio<int>(
+  //             value: index,
+  //             groupValue: _selectedAnswerIndex,
+  //             onChanged: (value) {
+  //               setState(() {
+  //                 _selectedAnswerIndex = value!;
+  //               });
+  //             },
+  //             // fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+  //             //   if (states.contains(WidgetState.selected)) {
+  //             //     return Colors.green; // Selected color
+  //             //   }
+  //             //   return Colors.green.withOpacity(0.6); // Unselected color
+  //             // }),
+  //           ),
+  //         );
+  //       }).toList(),
+  //     ],
+  //   );
+  // }
 
   // Matching Widget
-  Widget _buildMatching(MatchingQuestion question) {
-    return Column(
-      children: question.items.map((item) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(item),
-            DropdownButton<int>(
-              value: _selectedMatches[item],
-              items: question.items.asMap().entries.map((entry) {
-                return DropdownMenuItem<int>(
-                  value: entry.key,
-                  child: Text(entry.value),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedMatches[item] = value!;
-                });
-              },
-            ),
-          ],
-        );
-      }).toList(),
-    );
-  }
+  Widget _buildMatching<T>(MatchingQuestion<T> question) {
+  return Column(
+    children: question.shuffledKeys.map((key) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Display the shuffled key
+          Text(key, style: TextStyle(fontSize: 20),),
+
+          // Dropdown for shuffled values
+          DropdownButton<T>(
+            value: _selectedMatches[key] as T?, // Cast to T
+            items: question.shuffledValues.map((value) {
+              return DropdownMenuItem<T>(
+                value: value,
+                child: Text(value.toString(), style: TextStyle(fontSize: 18),), // Convert value to String for display
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedMatches[key] = value; // Store the selected value
+              });
+            },
+          ),
+        ],
+      );
+    }).toList(),
+  );
+}
+
 
   @override
   void initState() {
@@ -259,13 +337,15 @@ class _QuizPageState extends State<QuizPage> {
     // pause the global audio handler, why is it disposed?
     if (audioHandler.playbackState.value.playing) {
       audioHandler.pause();
+      // audioHandler.dispose();
+      //
     }
   }
-
+            
   @override
   void dispose() {
     _timer?.cancel();
-    _quizAudioPlayer.dispose();
+    // _quizAudioPlayer.dispose();
     super.dispose();
   }
 
@@ -293,7 +373,7 @@ class _QuizPageState extends State<QuizPage> {
           TextButton(
             onPressed: () =>
                 Navigator.popUntil(context, (route) => route.isFirst),
-            child: const Text('OK'),
+            child: const Text('OK', style: TextStyle(color: Colors.green),),
           ),
         ],
       ),
@@ -308,20 +388,37 @@ class _QuizPageState extends State<QuizPage> {
 
   void _submitAnswer() {
     final question = _questions[_currentQuestionIndex];
-
-    if (question is MultipleChoiceQuestion &&
-        _selectedAnswerIndex == question.correctIndex) {
-      _correctAnswers++;
-    } else if (question is SelectAllQuestion || question is AudioQuestion) {
-      // Includes Select All and Audio Questions
-      final correctIndexes = (question as dynamic)
-          .correctIndexes; // Access correctIndexes dynamically
+    _quizAudioPlayer.stop();
+    // Check answer based on question type
+    if (question is MultipleChoiceQuestion) {
+      if (_selectedAnswerIndex == question.correctIndex) {
+        _correctAnswers++;
+      }
+    } else if (question is SelectAllQuestion ||
+        question is SelectFromSingleAudioQuestion) {
+      // For Select All questions, compare selected answers with the correct set
+      final correctIndexes = (question as dynamic).correctIndexes;
       if (_selectedAnswers.toSet().containsAll(correctIndexes) &&
           correctIndexes.toSet().containsAll(_selectedAnswers)) {
         _correctAnswers++;
       }
+    } else if (question is MatchingQuestion) {
+      // For Matching questions, ensure all matches are correct
+      bool isCorrect = question.correctMatches.entries.every((entry) {
+        final key = entry.key;
+        final value = entry.value;
+        return _selectedMatches[key] == value;
+      });
+      if (isCorrect) {
+        _correctAnswers++;
+      }
+    } else if (question is SelectCorrectAudioQuestion) {
+      if (_selectedAnswerIndex == question.correctAudioIndex) {
+        _correctAnswers++;
+      }
     }
 
+    // Move to the next question or finish the quiz
     if (_currentQuestionIndex < _questions.length - 1) {
       setState(() {
         _currentQuestionIndex++;
@@ -334,11 +431,23 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Future<void> _handleQuizCompletion() async {
+    final passingScore = (_questions.length * 0.9).ceil();
+    _passedTest = _correctAnswers >= passingScore;
+
     if (_passedTest) {
       await _verifyUser();
     }
     _showResultsDialog();
   }
+
+// Future<void> _updateUserVerification() async {
+//   final docRef = FirebaseFirestore.instance
+//       .collection('QawlUsers')
+//       .doc(currentUserUid);
+
+//   await docRef.update({'isVerified': true});
+//   _fetchFirebaseData(); // Manually reload after the update
+// }
 
   Future<void> _verifyUser() async {
     QawlUser? currentUser =
@@ -366,7 +475,7 @@ class _QuizPageState extends State<QuizPage> {
           TextButton(
             onPressed: () =>
                 Navigator.popUntil(context, (route) => route.isFirst),
-            child: const Text('OK'),
+            child: const Text('OK', style: TextStyle(color: Colors.green),),
           ),
         ],
       ),
@@ -382,7 +491,7 @@ class _QuizPageState extends State<QuizPage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Quiz'),
+            const Text('Tajweed Quiz'),
             Text(
               _formatTime(_remainingTime),
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -392,32 +501,43 @@ class _QuizPageState extends State<QuizPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Question ${_currentQuestionIndex + 1}/${_questions.length}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              question.text,
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 20),
-            if (question is MultipleChoiceQuestion)
-              _buildMultipleChoice(question),
-            if (question is SelectAllQuestion) _buildSelectAll(question),
-            if (question is AudioQuestion) _buildAudioQuestion(question),
-            if (question is MatchingQuestion) _buildMatching(question),
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: _canSubmitAnswer() ? _submitAnswer : null,
-                child: const Text('Submit'),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Question ${_currentQuestionIndex + 1}/${_questions.length}',
+                style:
+                    const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              Text(
+                question.text,
+                style: const TextStyle(fontSize: 20),
+              ),
+              const SizedBox(height: 20),
+              if (question is MultipleChoiceQuestion)
+                _buildMultipleChoice(question),
+              if (question is SelectAllQuestion) _buildSelectAll(question),
+              if (question is SelectFromSingleAudioQuestion)
+                _buildAudioSelectAllQuestion(question),
+              // if (question is SelectCorrectAudioQuestion)
+              //   _buildMultipleChoiceAudio(question),
+              if (question is MatchingQuestion) _buildMatching(question),
+              const SizedBox(height: 20),
+              Center(
+
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
+                  onPressed: _canSubmitAnswer() ? _submitAnswer : null,
+                  
+                  child: const Text('Submit', style: TextStyle(fontSize: 20),),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

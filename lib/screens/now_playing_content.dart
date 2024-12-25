@@ -194,8 +194,9 @@ class CoverContent2 extends StatelessWidget {
                                       SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Text(
-                                          SurahMapper.getSurahNameByNumber(
-                                              myTrack.surahNumber),
+                                          // SurahMapper.getSurahNameByNumber(
+                                          //     myTrack.surahNumber)
+                                          myTrack.trackName,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize:

@@ -1,3 +1,5 @@
+import 'package:just_audio/just_audio.dart';
+
 enum QuestionType {
   multipleChoice,
   selectAll,
@@ -18,7 +20,8 @@ class MultipleChoiceQuestion extends Question {
   final int correctIndex;
   final String verse; // New field for Arabic text
 
-  MultipleChoiceQuestion(String text, this.options, this.correctIndex, this.verse)
+  MultipleChoiceQuestion(
+      String text, this.options, this.correctIndex, this.verse)
       : super(text, QuestionType.multipleChoice);
 }
 
@@ -31,22 +34,38 @@ class SelectAllQuestion extends Question {
       : super(text, QuestionType.selectAll);
 }
 
-// select correct audio question based on ayah
-class AudioQuestion extends Question {
+// select options based on a single audio clip
+class SelectFromSingleAudioQuestion extends Question {
   final String audioUrl;
   final List<String> options;
   final List<int> correctIndexes; // Multiple correct answers for Select All
 
-  AudioQuestion(String text, this.audioUrl, this.options, this.correctIndexes)
+  SelectFromSingleAudioQuestion(
+      String text, this.audioUrl, this.options, this.correctIndexes)
       : super(text, QuestionType.selectAll);
 }
 
+// select the correct audio of ayah, each choice is audio player
+class SelectCorrectAudioQuestion extends Question {
+  final List<String?> audioURLs;
+  final int correctAudioIndex;
+  final String arabicText;
 
-// Matching Question
-class MatchingQuestion extends Question {
-  final List<String> items;
-  final Map<int, int> correctMatches; // Key-value pairs for matching
+  SelectCorrectAudioQuestion(
+      String text, this.audioURLs, this.correctAudioIndex, this.arabicText)
+      : super(text, QuestionType.audioBased);
 
-  MatchingQuestion(String text, this.items, this.correctMatches)
-      : super(text, QuestionType.matching);
+}
+
+// Matching Question (uses generic typs for both string to string and string to int maps)
+class MatchingQuestion<T> extends Question {
+  final Map<String, T> correctMatches;
+  late final List<String> shuffledKeys;
+  late final List<T> shuffledValues;
+
+  MatchingQuestion(String text, this.correctMatches)
+      : super(text, QuestionType.matching) {
+    shuffledKeys = correctMatches.keys.toList()..shuffle();
+    shuffledValues = (correctMatches.values.toList()..shuffle());
+  }
 }
