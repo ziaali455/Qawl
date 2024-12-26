@@ -194,9 +194,9 @@ class CoverContent2 extends StatelessWidget {
                                       SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Text(
-                                          // SurahMapper.getSurahNameByNumber(
-                                          //     myTrack.surahNumber)
-                                          myTrack.trackName,
+                                          SurahMapper.getSurahNameByNumber(
+                                              myTrack.surahNumber),
+                                          // myTrack.trackName,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize:
@@ -207,9 +207,10 @@ class CoverContent2 extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                QawlShareButton(
-                                  track: myTrack,
-                                )
+                                //work in progress
+                                // QawlShareButton(
+                                //   track: myTrack,
+                                // )
                                 // color: Colors.green.shade300,
                                 // iconSize: 24,
                               ],
