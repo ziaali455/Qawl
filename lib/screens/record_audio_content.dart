@@ -251,7 +251,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Text(
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
               messageText,
               textAlign: TextAlign
                   .center, // Optional: TextAlign.center for text alignment
@@ -435,10 +435,10 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
         children: <Widget>[
           Positioned.fill(
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 // Make the container circular
                 shape: BoxShape.circle, // This makes the container a circle
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   colors: <Color>[
                     Color.fromARGB(255, 13, 161, 99),
                     Color.fromARGB(255, 22, 181, 93),
@@ -479,8 +479,9 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   Widget QawlPlayBackButton() {
     if (doneRecording) {
       return Ink(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
             colors: <Color>[
               Color.fromARGB(255, 13, 161, 99),
               Color.fromARGB(255, 22, 181, 93),
@@ -489,8 +490,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
-          borderRadius:
-              BorderRadius.circular(10), // Add some rounding to match button
+
         ),
         child: ElevatedButton(
           onPressed: () async {
@@ -509,7 +509,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             ),
           ),
           child: Icon(isPlaying ? Icons.pause : Icons.play_arrow,
-              size: 60.0, color: Colors.white),
+              size: 80.0, color: Colors.white),
         ),
       );
     }
