@@ -5,7 +5,7 @@ class QuestionBank {
     return [
       MultipleChoiceQuestion(
           'What tajweed rule is applied in the ayah below?',
-          ['Idhaar', 'Iqlaab', 'Ikhfaa', "Ghunna", "Idgham"],
+          ['Idhaar', 'Iqlaab', 'Ikhfaa', "Idgham"],
           4, // Correct index
           "لَا يَسْمَعُونَ فِيهَا لَغْوًۭا وَلَا تَأْثِيمًا"),
       SelectAllQuestion(
@@ -75,16 +75,6 @@ class QuestionBank {
         2, // Correct index
       "",
       ),
-      // SelectCorrectAudioQuestion(
-      //     "Select the correct pronounciation of the ayah:",
-      //     [
-      //       'assets/Hussary_Dukhan_13.mp3',
-      //       'assets/Hussary_Dukhan_13.mp3', // add audio to pubspec, assets...
-      //       'assets/Hussary_Dukhan_13.mp3',
-      //       'assets/Hussary_Dukhan_13.mp3',
-      //     ],
-      //     1, // correct option
-      //     "Arabic Text"),
     ];
   }
 }
