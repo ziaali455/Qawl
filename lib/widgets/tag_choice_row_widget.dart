@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TagChoiceRow extends StatefulWidget {
-  const TagChoiceRow({super.key});
+  final Function(String) onStyleSelected; // Callback to pass the selected style
+
+  const TagChoiceRow({super.key, required this.onStyleSelected});
 
   @override
   _TagChoiceRowState createState() => _TagChoiceRowState();
@@ -9,7 +11,7 @@ class TagChoiceRow extends StatefulWidget {
 
 class _TagChoiceRowState extends State<TagChoiceRow> {
   final List<String> tags = [
-      'Hafs ‘an Asim',
+    'Hafs ‘an Asim',
     'Shu’bah ‘an Asim',
     'Warsh ‘an Nafi’',
     'Qaloon ‘an Nafi’',
@@ -25,8 +27,7 @@ class _TagChoiceRowState extends State<TagChoiceRow> {
     'Khallad ‘an Hamzah',
   ];
 
-  // Use a Set to store the selected tags, allowing multiple selections
-  final Set<String> selectedTags = {};
+  String? selectedTag; // Holds the selected tag
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class _TagChoiceRowState extends State<TagChoiceRow> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: tags.map((tag) {
-          final bool isSelected = selectedTags.contains(tag);
+          final bool isSelected = selectedTag == tag;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ChoiceChip(
@@ -49,11 +50,8 @@ class _TagChoiceRowState extends State<TagChoiceRow> {
               backgroundColor: Colors.green.shade100,
               onSelected: (bool selected) {
                 setState(() {
-                  if (selected) {
-                    selectedTags.add(tag); // Add the tag when selected
-                  } else {
-                    selectedTags.remove(tag); // Remove the tag when unselected
-                  }
+                  selectedTag = selected ? tag : null; // Update the selected tag
+                  widget.onStyleSelected(selectedTag ?? 'Hafs \'an Asim'); // Pass to parent
                 });
               },
             ),

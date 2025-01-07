@@ -41,6 +41,7 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
     super.dispose();
   }
 
+  String? selectedStyle;
   String? selectedSurah;
   var alertStyle = AlertStyle(
     animationType: AnimationType.fromTop,
@@ -128,7 +129,14 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                 ),
               ),
               QawlSubtitleText(title: "Tags"),
-              const TagChoiceRow(),
+              TagChoiceRow(
+                onStyleSelected: (style) {
+                  setState(() {
+                    selectedStyle = style; // Store the selected style
+                  });
+                  print("SELECTED STYLE IS: " + selectedStyle!);
+                },
+              ),
               const SizedBox(height: 60),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -142,12 +150,12 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: ConfirmPostButton(
-                        alertStyle: alertStyle,
-                        trackPath: trackPath,
-                        surah: selectedSurah ?? "",
-                        trackName: _trackNameController.text),
-                    // Pass the track name here
-
+                      alertStyle: alertStyle,
+                      trackPath: trackPath,
+                      surah: selectedSurah ?? "",
+                      trackName: _trackNameController.text,
+                      style: selectedStyle ?? 'Hafs \'an Asim',
+                    ),
                   ),
                 ],
               ),
@@ -276,6 +284,7 @@ class ConfirmPostButton extends StatefulWidget {
   final String trackPath;
   final String surah;
   final String trackName;
+  final String style;
   final AlertStyle alertStyle;
 
   const ConfirmPostButton({
@@ -284,6 +293,7 @@ class ConfirmPostButton extends StatefulWidget {
     required this.surah,
     required this.trackName,
     required this.alertStyle,
+    required this.style,
   }) : super(key: key);
 
   @override
@@ -317,7 +327,8 @@ class _ConfirmPostButtonState extends State<ConfirmPostButton> {
               fixedSize: const Size(125, 70),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              textStyle:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             onPressed: _postContent,
             child: _isLoading
@@ -338,7 +349,8 @@ class _ConfirmPostButtonState extends State<ConfirmPostButton> {
     if (fileUrl != null) {
       String? uid = QawlUser.getCurrentUserUid();
       if (uid != null) {
-        await Track.createQawlTrack(uid, widget.surah, fileUrl, widget.trackName);
+        await Track.createQawlTrack(
+            uid, widget.surah, fileUrl, widget.trackName, widget.style);
       } else {
         print("Error: UID is null.");
       }
@@ -354,11 +366,11 @@ class _ConfirmPostButtonState extends State<ConfirmPostButton> {
     Navigator.pop(context);
 
     Alert(
-      image: const Icon(Icons.check, size: 100.0),
-      style: widget.alertStyle,
-      context: context,
-      title: "Posted!"
-    ).show();
+            image: const Icon(Icons.check, size: 100.0),
+            style: widget.alertStyle,
+            context: context,
+            title: "Posted!")
+        .show();
   }
 }
 

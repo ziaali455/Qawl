@@ -15,7 +15,7 @@ class Track {
   final String userId;
   String trackName;
   final String id;
-
+  final String style;
   int plays;
   final int surahNumber;
   String audioPath;
@@ -30,6 +30,7 @@ class Track {
       required this.plays,
       required this.surahNumber,
       required this.audioPath,
+      required this.style,
       this.coverImagePath = "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3"});
 
   factory Track.fromFirestore(Map<String, dynamic> data, String id) {
@@ -42,7 +43,8 @@ class Track {
       surahNumber: data['surahNumber'] as int,
       audioPath: data['audioPath'] as String,
       coverImagePath:
-          data['coverImagePath'] as String? ?? "defaultCoverImagePath",
+          data['coverImagePath'] as String? ?? "defaultCoverImagePath", 
+      style: data['style'] as String? ?? 'Hafs \'an Asim', // using hafs as default value for existing tracks
     );
   }
 
@@ -99,10 +101,13 @@ class Track {
   // Method to fetch a track by ID from Firestore
 
   static Future<String?> createQawlTrack(
-      String uid, String surah, String fileUrl, text) async {
+      String uid, String surah, String fileUrl, String text, String style) async {
     //create unique id for each track
     String? imagePath = await QawlUser.getPfp(uid);
     String uniqueID = Uuid().v4();
+
+    style = style.isNotEmpty ? style : "Hafs 'an Asim";
+
     uid != null
         ? Track(
             userId: uid,
@@ -112,7 +117,8 @@ class Track {
             plays: 0,
             surahNumber: getSurahNumberByName(surah)!,
             audioPath: fileUrl,
-            coverImagePath: imagePath ?? "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
+            coverImagePath: imagePath ?? "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3", 
+            style: style,
           )
         : null;
 
@@ -127,7 +133,8 @@ class Track {
       'plays': 0,
       'surahNumber': getSurahNumberByName(surah)!,
       'audioPath': fileUrl,
-      'timeStamp': DateTime.now() // for testing clarity
+      'timeStamp': DateTime.now(), // for testing clarity
+      'style': style,
     });
 
     QawlUser? uploader = await QawlUser.getQawlUser(uid);
@@ -308,6 +315,7 @@ class Track {
       audioPath: mediaItem.extras?['audioPath'] ?? '',
       coverImagePath: mediaItem.artUri?.toString() ??
           "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
+      style: mediaItem.extras?['style'] ?? 'Hafs \'an Asim',
     );
   }
 }
