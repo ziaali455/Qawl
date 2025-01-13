@@ -1,3 +1,5 @@
+import 'package:first_project/model/playlist.dart';
+import 'package:first_project/model/track.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:flutter/material.dart';
@@ -12,20 +14,26 @@ class StylesContent extends StatefulWidget {
 class _StylesContentState extends State<StylesContent> {
   // List of items
   final List<String> items = [
-    'Hafs ‘an Asim',
-    'Shu’bah ‘an Asim',
-    'Warsh ‘an Nafi’',
-    'Qaloon ‘an Nafi’',
-    'Duri ‘an Abu Amr',
-    'Susi ‘an Abu Amr',
-    'Bazzi ibn Kathir',
-    'Qunbul ibn Kathir',
-    'Duri an Kisaa’i',
-    'Layth an Kisaa’i',
-    'Hisham ‘an Ibn Amir',
-    'Ibn Dakhwan/Amir',
-    'Khalaf ‘an Hamzah',
-    'Khallad ‘an Hamzah',
+    'Hafs \'an Asim',
+    'Shu\'bah \'an Asim',
+    'Warsh \'an Nafi\'',
+    'Qaloon \'an Nafi\'',
+    'Duri \'an Abu Amr',
+    'Susi \'an Abu Amr',
+    'Bazzi Ibn Kathir',
+    'Qunbul Ibn Kathir',
+    'Duri an Kisa\'i',
+    'Abu al-Harith an Kisa\'i',
+    'Hisham \'an Ibn Amir',
+    'Ibn Dakhwan \'an Ibn Amir',
+    'Khalaf \'an Hamzah',
+    'Khallad \'an Hamzah',
+    'Ibn Wardan \'an Abu Ja\'far',
+    'Ibn Jammaz \'an Abu Ja\'far',
+    'Ruwais an Ya\'qub',
+    'Rawh \'an Ya\'qub',
+    'Ishaq \'an Khalaf',
+    'Idris \'an Khalaf'
   ];
 
   @override
@@ -61,16 +69,19 @@ class _StylesContentState extends State<StylesContent> {
               padding: const EdgeInsets.all(16.0),
               children: List.generate(items.length, (index) {
                 return GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     // MUSA: This is where the playlist of X style will be loaded. An example of this can be seen in Top 100, Recent, etc
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => PlaylistScreenContent(playlist: RESULT FROM REQUESTING PLAYLIST WITH 
-                    //     TITLE SAME AS STYLE LIST, 
-                    //     isPersonal: false)
-                    //   ),
-                    // );
+                    String selectedStyle = items[index];
+                    //await Track.setDefaultStyleForAllTracks("Hafs 'an Asim");
+
+                    QawlPlaylist stylePlaylist =
+                        await QawlPlaylist.getStylesPlaylist(selectedStyle);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PlaylistScreenContent(
+                              playlist: stylePlaylist, isPersonal: false)),
+                    );
                     print("Tapped on item ${items[index]}");
                   },
                   child: Container(

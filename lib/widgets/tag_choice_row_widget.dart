@@ -11,20 +11,26 @@ class TagChoiceRow extends StatefulWidget {
 
 class _TagChoiceRowState extends State<TagChoiceRow> {
   final List<String> tags = [
-    'Hafs ‘an Asim',
-    'Shu’bah ‘an Asim',
-    'Warsh ‘an Nafi’',
-    'Qaloon ‘an Nafi’',
-    'Duri ‘an Abu Amr',
-    'Susi ‘an Abu Amr',
-    'Bazzi ibn Kathir',
-    'Qunbul ibn Kathir',
-    'Duri an Kisaa’i',
-    'Layth an Kisaa’i',
-    'Hisham ‘an Ibn Amir',
-    'Ibn Dakhwan/Amir',
-    'Khalaf ‘an Hamzah',
-    'Khallad ‘an Hamzah',
+    'Hafs \'an Asim',
+    'Shu\'bah \'an Asim',
+    'Warsh \'an Nafi\'',
+    'Qaloon \'an Nafi\'',
+    'Duri \'an Abu Amr',
+    'Susi \'an Abu Amr',
+    'Bazzi Ibn Kathir',
+    'Qunbul Ibn Kathir',
+    'Duri an Kisa\'i',
+    'Abu al-Harith an Kisa\'i',
+    'Hisham \'an Ibn Amir',
+    'Ibn Dakhwan \'an Ibn Amir',
+    'Khalaf \'an Hamzah',
+    'Khallad \'an Hamzah',
+    'Ibn Wardan \'an Abu Ja\'far',
+    'Ibn Jammaz \'an Abu Ja\'far',
+    'Ruwais an Ya\'qub',
+    'Rawh \'an Ya\'qub',
+    'Ishaq \'an Khalaf',
+    'Idris \'an Khalaf'
   ];
 
   String? selectedTag; // Holds the selected tag

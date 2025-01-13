@@ -5,8 +5,8 @@ class QuestionBank {
     return [
       MultipleChoiceQuestion(
           'What tajweed rule is applied in the ayah below?',
-          ['Idhaar', 'Iqlaab', 'Ikhfaa', "Ghunna", "Idgham"],
-          4, // Correct index
+          ['Idhaar', 'Iqlaab', 'Ikhfaa', "Idgham"],
+          3, // Correct index
           "لَا يَسْمَعُونَ فِيهَا لَغْوًۭا وَلَا تَأْثِيمًا"),
       SelectAllQuestion(
         'Select the Heavy Letters below. (Scroll to see all letters)',
@@ -66,8 +66,8 @@ class QuestionBank {
       SelectFromSingleAudioQuestion(
         'Identify the Tajweed rules in this audio snippet.',
         'assets/Hussary_Dukhaan_13.mp3', // LOAD IN HERE AND ADD TO PUBSPEC, THEN CLEAN/PUB GET
-        ['Idgham', 'Ikhfaa', 'Qalqala', 'Ghunna'],
-        [0, 3], // Multiple correct answers: Qalqala and Ghunna
+        ['Idhaar', 'Ikhfaa', 'Qalqala', 'Ghunna'],
+        [2, 3], // Multiple correct answers: Qalqala and Ghunna
       ),
        MultipleChoiceQuestion(
         'What Tajweed rule is applied in the phrase: مَنْ يَعْمَلُ',
@@ -75,16 +75,6 @@ class QuestionBank {
         2, // Correct index
       "",
       ),
-      // SelectCorrectAudioQuestion(
-      //     "Select the correct pronounciation of the ayah:",
-      //     [
-      //       'assets/Hussary_Dukhan_13.mp3',
-      //       'assets/Hussary_Dukhan_13.mp3', // add audio to pubspec, assets...
-      //       'assets/Hussary_Dukhan_13.mp3',
-      //       'assets/Hussary_Dukhan_13.mp3',
-      //     ],
-      //     1, // correct option
-      //     "Arabic Text"),
     ];
   }
 }

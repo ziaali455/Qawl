@@ -155,7 +155,8 @@ static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
               audioPath: data['audioPath'],
               inPlaylists: data['inPlaylists'],
               coverImagePath: data['coverImagePath'] ?? "defaultCoverImagePath",
-              style: data['style'] ?? 'Hafs \'an Asim'
+              style: data['style'] ?? 'Hafs \'an Asim',
+              timeStamp: data['timeStamp']
             );
             uploadedTracks.add(track);
             print(
