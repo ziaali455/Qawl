@@ -72,6 +72,7 @@ dependencies:
   app_links: ^6.3.2
   go_router: ^14.4.1
   choice: ^2.3.2
+  super_tooltip: ^2.0.9
   
 
 dev_dependencies:

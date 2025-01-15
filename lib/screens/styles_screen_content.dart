@@ -2,9 +2,11 @@ import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
+import 'package:first_project/size_config.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
+import 'package:widget_and_text_animator/widget_and_text_animator.dart';
 
 class StylesContent extends StatefulWidget {
   @override
@@ -12,29 +14,13 @@ class StylesContent extends StatefulWidget {
 }
 
 class _StylesContentState extends State<StylesContent> {
-  // List of items
-  final List<String> items = [
-    'Hafs \'an Asim',
-    'Shu\'bah \'an Asim',
-    'Warsh \'an Nafi\'',
-    'Qaloon \'an Nafi\'',
-    'Duri \'an Abu Amr',
-    'Susi \'an Abu Amr',
-    'Bazzi Ibn Kathir',
-    'Qunbul Ibn Kathir',
-    'Duri an Kisa\'i',
-    'Abu al-Harith an Kisa\'i',
-    'Hisham \'an Ibn Amir',
-    'Ibn Dakhwan \'an Ibn Amir',
-    'Khalaf \'an Hamzah',
-    'Khallad \'an Hamzah',
-    'Ibn Wardan \'an Abu Ja\'far',
-    'Ibn Jammaz \'an Abu Ja\'far',
-    'Ruwais an Ya\'qub',
-    'Rawh \'an Ya\'qub',
-    'Ishaq \'an Khalaf',
-    'Idris \'an Khalaf'
-  ];
+  bool _isVisible = true; // Initialize _isVisible
+
+  // void _toggleVisibility() {
+  //   setState(() {
+  //     _isVisible = !_isVisible; // Toggle the visibility when the button is pressed
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +35,19 @@ class _StylesContentState extends State<StylesContent> {
               children: [
                 const QawlBackButton(), // Optional: Replace with your custom button
                 Tooltip(
-                  message: 'This is a tooltip with helpful information.',
-                  child: IconButton(
+                  showDuration: Duration(seconds: 10),
+                  message:
+                      'The Prophet صلى الله عليه وسلم said in a Hadith, \“The Qur\ʾān has been revealed in seven aḥruf (modes). Recite it in a way that is easy for you.\” Scholars understand this to mean that the Qur\ʾān was revealed with variations in pronunciation, vocabulary, and meaning to accommodate different Arabic dialects. These variations are preserved in ten canonical recitation styles (qirā\ʾāt) taught worldwide. They make the Qur\ʾān easier to recite for Muslims globally and highlight its depth, with all differences carefully preserved through oral transmission. (Basil Farooq, Saima Yacoob)  (Narrated by al-Bukhaari, 2287; Muslim, 818)',
+                  child: Row(children: [
+                  Text("What are styles? (tap and hold)"),
+                  IconButton(
                     icon: const Icon(Icons.info_outline),
                     onPressed: () {
                       // Optionally, you could display a dialog or snackbar here
                       print("Info button tapped");
                     },
                   ),
+                  ])
                 ),
               ],
             ),
@@ -116,3 +107,36 @@ class _StylesContentState extends State<StylesContent> {
     );
   }
 }
+  final List<String> items = [
+    'Hafs \'an Asim',
+    'Shu\'bah \'an Asim',
+    'Warsh \'an Nafi\'',
+    'Qaloon \'an Nafi\'',
+    'Duri \'an Abu Amr',
+    'Susi \'an Abu Amr',
+    'Bazzi Ibn Kathir',
+    'Qunbul Ibn Kathir',
+    'Duri an Kisa\'i',
+    'Abu al-Harith an Kisa\'i',
+    'Hisham \'an Ibn Amir',
+    'Ibn Dakhwan \'an Ibn Amir',
+    'Khalaf \'an Hamzah',
+    'Khallad \'an Hamzah',
+    'Ibn Wardan \'an Abu Ja\'far',
+    'Ibn Jammaz \'an Abu Ja\'far',
+    'Ruwais an Ya\'qub',
+    'Rawh \'an Ya\'qub',
+    'Ishaq \'an Khalaf',
+    'Idris \'an Khalaf'
+  ];
+// AnimatedOpacity(
+//                   duration: const Duration(seconds: 1), // Animation duration
+//                   opacity: _isVisible ? 1.0 : 0.0, // Opacity value based on visibility
+//                   child: Text(
+//                         'Fading Box', // Text displayed inside the box
+//                         style: TextStyle(
+//                           color: Colors.white, // Text color
+//                           fontSize: 20.0, // Text font size
+//                         ),
+//                       ),
+//                 ),

@@ -313,19 +313,14 @@ class PlaceholderContent extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Coming Soon',
+                      'Coming Soon!',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: getProportionateScreenWidth(24),
                       ),
                     ),
                     SizedBox(height: 60),
-                    Text(
-                      '😊',
-                      style: TextStyle(
-                        fontSize: getProportionateScreenWidth(40),
-                      ),
-                    ),
+                    
                   ],
                 ),
               ),
