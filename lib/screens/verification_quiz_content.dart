@@ -496,7 +496,7 @@ class _QuizPageState extends State<QuizPage> {
         content: Text(
           _passedTest
               ? 'Congratulations! You passed the test.'
-              : 'You did not pass. Better luck next time!',
+              : 'You did not pass. Try again in 10 days!',
         ),
         actions: [
           TextButton(

@@ -172,9 +172,10 @@ class QawlRecordButton extends StatelessWidget {
           // const int tenDaysInMillis = 10 * 24 * 60 * 60 * 1000;
           const int twoMinInMillis = 2 * 60 * 1000; // = 120000 milliseconds
 
-          return (currentTimestamp - lastAttempt) >= twoMinInMillis; // CHANGE BACK TO 10 DAYS!!!
+          return (currentTimestamp - lastAttempt) >=
+              twoMinInMillis; // CHANGE BACK TO 10 DAYS!!!
         }
-        
+
         // UPDATES TIMESTAMP LOCALLY
         Future<void> updateQuizTimestamp() async {
           final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -183,7 +184,7 @@ class QawlRecordButton extends StatelessWidget {
           print('Last quiz attempt timestamp updated: $currentTimestamp');
         }
 
-        // SETS THE CURRENT TIMESTAMP AND SAVES IN LOCAL MEMORY 
+        // SETS THE CURRENT TIMESTAMP AND SAVES IN LOCAL MEMORY
         Future<void> _handleQuizAttempt() async {
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           final int currentTimestamp = DateTime.now().millisecondsSinceEpoch;
@@ -220,11 +221,14 @@ class QawlRecordButton extends StatelessWidget {
                 ),
               );
             } else if (!canRetake) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const NotVerifiedTimePage(),
-                ),
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const NotVerifiedTimePage(),
+              //   ),
+              // );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("You must wait 10 days before retaking the quiz.")),
               );
             } else {
               await updateQuizTimestamp();
