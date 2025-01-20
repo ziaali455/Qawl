@@ -76,6 +76,10 @@ class AuthService {
           await FirebaseAuth.instance.signInWithCredential(credential);
 
       final String uid = userCredential.user!.uid;
+      // final String email = userCredential.user!.email!;
+      // List<String> signInMethods =
+      //   // ignore: deprecated_member_use
+      //   await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
 
       // check if user exists in firebase already, otherwise create the QawlUser and its collection
       final users = FirebaseFirestore.instance.collection('QawlUsers');

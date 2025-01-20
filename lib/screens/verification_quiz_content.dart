@@ -25,7 +25,14 @@ class QuizHomePage extends StatelessWidget {
             const SizedBox(height: 50),
             const QuizDescription(),
             const SizedBox(height: 50),
-            Center(child: StartQuizButton(onStart: _navigateToQuiz)),
+            Center(
+              child: StartQuizButton(
+                onStart: (context) async {
+                  // await _handleQuizAttempt();
+                  _navigateToQuiz(context);
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -47,7 +54,7 @@ class QuizDescription extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Text(
       'To ensure quality recitation on Qawl, we\'ve added a Tajweed test for all new users before they can upload. '
-      'You will have 4 minutes to answer a series of MCQs on standard Tajweed concepts. '
+      'You will have 4 minutes to answer a series of MCQs on standard Tajweed concepts from the narration of Hafs. '
       'Choose the correct answer for each question and click Submit to proceed to the next question. '
       'Good luck!',
       style: TextStyle(fontSize: 25),
@@ -105,7 +112,10 @@ class _QuizPageState extends State<QuizPage> {
         final index = entry.key;
         final option = entry.value;
         return ListTile(
-          title: Text(option, style: TextStyle(fontSize: 20),),
+          title: Text(
+            option,
+            style: TextStyle(fontSize: 20),
+          ),
           leading: Radio<int>(
             value: index,
             groupValue: selectedIndex,
@@ -141,13 +151,15 @@ class _QuizPageState extends State<QuizPage> {
             final option = entry.value;
 
             return ListTile(
-              title: Text(option, style: TextStyle(fontSize: 20),),
+              title: Text(
+                option,
+                style: TextStyle(fontSize: 20),
+              ),
               leading: Radio<int>(
                 value: index,
                 groupValue: _selectedAnswerIndex,
                 focusColor: Colors.green,
                 activeColor: Colors.green,
-                
                 onChanged: (value) {
                   setState(() {
                     _selectedAnswerIndex = value!;
@@ -171,10 +183,12 @@ class _QuizPageState extends State<QuizPage> {
           final index = entry.key;
           final option = entry.value;
           return CheckboxListTile(
-            
             activeColor: Colors.green,
             checkColor: Colors.white,
-            title: Text(option, style: TextStyle(fontSize: 20),),
+            title: Text(
+              option,
+              style: TextStyle(fontSize: 20),
+            ),
             value: _selectedAnswers.contains(index),
             onChanged: (isChecked) {
               setState(() {
@@ -201,7 +215,6 @@ class _QuizPageState extends State<QuizPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
             ),
- 
             onPressed: () async {
               // Load and play the audio
               print("AUDIO PATH IS: " + question.audioUrl);
@@ -209,7 +222,10 @@ class _QuizPageState extends State<QuizPage> {
               await _quizAudioPlayer.setAsset(question.audioUrl);
               _quizAudioPlayer.play();
             },
-            child: const Text('Play Audio', style: TextStyle(fontSize: 20),),
+            child: const Text(
+              'Play Audio',
+              style: TextStyle(fontSize: 20),
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -226,7 +242,10 @@ class _QuizPageState extends State<QuizPage> {
             return CheckboxListTile(
               activeColor: Colors.green,
               checkColor: Colors.white,
-              title: Text(option, style: TextStyle(fontSize: 20),),
+              title: Text(
+                option,
+                style: TextStyle(fontSize: 20),
+              ),
               value: _selectedAnswers.contains(index),
               onChanged: (isChecked) {
                 setState(() {
@@ -298,35 +317,40 @@ class _QuizPageState extends State<QuizPage> {
 
   // Matching Widget
   Widget _buildMatching<T>(MatchingQuestion<T> question) {
-  return Column(
-    children: question.shuffledKeys.map((key) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Display the shuffled key
-          Text(key, style: TextStyle(fontSize: 20),),
+    return Column(
+      children: question.shuffledKeys.map((key) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Display the shuffled key
+            Text(
+              key,
+              style: TextStyle(fontSize: 20),
+            ),
 
-          // Dropdown for shuffled values
-          DropdownButton<T>(
-            value: _selectedMatches[key] as T?, // Cast to T
-            items: question.shuffledValues.map((value) {
-              return DropdownMenuItem<T>(
-                value: value,
-                child: Text(value.toString(), style: TextStyle(fontSize: 18),), // Convert value to String for display
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedMatches[key] = value; // Store the selected value
-              });
-            },
-          ),
-        ],
-      );
-    }).toList(),
-  );
-}
-
+            // Dropdown for shuffled values
+            DropdownButton<T>(
+              value: _selectedMatches[key] as T?, // Cast to T
+              items: question.shuffledValues.map((value) {
+                return DropdownMenuItem<T>(
+                  value: value,
+                  child: Text(
+                    value.toString(),
+                    style: TextStyle(fontSize: 18),
+                  ), // Convert value to String for display
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedMatches[key] = value; // Store the selected value
+                });
+              },
+            ),
+          ],
+        );
+      }).toList(),
+    );
+  }
 
   @override
   void initState() {
@@ -341,7 +365,7 @@ class _QuizPageState extends State<QuizPage> {
       //
     }
   }
-            
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -373,7 +397,10 @@ class _QuizPageState extends State<QuizPage> {
           TextButton(
             onPressed: () =>
                 Navigator.popUntil(context, (route) => route.isFirst),
-            child: const Text('OK', style: TextStyle(color: Colors.green),),
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.green),
+            ),
           ),
         ],
       ),
@@ -475,17 +502,19 @@ class _QuizPageState extends State<QuizPage> {
           TextButton(
             onPressed: () =>
                 Navigator.popUntil(context, (route) => route.isFirst),
-            child: const Text('OK', style: TextStyle(color: Colors.green),),
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.green),
+            ),
           ),
         ],
       ),
     );
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
     final question = _questions[_currentQuestionIndex];
-
     return Scaffold(
       appBar: AppBar(
         title: Row(

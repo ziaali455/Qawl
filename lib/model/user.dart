@@ -21,6 +21,7 @@ class QawlUser {
   Set<String> uploads;
   String gender;
   bool isVerified;
+  //DateTime? lastAttemptedQuiz;
 
   QawlUser(
       {required this.imagePath,
@@ -34,7 +35,8 @@ class QawlUser {
       required this.privateLibrary,
       required this.uploads,
       this.gender = 'm',
-      this.isVerified = false
+      this.isVerified = false,
+      //this.lastAttemptedQuiz
       });
 
   static String? getCurrentUserUid() {
@@ -45,19 +47,19 @@ class QawlUser {
   factory QawlUser.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return QawlUser(
-      id: doc.id,
-      name: data['name'] ?? '',
-      email: data['email'] ?? '',
-      imagePath: data['imagePath'] ?? '',
-      about: data['about'] ?? '',
-      country: data['country'] ?? '',
-      followers: data['followers'] ?? 0,
-      following: Set<String>.from(data['following'] ?? []),
-      privateLibrary: Set<String>.from(data['privateLibrary'] ?? []),
-      uploads: Set<String>.from(data['publicLibrary'] ?? []),
-      gender: data['gender'] ?? '',
-      isVerified: data['isVerified'] ?? false
-    );
+        id: doc.id,
+        name: data['name'] ?? '',
+        email: data['email'] ?? '',
+        imagePath: data['imagePath'] ?? '',
+        about: data['about'] ?? '',
+        country: data['country'] ?? '',
+        followers: data['followers'] ?? 0,
+        following: Set<String>.from(data['following'] ?? []),
+        privateLibrary: Set<String>.from(data['privateLibrary'] ?? []),
+        uploads: Set<String>.from(data['publicLibrary'] ?? []),
+        gender: data['gender'] ?? '',
+        isVerified: data['isVerified'] ?? false,);
+        //lastAttemptedQuiz: data['lastAttemptedQuiz'] ?? null);
   }
 
   static Future<QawlUser?> getQawlUser(String uid) async {
@@ -69,36 +71,38 @@ class QawlUser {
       return null;
     }
   }
+
 // does a check to see if isVerified field already exists
-static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
-    {QawlUser? user}) async {
-  if (isPersonal) {
-    final currentUserUid = QawlUser.getCurrentUserUid();
-    if (currentUserUid != null) {
-      final docRef = FirebaseFirestore.instance
-          .collection('QawlUsers')
-          .doc(currentUserUid);
+  static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
+      {QawlUser? user}) async {
+    if (isPersonal) {
+      final currentUserUid = QawlUser.getCurrentUserUid();
+      if (currentUserUid != null) {
+        final docRef = FirebaseFirestore.instance
+            .collection('QawlUsers')
+            .doc(currentUserUid);
 
-      final doc = await docRef.get();
+        final doc = await docRef.get();
 
-      if (doc.exists) {
+        if (doc.exists) {
+          // Check if the 'isVerified' field exists in the document
+          final data = doc.data();
+          if (data != null && (!data.containsKey('isVerified'))) {
+            // Update the document to include 'isVerified' with a default value of false
+            await docRef.update({'isVerified': false});
+          }
+          // if (data != null && (!data.containsKey('lastAttemptedQuiz'))) {
+          //   await docRef.update({'lastAttemptedQuiz': null});
+          // }
 
-        // Check if the 'isVerified' field exists in the document
-        final data = doc.data();
-        if (data != null && !data.containsKey('isVerified')) {
-          //print("HERE GETT")
-          // Update the document to include 'isVerified' with a default value of false
-          await docRef.update({'isVerified': false});
+          return QawlUser.fromFirestore(doc);
         }
-        return QawlUser.fromFirestore(doc);
       }
+    } else {
+      return user;
     }
-  } else {
-    return user;
+    return null; // Return null if user not found or isPersonal is true but no user is logged in
   }
-  return null; // Return null if user not found or isPersonal is true but no user is logged in
-}
-
 
   // static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
   //     {QawlUser? user}) async {
@@ -147,17 +151,17 @@ static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
             Map<String, dynamic> data =
                 trackSnapshot.data() as Map<String, dynamic>;
             Track track = Track(
-              userId: data['userId'],
-              id: trackSnapshot.id,
-              trackName: data['trackName'],
-              plays: data['plays'],
-              surahNumber: data['surahNumber'],
-              audioPath: data['audioPath'],
-              inPlaylists: data['inPlaylists'],
-              coverImagePath: data['coverImagePath'] ?? "defaultCoverImagePath",
-              style: data['style'] ?? 'Hafs \'an Asim',
-              timeStamp: data['timeStamp']
-            );
+                userId: data['userId'],
+                id: trackSnapshot.id,
+                trackName: data['trackName'],
+                plays: data['plays'],
+                surahNumber: data['surahNumber'],
+                audioPath: data['audioPath'],
+                inPlaylists: data['inPlaylists'],
+                coverImagePath:
+                    data['coverImagePath'] ?? "defaultCoverImagePath",
+                style: data['style'] ?? 'Hafs \'an Asim',
+                timeStamp: data['timeStamp']);
             uploadedTracks.add(track);
             print(
                 'Track with ID $trackId found and added to uploadedTracks.'); // Add debug print
@@ -540,6 +544,19 @@ static Future<QawlUser?> getQawlUserOrCurr(bool isPersonal,
       debugPrint("Error updating user $field: $e");
     }
   }
+
+  // static Future<void> createUserField(
+  //     String uid, String field, dynamic value) async {
+  //   try {
+  //     await FirebaseFirestore.instance
+  //         .collection('QawlUsers')
+  //         .doc(uid)
+  //         .({field: value});
+  //     debugPrint("Added $field to user .");
+  //   } catch (e) {
+  //     debugPrint("Error adding user $field: $e");
+  //   }
+  // }
 
   static Future<String?> createQawlUser(User? firebaseUser) async {
     firebaseUser != null
