@@ -187,7 +187,25 @@ class CoverContent2 extends StatelessWidget {
                                           ),
                                         ),
                                         onTap: () async {
-                                          // Author tap logic
+                                          String? author = snapshot.data;
+                                          if (author != null) {
+                                            QawlUser? user =
+                                                await QawlUser.getQawlUser(
+                                                    myTrack.userId);
+                                            if (user != null) {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfileContent(
+                                                    user: user,
+                                                    isPersonal: false,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          }
                                         },
                                       ),
                                       const SizedBox(height: 6),

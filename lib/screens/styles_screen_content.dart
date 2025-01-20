@@ -73,7 +73,7 @@ class _StylesContentState extends State<StylesContent> {
                           content: Text('No uploads found for ${items[index]}.'),
                           duration: Duration(
                               seconds:
-                                  3),
+                                  1),
                         ),
                       );
                     } else {

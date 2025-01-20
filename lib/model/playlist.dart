@@ -291,38 +291,42 @@ class QawlPlaylist {
         );
       }
 
-      // Step 2: Query Firestore to get all user IDs with the same gender
-      QuerySnapshot userQuerySnapshot = await FirebaseFirestore.instance
-          .collection('QawlUsers')
-          .where('gender', isEqualTo: currentUserGender)
-          .get();
+      // Step 2: Fetch all users with the same gender (if male)
+      List<String> userIds = [];
+      if (currentUserGender == 'm') {
+        QuerySnapshot userQuerySnapshot = await FirebaseFirestore.instance
+            .collection('QawlUsers')
+            .where('gender', isEqualTo: 'm')
+            .get();
 
-      List<String> userIds =
-          userQuerySnapshot.docs.map((doc) => doc.id).toList();
+        userIds = userQuerySnapshot.docs.map((doc) => doc.id).toList();
 
-      if (userIds.isEmpty) {
-        print("No users found with the specified gender.");
-        return QawlPlaylist(
-          author: "System",
-          name: "No Tracks Playlist",
-          list: [],
-          id: Uuid().v4(),
-        );
+        if (userIds.isEmpty) {
+          print("No male users found.");
+          return QawlPlaylist(
+            author: "System",
+            name: "No Tracks Playlist",
+            list: [],
+            id: Uuid().v4(),
+          );
+        }
       }
 
-      // Step 3: Query all tracks and filter manually for matching style and userId
+      // Step 3: Fetch all tracks with the specified style
       QuerySnapshot trackQuerySnapshot = await FirebaseFirestore.instance
           .collection('QawlTracks')
           .where('style', isEqualTo: style)
           .get();
 
+      // Step 4: Filter tracks manually based on user ID (only for male users)
       List<Track> tracks = trackQuerySnapshot.docs
-          .where((doc) => userIds.contains(doc['userId']))
+          .where((doc) =>
+              currentUserGender == 'f' || userIds.contains(doc['userId'])) // gets all male userIDs if not f, currentUserGender will fetch all
           .map((doc) =>
               Track.fromFirestore(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
 
-      // Step 4: Create and return the playlist
+      // Step 5: Create and return the playlist
       return QawlPlaylist(
         author: "System",
         name: "$style",
@@ -364,7 +368,7 @@ class QawlPlaylist {
         // sort by newest first
         tracks.sort((a, b) {
           if (a.timeStamp == null || b.timeStamp == null) {
-            return 0; 
+            return 0;
           }
           return b.timeStamp!.compareTo(a.timeStamp!);
         });
