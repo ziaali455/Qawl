@@ -500,6 +500,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       isLoading
                           ? CircularProgressIndicator(color: Colors.green)
                           : SignupWithGoogleWidget(GoogleLogoImagePath: GoogleLogoImagePath),
+                      const SizedBox(height: 10),
+                      isLoading
+                          ? CircularProgressIndicator(color: Colors.green)
+                          : SignupWithAppleWidget(AppleLogoImagePath: GoogleLogoImagePath),    
                           
                       const SizedBox(height: 40),
                       Row(
@@ -577,6 +581,48 @@ class SignupWithGoogleWidget extends StatelessWidget {
             const SizedBox(width: 8), // Space between icon and text
             const Text(
               'Sign up with Google',
+              style: TextStyle(
+                color: Colors.black, // Text color
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+class SignupWithAppleWidget extends StatelessWidget {
+  const SignupWithAppleWidget({
+    super.key,
+    required this.AppleLogoImagePath,
+  });
+
+  final String AppleLogoImagePath;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        AuthService().LoginWithApple(context);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/google_logo.png', // Replace with the path to your Google icon asset
+              height: 20.0, // Adjust size as needed
+              width: 20.0, // Adjust size as needed
+            ),
+            const SizedBox(width: 8), // Space between icon and text
+            const Text(
+              'Sign up with Apple',
               style: TextStyle(
                 color: Colors.black, // Text color
                 fontWeight: FontWeight.bold,

@@ -73,6 +73,7 @@ dependencies:
   go_router: ^14.4.1
   choice: ^2.3.2
   super_tooltip: ^2.0.9
+  sign_in_with_apple: ^6.1.4
   
 
 dev_dependencies:
