@@ -616,7 +616,7 @@ class SignupWithAppleWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
-              'assets/google_logo.png', // Replace with the path to your Google icon asset
+              'assets/apple_logo.png', // Replace with the path to your Google icon asset
               height: 20.0, // Adjust size as needed
               width: 20.0, // Adjust size as needed
             ),

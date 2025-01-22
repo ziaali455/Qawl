@@ -112,6 +112,7 @@ flutter:
   assets:
     - images/qawl-lime.png
     - assets/google_logo.png
+    - assets/apple_logo.png
     - fonts/PPTelegraf-UltraBold.otf
     - fonts/PPTelegraf-Regular.otf
     - assets/Hussary_Dukhaan_13.mp3

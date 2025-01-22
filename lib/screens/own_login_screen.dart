@@ -453,7 +453,7 @@ class SignInWithAppleWidget extends StatelessWidget {
         minimumSize: const Size(35, 40), // Button size
       ),
       icon: Image.asset(
-        'assets/google_logo.png', // Path to your Google logo asset
+        'assets/apple_logo.png', // Path to your Google logo asset
         height: 20,
         width: 20,
       ),
