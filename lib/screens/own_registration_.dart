@@ -609,7 +609,7 @@ class SignupWithAppleWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Color.fromARGB(221, 57, 54, 54),
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: Row(
@@ -624,7 +624,7 @@ class SignupWithAppleWidget extends StatelessWidget {
             const Text(
               'Sign up with Apple',
               style: TextStyle(
-                color: Colors.black, // Text color
+                color: Colors.white, // Text color
                 fontWeight: FontWeight.bold,
               ),
             ),

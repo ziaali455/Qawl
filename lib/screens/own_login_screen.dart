@@ -356,9 +356,9 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(height: 10), // Add space between the buttons
-                  SignInWithGoogleWidget(),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 50), // Add space between the buttons
+                   SignInWithGoogleWidget(),
+                  const SizedBox(height: 20),
                   SignInWithAppleWidget(),
                   const SizedBox(height: 30), // Spacing before the "New User" section
                   Row(
@@ -409,7 +409,7 @@ class SignInWithGoogleWidget extends StatelessWidget {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
-        minimumSize: const Size(30, 40), // Button size
+        minimumSize: const Size(100, 40), // Button size
       ),
       icon: Image.asset(
         'assets/google_logo.png', // Path to your Google logo asset
@@ -450,7 +450,7 @@ class SignInWithAppleWidget extends StatelessWidget {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
         foregroundColor:  Colors.white,  backgroundColor: Color.fromARGB(221, 57, 54, 54), // Text color
-        minimumSize: const Size(35, 40), // Button size
+        minimumSize: const Size(100, 40), // Button size
       ),
       icon: Image.asset(
         'assets/apple_logo.png', // Path to your Google logo asset
