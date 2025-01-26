@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
@@ -286,10 +287,14 @@ Future<List<QawlUser>> getUsersBySearchQuery(String query) async {
     print("CURRENT GENDER IS " + currentUser.gender);
     // Filter users on client-side
     users = allUsers.where((user) {
-      bool notMe = user.name.toLowerCase() != currentUser.name;
+      bool notMe = user.id != currentUser.id;
       bool matchesQuery = user.name.toLowerCase().contains(lowercaseQuery);
-      bool matchesGender = user.gender == currentUserGender;
-      return matchesQuery && matchesGender && notMe;
+      bool matchesGender = currentUserGender == 'f' || user.gender == 'm'; // if female always true, otherwise conditional
+
+      // = user.gender == currentUserGender;
+
+      bool isVerified = user.isVerified == true;
+      return matchesQuery && matchesGender && notMe && isVerified;
     }).toList();
   } catch (error) {
     print("Error fetching users by search query: $error");
@@ -339,12 +344,17 @@ Future<List<Track>> getTracksBySearchQuery(String query) async {
 
     for (Track track in allTracks) {
       QawlUser? trackUser = await QawlUser.getQawlUser(track.userId);
+      //print(trackUser!.name);
       if (trackUser != null) {
         bool notMe = track.userId != currentUser.id;
         bool matchesQuery =
-            track.trackName.toLowerCase().contains(lowercaseQuery);
-        bool matchesGender = trackUser.gender == currentUserGender;
-        if (matchesQuery && matchesGender && notMe) {
+             SurahMapper.getSurahNameByNumber(track.getSurah()).toLowerCase().contains(lowercaseQuery);
+        // bool matchesGender = trackUser.gender == currentUserGender;
+        //bool matchesGender = true;
+        bool matchesGender = currentUserGender == 'f' || trackUser.gender == 'm'; // male as default if not f or empty gender
+        bool isVerified = trackUser.isVerified == true;
+        //print("IS HE VERIFIED??: " + trackUser.isVerified.toString());
+        if (matchesQuery && matchesGender && notMe && isVerified) {
           tracks.add(track);
         }
       }
@@ -417,26 +427,47 @@ class _QariCardRowState extends State<QariCardRow> {
 }
 
 Future<List<QawlUser>> getTopUsersByFollowers() async {
-  List<QawlUser> topThreeUsers = [];
+  List<QawlUser> topUsers = [];
 
   try {
-    QawlUser? currUser = await QawlUser.getCurrentQawlUser(); // Await here
+    // Get the current user
+    QawlUser? currUser = await QawlUser.getCurrentQawlUser();
+    if (currUser == null) {
+      throw Exception("Current user not found");
+    }
 
+    String currentUserGender = currUser.gender;
+
+    // Fetch top users by followers
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('QawlUsers')
         .orderBy('followers', descending: true)
-        .limit(5)
+        .limit(20) // Fetch more users for filtering
         .get();
 
     for (QueryDocumentSnapshot doc in querySnapshot.docs) {
       QawlUser user = QawlUser.fromFirestore(doc);
-      if (currUser != null && user.id != currUser.id) {
-        topThreeUsers.add(user);
+
+      // Exclude the current user
+      if (user.id == currUser.id) {
+        continue;
+      }
+
+      // Gender-based filtering
+      if (currentUserGender == 'm' && user.gender != 'm') {
+        continue; // Skip if the current user is male and the other user is not male
+      }
+
+      topUsers.add(user);
+
+      if (topUsers.length >= 5) {
+        break;
       }
     }
   } catch (e) {
-    print("Error getting top three users by followers: $e");
+    print("Error getting top users by followers: $e");
   }
 
-  return topThreeUsers;
+  return topUsers;
 }
+

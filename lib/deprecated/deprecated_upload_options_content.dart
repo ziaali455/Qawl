@@ -31,10 +31,10 @@ class _UploadOptionsContentState extends State<UploadOptionsContent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        QawlBackButton(),
+        const QawlBackButton(),
         Material(
           child: Container(
-            child: Padding(
+            child: const Padding(
               padding: EdgeInsets.only(top: 100.0),
               child: Center(
                 child: Column(children: [
@@ -50,7 +50,7 @@ class _UploadOptionsContentState extends State<UploadOptionsContent> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 30.0),
+                    padding: EdgeInsets.only(bottom: 30.0),
                     child: RecordPageButton(),
                   ),
                   UploadPageButton()
@@ -90,7 +90,7 @@ class RecordPageButton extends StatelessWidget {
           ),
           TextButton(
             style: TextButton.styleFrom(
-              fixedSize: Size(250, 70),
+              fixedSize: const Size(250, 70),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.only(left: 50, right: 50),
               textStyle: const TextStyle(fontSize: 50),
@@ -99,10 +99,10 @@ class RecordPageButton extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RecordAudioContent(),
+                    builder: (context) => const RecordAudioContent(),
                   ));
             },
-            child: Align(
+            child: const Align(
                 alignment: Alignment.center,
                 child: Text(
                   "Record",
@@ -141,7 +141,7 @@ class UploadPageButton extends StatelessWidget {
           ),
           TextButton(
             style: TextButton.styleFrom(
-              fixedSize: Size(250, 70),
+              fixedSize: const Size(250, 70),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.only(left: 20, right: 20),
               textStyle: const TextStyle(fontSize: 50),
@@ -179,7 +179,7 @@ class UploadPageButton extends StatelessWidget {
                 debugPrint("User canceled the picker");
               }
             },
-            child: Align(
+            child: const Align(
                 alignment: Alignment.center,
                 child: Text(
                   "Upload",

@@ -7,11 +7,14 @@ import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
 import 'package:first_project/screens/danger_zone_widget.dart';
 import 'package:first_project/screens/now_playing_content.dart';
+import 'package:first_project/screens/verification_quiz_content.dart';
 import 'package:first_project/widgets/playlist_preview_widget.dart';
 import 'package:first_project/widgets/profile_picture_widget.dart';
+import 'package:first_project/widgets/qawl_record_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/widgets/profile_stats_widget.dart';
+import 'package:go_router/go_router.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:first_project/widgets/upload_popup_widget.dart';
 import '../screens/taken_from_firebaseui/profile_screen_firebaseui.dart';
@@ -261,7 +264,8 @@ class _ProfileContentState extends State<ProfileContent> {
               ],
             ),
             if (isPersonal)
-              Positioned(top: 40, right: 30, child: QawlRecordButton()),
+              Positioned(
+                  top: 40, right: 30, child: QawlRecordButton(user: user)),
             if (!isPersonal)
               Positioned(top: 40, right: 30, child: DangerZone(user: user)),
             if (!isPersonal) const QawlBackButton(),
@@ -329,62 +333,7 @@ class _ProfileContentState extends State<ProfileContent> {
   }
 }
 
-class QawlRecordButton extends StatelessWidget {
-  const QawlRecordButton({
-    Key? key,
-  }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(3.0),
-      child: GestureDetector(
-        onTap: () {
-          showMaterialModalBottomSheet(
-            context: context,
-            builder: (context) => SingleChildScrollView(
-              controller: ModalScrollController.of(context),
-              child:
-                  const UploadPopupWidget(), // Replace with your content widget
-            ),
-          );
-        },
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.transparent, // Transparent background
-          ),
-          child: ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return LinearGradient(
-                colors: <Color>[
-                  Color.fromARGB(255, 13, 161, 99),
-                  Color.fromARGB(255, 22, 181, 93),
-                  Color.fromARGB(255, 32, 220, 85),
-                ],
-              ).createShader(bounds);
-            },
-            blendMode:
-                BlendMode.srcATop, // Ensures gradient only affects the icon
-            child: Row(
-              children: [
-                Center(
-                  child: Icon(
-                    Icons.add,
-                    size: 35,
-                    color: Colors.white, // Icon color
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 
 

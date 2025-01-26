@@ -13,6 +13,7 @@ import 'package:first_project/screens/profile_content.dart';
 import 'package:first_project/size_config.dart';
 import 'package:first_project/widgets/add_to_library_popup.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
+import 'package:first_project/widgets/share_track_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/neu_box.dart';
 import 'package:first_project/model/track.dart';
@@ -56,10 +57,7 @@ class _NowPlayingContentState extends State<NowPlayingContent> {
         _audioPlayer.pause();
       }
     });
-
   }
-
-
 
   @override
   void dispose() {
@@ -123,6 +121,7 @@ class CoverContent2 extends StatelessWidget {
     required this.audioHandler,
   }) : super(key: key);
   final MyAudioHandler audioHandler;
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Track?>(
@@ -136,7 +135,7 @@ class CoverContent2 extends StatelessWidget {
               NeuBox(
                 child: Column(
                   children: [
-// Track image
+                    // Track image
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ClipRRect(
@@ -147,7 +146,6 @@ class CoverContent2 extends StatelessWidget {
                             myTrack.coverImagePath,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
-// Load default image when loading fails
                               return Image.network(
                                 'https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3',
                                 fit: BoxFit.cover,
@@ -157,7 +155,7 @@ class CoverContent2 extends StatelessWidget {
                         ),
                       ),
                     ),
-// Author name
+                    // Author name, surah name, and share button
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: FutureBuilder<String?>(
@@ -166,87 +164,73 @@ class CoverContent2 extends StatelessWidget {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return CircularProgressIndicator(
-                              color: Colors.green,
-                            ); // Example loading indicator
+                                color: Colors.green);
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    GestureDetector(
-                                      child: Text(
-                                        snapshot.data ??
-                                            '', // Display author if available
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize:
-                                              getProportionateScreenWidth(17),
-                                          color: Colors.green.shade300,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      GestureDetector(
+                                        child: Text(
+                                          snapshot.data ?? '',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                getProportionateScreenWidth(17),
+                                            color: Colors.green.shade300,
+                                          ),
                                         ),
-                                      ),
-                                      onTap: () async {
-                                        String? author = snapshot.data;
-                                        if (author != null) {
-                                          QawlUser? user =
-                                              await QawlUser.getQawlUser(
-                                                  myTrack.userId);
-                                          if (user != null) {
-                                            Navigator.pop(context);
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ProfileContent(
-                                                  user: user,
-                                                  isPersonal: false,
+                                        onTap: () async {
+                                          String? author = snapshot.data;
+                                          if (author != null) {
+                                            QawlUser? user =
+                                                await QawlUser.getQawlUser(
+                                                    myTrack.userId);
+                                            if (user != null) {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfileContent(
+                                                    user: user,
+                                                    isPersonal: false,
+                                                  ),
                                                 ),
-                                              ),
-                                            );
+                                              );
+                                            }
                                           }
-                                        }
-                                      },
-                                    ),
-                                    const SizedBox(height: 6),
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis
-                                          .horizontal, // Set the scroll direction to horizontal
-                                      child: Text(
-                                        SurahMapper.getSurahNameByNumber(
-                                            myTrack.surahNumber),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize:
-                                              getProportionateScreenWidth(17),
+                                        },
+                                      ),
+                                      const SizedBox(height: 6),
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Text(
+                                          SurahMapper.getSurahNameByNumber(
+                                              myTrack.surahNumber),
+                                          // myTrack.trackName,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                getProportionateScreenWidth(17),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                                // IconButton(
-                                //   splashColor: Colors.transparent,
-                                //   highlightColor: Colors.transparent,
-                                //   hoverColor: Colors.transparent,
-                                //   onPressed: () {
-                                //     showMaterialModalBottomSheet(
-                                //       context: context,
-                                //       builder: (context) =>
-                                //           SingleChildScrollView(
-                                //         controller:
-                                //             ModalScrollController.of(context),
-                                //         child: AddToLibraryWidget(
-                                //           track: myTrack,
-                                //         ),
-                                //       ),
-                                //     );
-                                //   },
-                                //   iconSize: 35,
-                                //   color: Colors.white,
-                                //   icon: const Icon(Icons.library_add),
-                                // ),
+                                //work in progress
+                                // QawlShareButton(
+                                //   track: myTrack,
+                                // )
+                                // color: Colors.green.shade300,
+                                // iconSize: 24,
                               ],
                             );
                           }
@@ -493,7 +477,7 @@ class Controls extends StatelessWidget {
           },
           iconSize: 35,
           color: Colors.white,
-           icon: const Icon(Icons.favorite),
+          icon: const Icon(Icons.favorite),
           // icon: const Icon(Icons.library_add),
         ),
       ],

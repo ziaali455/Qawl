@@ -6,6 +6,9 @@ import 'package:first_project/screens/user_setup_page_content.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import 'package:sign_in_with_apple/sign_in_with_apple.dart'; // Add this dependency
+
+
 class AuthService {
   Future<String?> registration({
     required String email,
@@ -55,12 +58,9 @@ class AuthService {
 
   Future<String> LoginWithGoogle(BuildContext context) async {
     try {
-      // _toggleLoading(true); // Start the loading indicator
-
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
-        // _toggleLoading(false);
         return 'user is null';
       }
 
@@ -77,7 +77,6 @@ class AuthService {
 
       final String uid = userCredential.user!.uid;
 
-      // check if user exists in firebase already, otherwise create the QawlUser and its collection
       final users = FirebaseFirestore.instance.collection('QawlUsers');
       final userDoc = await users.doc(uid).get();
 
@@ -96,13 +95,48 @@ class AuthService {
     } 
   }
 
+  Future<String> LoginWithApple(BuildContext context) async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
 
-Future<void> checkUserDetailsAndNavigate(
+      final OAuthCredential oAuthCredential = OAuthProvider("apple.com").credential(
+        idToken: credential.identityToken,
+        accessToken: credential.authorizationCode,
+      );
+
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
+
+      final String uid = userCredential.user!.uid;
+
+      final users = FirebaseFirestore.instance.collection('QawlUsers');
+      final userDoc = await users.doc(uid).get();
+
+      if (!userDoc.exists) {
+        await QawlUser.createQawlUser(userCredential.user);
+      }
+      await checkUserDetailsAndNavigate(userCredential.user, context);
+      return 'Success';
+
+    } catch (error) {
+      debugPrint("Apple Sign-In failed: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Apple Sign-In failed: $error")),
+      );
+      return 'Error: $error';
+    }
+  }
+
+  Future<void> checkUserDetailsAndNavigate(
       User? user, BuildContext context) async {
     final currentUser = await QawlUser.getCurrentQawlUser();
 
     if (currentUser == null) {
-      // Handle error or navigate to error page
       return;
     }
 
@@ -122,5 +156,4 @@ Future<void> checkUserDetailsAndNavigate(
       );
     }
   }
-
 }

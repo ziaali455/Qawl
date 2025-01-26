@@ -252,7 +252,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
 
   void _checkButtonVisibility() {
     setState(() {
-      _isButtonVisible = _nameController.text.isNotEmpty && _isChecked;
+      _isButtonVisible = _isChecked;
     });
   }
 
@@ -293,7 +293,7 @@ class _UserSetupPageState extends State<UserSetupPage> {
                   const SizedBox(height: 50),
                   Center(
                     child: Text(
-                      'Name (required)',
+                      'Name (optional)',
                       style: TextStyle(
                         fontSize: getProportionateScreenWidth(25),
                         fontWeight: FontWeight.bold,
@@ -350,7 +350,8 @@ class _UserSetupPageState extends State<UserSetupPage> {
                   ),
                   const SizedBox(height: 25),
                   Center(
-                    child: CountryDropdownMenu(onCountrySelected: onCountrySelected),
+                    child: CountryDropdownMenu(
+                        onCountrySelected: onCountrySelected),
                   ),
                   const SizedBox(height: 20),
                   const Padding(
@@ -407,7 +408,8 @@ class _UserSetupPageState extends State<UserSetupPage> {
                               MaterialStateProperty.all<Color>(Colors.green),
                           foregroundColor:
                               MaterialStateProperty.all<Color>(Colors.white),
-                          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
                             const EdgeInsets.all(16.0),
                           ),
                           textStyle: MaterialStateProperty.all<TextStyle>(
@@ -421,7 +423,11 @@ class _UserSetupPageState extends State<UserSetupPage> {
                           QawlUser.updateCountry(_selectedCountry ??
                               ""); // Pass "" if _selectedCountry is null
                           QawlUser.updateGender(_selectedGender);
-                          QawlUser.updateName(_nameController.text);
+                          QawlUser.updateName(
+                              (_nameController.text?.isEmpty ?? true)
+                                  ? "Qawl User"
+                                  : _nameController.text);
+
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
@@ -441,7 +447,6 @@ class _UserSetupPageState extends State<UserSetupPage> {
     );
   }
 }
-
 
 class CountryDropdownMenu extends StatefulWidget {
   final void Function(String) onCountrySelected;
