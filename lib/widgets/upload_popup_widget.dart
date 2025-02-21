@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
 class UploadPopupWidget extends StatelessWidget {
-  const UploadPopupWidget
-({Key? key}) : super(key: key);
+  const UploadPopupWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +38,6 @@ class UploadPopupWidget extends StatelessWidget {
             leading: Icon(Icons.file_upload_outlined,
                 color: Colors.green, size: 30.0),
             onTap: () async {
-
               FilePickerResult? result = await FilePicker.platform.pickFiles();
 
               if (result != null) {
@@ -64,7 +62,6 @@ class UploadPopupWidget extends StatelessWidget {
                       ),
                     ));
 
-  
                 // // Navigator.push(
                 // //     context,
                 // //     MaterialPageRoute(

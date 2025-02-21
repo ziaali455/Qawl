@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/deprecated/profile_content_DEPRECATED.dart';
+import 'package:first_project/widgets/tag_choice_row_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/track.dart';
 import 'package:path_provider/path_provider.dart';
@@ -40,6 +41,7 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
     super.dispose();
   }
 
+  String? selectedStyle;
   String? selectedSurah;
   var alertStyle = AlertStyle(
     animationType: AnimationType.fromTop,
@@ -47,16 +49,16 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
     isCloseButton: false,
     isButtonVisible: false,
     isOverlayTapDismiss: true,
-    descStyle: TextStyle(fontWeight: FontWeight.bold),
+    descStyle: const TextStyle(fontWeight: FontWeight.bold),
     descTextAlign: TextAlign.start,
-    animationDuration: Duration(milliseconds: 400),
+    animationDuration: const Duration(milliseconds: 400),
     alertBorder: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8.0),
-      side: BorderSide(
+      side: const BorderSide(
         color: Colors.green,
       ),
     ),
-    titleStyle: TextStyle(
+    titleStyle: const TextStyle(
       color: Colors.green,
     ),
   );
@@ -70,8 +72,8 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //Existing code...
-              Padding(
-                padding: EdgeInsets.only(bottom: 180.0),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 60.0),
                 child: Text(
                   "Recitation Info",
                   textAlign: TextAlign.center,
@@ -81,15 +83,17 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 30),
+              QawlSubtitleText(title: "Title"),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
                   controller: _trackNameController,
                   cursorColor: Colors.green,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     floatingLabelStyle: TextStyle(color: Colors.green),
-                    labelText: 'Track Name',
+                    labelText: 'Title (optional)',
                     border: OutlineInputBorder(),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -109,7 +113,7 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                   value: null, // Set the initial selected value if needed
                   hint: selectedSurah != null
                       ? Text(selectedSurah!)
-                      : Text('Select a Surah'),
+                      : const Text('Select a Surah'),
                   onChanged: (SurahLabel? newValue) {
                     setState(() {
                       selectedSurah = newValue?.label;
@@ -124,6 +128,16 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                   }).toList(),
                 ),
               ),
+              QawlSubtitleText(title: "Tags"),
+              TagChoiceRow(
+                onStyleSelected: (style) {
+                  setState(() {
+                    selectedStyle = style; // Store the selected style
+                  });
+                  print("SELECTED STYLE IS: " + selectedStyle!);
+                },
+              ),
+              const SizedBox(height: 60),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -136,12 +150,12 @@ class _TrackInfoContentState extends State<TrackInfoContent> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: ConfirmPostButton(
-                        alertStyle: alertStyle,
-                        trackPath: trackPath,
-                        surah: selectedSurah ?? "",
-                        trackName: _trackNameController.text),
-                    // Pass the track name here
-
+                      alertStyle: alertStyle,
+                      trackPath: trackPath,
+                      surah: selectedSurah ?? "",
+                      trackName: _trackNameController.text,
+                      style: selectedStyle ?? 'Hafs \'an Asim',
+                    ),
                   ),
                 ],
               ),
@@ -182,7 +196,7 @@ class CancelPostButton extends StatelessWidget {
           ),
           TextButton(
             style: TextButton.styleFrom(
-              fixedSize: Size(125, 70),
+              fixedSize: const Size(125, 70),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.only(left: 20, right: 20),
               textStyle: const TextStyle(fontSize: 50),
@@ -195,7 +209,7 @@ class CancelPostButton extends StatelessWidget {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: Align(
+            child: const Align(
                 alignment: Alignment.center,
                 child: Text(
                   "Cancel",
@@ -270,6 +284,7 @@ class ConfirmPostButton extends StatefulWidget {
   final String trackPath;
   final String surah;
   final String trackName;
+  final String style;
   final AlertStyle alertStyle;
 
   const ConfirmPostButton({
@@ -278,6 +293,7 @@ class ConfirmPostButton extends StatefulWidget {
     required this.surah,
     required this.trackName,
     required this.alertStyle,
+    required this.style,
   }) : super(key: key);
 
   @override
@@ -311,7 +327,8 @@ class _ConfirmPostButtonState extends State<ConfirmPostButton> {
               fixedSize: const Size(125, 70),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              textStyle:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             onPressed: _postContent,
             child: _isLoading
@@ -332,7 +349,8 @@ class _ConfirmPostButtonState extends State<ConfirmPostButton> {
     if (fileUrl != null) {
       String? uid = QawlUser.getCurrentUserUid();
       if (uid != null) {
-        await Track.createQawlTrack(uid, widget.surah, fileUrl, widget.trackName);
+        await Track.createQawlTrack(
+            uid, widget.surah, fileUrl, widget.trackName, widget.style);
       } else {
         print("Error: UID is null.");
       }
@@ -348,11 +366,11 @@ class _ConfirmPostButtonState extends State<ConfirmPostButton> {
     Navigator.pop(context);
 
     Alert(
-      image: const Icon(Icons.check, size: 100.0),
-      style: widget.alertStyle,
-      context: context,
-      title: "Posted!"
-    ).show();
+            image: const Icon(Icons.check, size: 100.0),
+            style: widget.alertStyle,
+            context: context,
+            title: "Posted!")
+        .show();
   }
 }
 
@@ -366,10 +384,10 @@ class QawlSubtitleText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 10.0),
+      padding: const EdgeInsets.only(bottom: 10.0),
       child: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 15.0,
         ),

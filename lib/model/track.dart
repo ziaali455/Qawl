@@ -7,6 +7,7 @@ import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -15,10 +16,11 @@ class Track {
   final String userId;
   String trackName;
   final String id;
-
+  final String style;
   int plays;
   final int surahNumber;
   String audioPath;
+  DateTime? timeStamp; // Musa added the timeStamp field
   Set<QawlPlaylist> inPlaylists;
   String coverImagePath =
       "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3";
@@ -30,7 +32,10 @@ class Track {
       required this.plays,
       required this.surahNumber,
       required this.audioPath,
-      this.coverImagePath = "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3"});
+      required this.style,
+      required this.timeStamp,
+      this.coverImagePath =
+          "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3"});
 
   factory Track.fromFirestore(Map<String, dynamic> data, String id) {
     return Track(
@@ -43,6 +48,9 @@ class Track {
       audioPath: data['audioPath'] as String,
       coverImagePath:
           data['coverImagePath'] as String? ?? "defaultCoverImagePath",
+      style: data['style'] as String? ?? 'Hafs \'an Asim',
+      timeStamp: (data['timeStamp'] as Timestamp?)
+          ?.toDate(), // Parse Firestore Timestamp
     );
   }
 
@@ -98,11 +106,15 @@ class Track {
   }
   // Method to fetch a track by ID from Firestore
 
-  static Future<String?> createQawlTrack(
-      String uid, String surah, String fileUrl, text) async {
+  static Future<String?> createQawlTrack(String uid, String surah,
+      String fileUrl, String text, String style) async {
     //create unique id for each track
     String? imagePath = await QawlUser.getPfp(uid);
     String uniqueID = Uuid().v4();
+
+    style = style.isNotEmpty ? style : "Hafs 'an Asim";
+    DateTime timestamp = DateTime.now();
+
     uid != null
         ? Track(
             userId: uid,
@@ -112,7 +124,10 @@ class Track {
             plays: 0,
             surahNumber: getSurahNumberByName(surah)!,
             audioPath: fileUrl,
-            coverImagePath: imagePath ?? "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
+            coverImagePath: imagePath ??
+                "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
+            style: style,
+            timeStamp: timestamp,
           )
         : null;
 
@@ -127,7 +142,8 @@ class Track {
       'plays': 0,
       'surahNumber': getSurahNumberByName(surah)!,
       'audioPath': fileUrl,
-      'timeStamp': DateTime.now() // for testing clarity
+      'timeStamp': timestamp, // for testing clarity
+      'style': style,
     });
 
     QawlUser? uploader = await QawlUser.getQawlUser(uid);
@@ -183,7 +199,7 @@ class Track {
 
   String getAudioFile() {
     return audioPath;
-  } 
+  }
 
   Set<QawlPlaylist> getInPlayLists() {
     return inPlaylists;
@@ -278,6 +294,60 @@ class Track {
     }
   }
 
+// USED ONCE IN THE BEGINNING TO SET DEFAULTS
+//   static Future<void> setDefaultStyleForAllTracks(String defaultStyle) async {
+//   try {
+//     // Get all tracks from the Firestore collection
+//     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+//         .collection('QawlTracks')
+//         .get();
+
+//     // Iterate through each track
+//     for (var doc in querySnapshot.docs) {
+//       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+//       // Check if the 'style' field is missing or empty
+//       if (!data.containsKey('style') || (data['style'] as String).isEmpty) {
+//         // Update the track with the default style
+//         await FirebaseFirestore.instance
+//             .collection('QawlTracks')
+//             .doc(doc.id)
+//             .update({'style': defaultStyle});
+//         print("Updated track ${doc.id} with default style $defaultStyle");
+//       }
+//     }
+//   } catch (error) {
+//     print("Error setting default style for tracks: $error");
+//   }
+// }
+
+  static Future<List<Track>> getTracksFromFollowingUsers() async {
+    QawlUser? currentUser = await QawlUser.getCurrentQawlUser();
+    List<Track> tracks = [];
+
+    if (currentUser != null) {
+      List<String> followingUserIds = currentUser.following.toList();
+
+      if (followingUserIds.isNotEmpty) {
+        // Fetch tracks from Firestore where userId is in the list of followingUserIds
+        QuerySnapshot trackSnapshot = await FirebaseFirestore.instance
+            .collection('QawlTracks')
+            .where('userId', whereIn: followingUserIds)
+            .orderBy('timeStamp',
+                descending: true) // Optional: Order by newest first
+            .get();
+
+        // Convert each document into a Track object
+        tracks = trackSnapshot.docs.map((doc) {
+          return Track.fromFirestore(
+              doc.data() as Map<String, dynamic>, doc.id);
+        }).toList();
+      }
+    }
+
+    return tracks;
+  }
+
   // factory Track.fromMediaItem(MediaItem mediaItem) {
   //   String trackPath, trackURL;
   //   return Track(author: fakeuserdata.user0.name, id: mediaItem.id, trackName: mediaItem.title, plays: 0, surah: surah, audioFile: trackURL, coverImagePath: coverImagePath)
@@ -288,7 +358,8 @@ class Track {
         artist: userId,
         album: 'Qawl',
         artUri: Uri.parse(coverImagePath),
-        duration: Duration(seconds: 0), // Replace with actual duration if available
+        duration:
+            Duration(seconds: 0), // Replace with actual duration if available
         extras: <String, dynamic>{
           'surah': surahNumber,
           'plays': plays,
@@ -308,6 +379,8 @@ class Track {
       audioPath: mediaItem.extras?['audioPath'] ?? '',
       coverImagePath: mediaItem.artUri?.toString() ??
           "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3",
+      style: mediaItem.extras?['style'] ?? 'Hafs \'an Asim',
+      timeStamp: mediaItem.extras?['timeStamp'] ?? DateTime.now()
     );
   }
 }

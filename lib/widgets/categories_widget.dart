@@ -7,6 +7,7 @@ import 'package:first_project/screens/explore_content.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:first_project/screens/profile_content.dart';
+import 'package:first_project/screens/styles_screen_content.dart';
 import 'package:first_project/widgets/qari_card_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -100,7 +101,7 @@ class CategoryCard extends StatelessWidget {
         } else if (text == "Styles") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PlaceholderContent()),
+            MaterialPageRoute(builder: (context) => StylesContent()),
             //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
           );
         } else if (text == "Following") {
@@ -312,19 +313,14 @@ class PlaceholderContent extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Coming Soon',
+                      'Coming Soon!',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: getProportionateScreenWidth(24),
                       ),
                     ),
                     SizedBox(height: 60),
-                    Text(
-                      '😊',
-                      style: TextStyle(
-                        fontSize: getProportionateScreenWidth(40),
-                      ),
-                    ),
+                    
                   ],
                 ),
               ),

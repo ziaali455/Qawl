@@ -36,6 +36,11 @@
 	data to save your audio upload to the app in our database, and your data will be wiped from the database after it
 	is deleted. For example, when you upload a recording, it is saved in the database untily you delete your post. We do not access
 	Microphone data outside of this.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+  		<string>https</string>
+  		<string>http</string>
+	</array>
 	<!-- <key>NSSpeechRecognitionUsageDescription</key>
 	<string>This app uses speech recognition to parse the audio input provided when recording audio.</string> -->
 	<key>NSPhotoLibraryUsageDescription</key>
