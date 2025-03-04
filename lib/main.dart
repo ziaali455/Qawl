@@ -1,15 +1,12 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:first_project/model/audio_handler.dart';
 import 'package:first_project/screens/auth_gate.dart';
 import 'package:first_project/screens/homepage.dart';
 
 import 'package:first_project/screens/login_content.dart';
 import 'package:first_project/screens/own_login_screen.dart';
 import 'package:first_project/size_config.dart';
-
-
 
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +16,10 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'firebase_options.dart';
 
 import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:first_project/blocs/now_playing/now_playing_bloc.dart';
+import 'package:first_project/blocs/now_playing/now_playing_event.dart';
+import 'package:uni_links/uni_links.dart';
 
 //sql-like queries that you can call in main()
 // void updateGendersToMale() async {
@@ -83,45 +84,54 @@ import 'package:provider/provider.dart';
 //how to use audio handler elsewhere:
 //final audioHandler = Provider.of<AudioHandler>(context);
 
-import 'package:first_project/model/audio_handler.dart'; // Make sure to import your MyAudioHandler
-
 // import 'firebase_options.dart'; // Uncomment and use if you have this file
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  Future<void> main() async {
-  // await JustAudioBackground.init(
-  //   androidNotificationChannelId: 'com.testing.qawl/audio_session',
-  //   androidNotificationChannelName: 'Audio playback',
-  //   androidNotificationOngoing: true,
-  // );
+
+  await Firebase.initializeApp(
+    name: 'qawl-io',
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.yourdomain.yourapp.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+  );
+
+  // Handle deep links
+  handleIncomingLinks();
+
   runApp(MyApp());
 }
-  await Firebase.initializeApp(
-      name: 'qawl-io', // had to uncomment bc of firebase issues?
-      options: DefaultFirebaseOptions.currentPlatform,
-      );
-  
-  final audioHandler = await AudioService.init(
-    builder: () => MyAudioHandler(),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.example.first_project.channel.audio',
-      androidNotificationChannelName: 'Audio Playback',
-      androidNotificationOngoing: true,
-    ),
-  );
 
+void handleIncomingLinks() {
+  // Handle links when app is already running
+  uriLinkStream.listen((Uri? uri) {
+    if (uri != null) {
+      handleDeepLink(uri);
+    }
+  }, onError: (err) {
+    print('Error handling incoming links: $err');
+  });
 
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider<MyAudioHandler>.value(value: audioHandler),
-      ],
-      child: MyApp(),
-    ),
-  );
+  // Handle links when app is opened from terminated state
+  getInitialUri().then((Uri? uri) {
+    if (uri != null) {
+      handleDeepLink(uri);
+    }
+  });
+}
+
+void handleDeepLink(Uri uri) {
+  if (uri.host == 'track' && uri.pathSegments.length > 0) {
+    final trackId = uri.pathSegments[0];
+    // Navigate to the track in the app
+    final bloc = NowPlayingBloc.instance;
+    // You'll need to implement a method to load and play the track by ID
+    // bloc.add(LoadTrackById(trackId));
+  }
 }
 
 // class MyApp extends StatelessWidget {
@@ -196,23 +206,23 @@ class _MyAppState extends State<MyApp> {
       return const SplashScreen();
     }
 
-    return MaterialApp(
-      title: 'Qawl',
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark,
-      theme: ThemeData(fontFamily: 'PPTelegraf'),
-      darkTheme: FlexThemeData.dark(
-        scheme: FlexScheme.hippieBlue,
-        darkIsTrueBlack: true,
-        fontFamily: 'PPTelegraf',
+    return BlocProvider(
+      create: (context) => NowPlayingBloc.instance,
+      child: MaterialApp(
+        title: 'Qawl',
+        debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.dark,
+        theme: ThemeData(fontFamily: 'PPTelegraf'),
+        darkTheme: FlexThemeData.dark(
+          scheme: FlexScheme.hippieBlue,
+          darkIsTrueBlack: true,
+          fontFamily: 'PPTelegraf',
+        ),
+        home: _isAuthenticated ? const HomePage() : LoginPage(),
       ),
-      home: _isAuthenticated ? const HomePage() : LoginPage(),
-      // home: AuthGate(),
     );
   }
 }
-
-
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({Key? key}) : super(key: key);

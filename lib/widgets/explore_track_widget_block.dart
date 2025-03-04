@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_project/deprecated/fake_track_data.dart';
-import 'package:first_project/model/player.dart';
+import 'package:first_project/screens/now_playing_page.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
@@ -112,11 +112,10 @@ class TrackCard extends StatelessWidget {
       padding: EdgeInsets.all(getProportionateScreenWidth(10)),
       child: GestureDetector(
         onTap: () {
-          playTrackWithList(track, playlist);
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NowPlayingContent(playedTrack: track),
+              builder: (context) => NowPlayingPage(track: track, playlist: playlist),
             ),
           );
         },

@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:first_project/model/player.dart';
 import 'package:first_project/model/sound_recorder.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/track_info_content.dart';
+import 'package:first_project/widgets/qawl_back_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
@@ -267,7 +267,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     return Scaffold(
         backgroundColor: Colors.black,
         body: SingleChildScrollView(
-          child: Column(
+            child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
@@ -318,8 +318,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
               ),
             ),
           ],
-          )
-        ));
+        )));
   }
 
   Widget QawlDeleteRecordingButton() {
@@ -499,8 +498,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             ),
           ),
           child: Icon(isPlaying ? Icons.pause : Icons.play_arrow,
-              size: 60.0,
-              color: Colors.white),
+              size: 60.0, color: Colors.white),
         ),
       );
     }

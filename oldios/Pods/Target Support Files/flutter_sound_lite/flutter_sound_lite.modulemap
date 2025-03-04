@@ -1,6 +1,0 @@
-framework module flutter_sound_lite {
-  umbrella header "flutter_sound_lite-umbrella.h"
-
-  export *
-  module * { export * }
-}

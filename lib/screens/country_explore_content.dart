@@ -4,6 +4,7 @@ import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/qari_nation_content.dart';
 import 'package:first_project/size_config.dart';
+import 'package:first_project/widgets/qawl_back_button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../neu_box.dart';

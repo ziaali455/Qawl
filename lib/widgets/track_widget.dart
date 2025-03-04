@@ -1,7 +1,7 @@
-import 'package:first_project/model/player.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/now_playing_content.dart';
+import 'package:first_project/screens/now_playing_page.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:first_project/widgets/explore_track_widget_block.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,11 +27,12 @@ class TrackWidget extends StatelessWidget {
       padding: const EdgeInsets.only(left: 4.0, right: 4.0),
       child: InkWell(
         onTap: () {
-          playTrackWithList(track, playlist);
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => NowPlayingContent(playedTrack: track)),
+              builder: (context) =>
+                  NowPlayingPage(playlist: playlist, track: track),
+            ),
           );
         },
         child: FutureBuilder<QawlUser?>(
@@ -103,23 +104,6 @@ class TrackWidget extends StatelessWidget {
     );
   }
 
-  Widget buildTitle(bool isPlaying) {
-    Color titleColor;
-    if (trackIsPlaying()) {
-      titleColor = Colors.green;
-    } else {
-      titleColor = Colors.white;
-    }
-    return Padding(
-      padding:
-          const EdgeInsets.only(left: 16.0, right: 8.0, top: 8.0, bottom: 8.0),
-      child: Text(
-        track.trackName,
-        style: TextStyle(fontSize: 20, color: titleColor),
-      ),
-    );
-  }
-
   //boolean input not count
 }
 
@@ -174,16 +158,3 @@ class TrashButtonWidget extends StatelessWidget {
     );
   }
 }
-
-//potentially a better track widget visually?
-// Card(
-//         child: Column(
-//       mainAxisSize: MainAxisSize.min,
-//       children: [
-//         const ListTile(
-//           leading: Icon(Icons.album),
-//           title: Text('The Enchanted Nightingale'),
-//           subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
-//         ),
-//       ],
-//     ));

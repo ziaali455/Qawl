@@ -8,6 +8,7 @@ import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:first_project/screens/profile_content.dart';
 import 'package:first_project/widgets/qari_card_widget.dart';
+import 'package:first_project/widgets/qawl_back_button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../size_config.dart';

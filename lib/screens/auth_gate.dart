@@ -12,28 +12,21 @@ import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:flutter/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'taken_from_firebaseui/sign_in_screen_firebaseui.dart';
 
 class AuthGate extends StatelessWidget {
-  const AuthGate({super.key});
-
-  void _checkUserSignInStatus(User? user) {
-    if (user != null) {
-      QawlUser.createQawlUser(user);
-      print("User has signed in with UID: ${user.uid}");
-    } else {
-      // User is not signed in or has signed out
-      print("User is not signed in.");
-    }
-  }
+  const AuthGate({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        _checkUserSignInStatus(snapshot.data);
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
         if (!snapshot.hasData) {
           return MySignInScreen(
@@ -413,9 +406,11 @@ class _CupertinoRadioChoiceState extends State<CupertinoRadioChoice> {
 }
 
 class GenderChoiceChip extends StatefulWidget {
-  final void Function(String) onGenderSelected; // Callback to pass selected gender
+  final void Function(String)
+      onGenderSelected; // Callback to pass selected gender
 
-  GenderChoiceChip({Key? key, required this.onGenderSelected}) : super(key: key);
+  GenderChoiceChip({Key? key, required this.onGenderSelected})
+      : super(key: key);
 
   @override
   _GenderChoiceChipState createState() => _GenderChoiceChipState();
@@ -435,28 +430,36 @@ class _GenderChoiceChipState extends State<GenderChoiceChip> {
               spacing: 20.0,
               children: <Widget>[
                 ChoiceChip(
-                  label: Text('👨🏾‍🦱', style: TextStyle(fontSize: 35),),
+                  label: Text(
+                    '👨🏾‍🦱',
+                    style: TextStyle(fontSize: 35),
+                  ),
                   selected: _selectedGender == 'm',
                   onSelected: (selected) {
                     if (selected) {
                       setState(() {
                         _selectedGender = 'm';
                       });
-                      widget.onGenderSelected('m'); // Pass the selected gender to the parent
+                      widget.onGenderSelected(
+                          'm'); // Pass the selected gender to the parent
                     }
                   },
                   selectedColor: Colors.green,
                   backgroundColor: Colors.grey,
                 ),
                 ChoiceChip(
-                  label: Text('🧕🏽', style: TextStyle(fontSize: 35),),
+                  label: Text(
+                    '🧕🏽',
+                    style: TextStyle(fontSize: 35),
+                  ),
                   selected: _selectedGender == 'f',
                   onSelected: (selected) {
                     if (selected) {
                       setState(() {
                         _selectedGender = 'f';
                       });
-                      widget.onGenderSelected('f'); // Pass the selected gender to the parent
+                      widget.onGenderSelected(
+                          'f'); // Pass the selected gender to the parent
                     }
                   },
                   selectedColor: Colors.green,
