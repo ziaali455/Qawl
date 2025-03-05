@@ -17,17 +17,18 @@ class PlaylistScreenContent extends StatefulWidget {
 
   //refactor playlistTitle
 
-  const PlaylistScreenContent({Key? key, required this.playlist, required this.isPersonal})
+  const PlaylistScreenContent(
+      {Key? key, required this.playlist, required this.isPersonal})
       : super(key: key);
 
-   @override
+  @override
   State<PlaylistScreenContent> createState() =>
       _PlaylistScreenContentState(playlist, isPersonal); // Pass flag to state
 }
 
 class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
   late QawlPlaylist playlist;
-    final bool isPersonal; // Store this flag
+  final bool isPersonal; // Store this flag
 
   _PlaylistScreenContentState(QawlPlaylist playlist, this.isPersonal) {
     this.playlist = playlist;
@@ -41,7 +42,10 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
           child: Column(children: [
             // back button and menu button
             const SizedBox(height: 50),
-            QawlBackButton(),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: QawlBackButton(),
+            ),
 
             Container(
               child: Padding(
@@ -74,11 +78,8 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
 }
 
 class RemoveFromPlaylistButton extends StatelessWidget {
-  const RemoveFromPlaylistButton({
-    super.key,
-    required this.playlist,
-    required this.track
-  });
+  const RemoveFromPlaylistButton(
+      {super.key, required this.playlist, required this.track});
 
   final QawlPlaylist playlist;
   final Track track;
@@ -92,7 +93,8 @@ class RemoveFromPlaylistButton extends StatelessWidget {
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
               title: const Text("Confirm Deletion"),
-              content: const Text("Are you sure you want to remove this track from your playlist?"),
+              content: const Text(
+                  "Are you sure you want to remove this track from your playlist?"),
               actions: <Widget>[
                 CupertinoDialogAction(
                   child: const Text(

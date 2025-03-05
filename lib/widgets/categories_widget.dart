@@ -29,25 +29,22 @@ class Categories extends StatelessWidget {
         "text": "Nations"
       },
       {
-        "icon":
-            const Icon(Icons.spatial_tracking_outlined, color: Colors.red),
+        "icon": const Icon(Icons.spatial_tracking_outlined, color: Colors.red),
         "text": "Styles"
       },
       {
         "icon": const Icon(Icons.trending_up, color: Colors.yellow),
         "text": "Trending"
       },
-      
       {
         "icon": const Icon(Icons.supervised_user_circle_rounded,
             color: Colors.purple),
         "text": "Following"
       },
     ];
-        SizeConfig().init(context);
+    SizeConfig().init(context);
 
     return Padding(
-      
       padding: EdgeInsets.all(getProportionateScreenWidth(20)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,7 +79,7 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-        SizeConfig().init(context);
+    SizeConfig().init(context);
 
     return GestureDetector(
       onTap: () {
@@ -185,7 +182,8 @@ class FollowingContent extends StatelessWidget {
         future: getFollowingUsers(), // Your method to fetch following Qaris
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Colors.green));
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.green));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -202,7 +200,8 @@ class FollowingContent extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return QariColumnCard(
                     user: users[index],
-                    width: MediaQuery.of(context).size.width / 2 - 40, // Adjust width
+                    width: MediaQuery.of(context).size.width / 2 -
+                        40, // Adjust width
                   );
                 },
               );
@@ -215,6 +214,7 @@ class FollowingContent extends StatelessWidget {
     );
   }
 }
+
 class QariColumnCard extends StatelessWidget {
   const QariColumnCard({
     super.key,
@@ -299,7 +299,6 @@ class QariColumnCard extends StatelessWidget {
   }
 }
 
-
 class PlaceholderContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -332,7 +331,7 @@ class PlaceholderContent extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: EdgeInsets.all(12.0),
+            padding: const EdgeInsets.only(top: 10.0),
             child: QawlBackButton(),
           ),
         ]),
@@ -340,4 +339,3 @@ class PlaceholderContent extends StatelessWidget {
     );
   }
 }
-

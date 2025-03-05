@@ -1,4 +1,3 @@
-
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/record_audio_content.dart';
 import 'package:first_project/screens/track_info_content.dart';
@@ -6,7 +5,6 @@ import 'package:first_project/widgets/qawl_back_button_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
-
 
 var qawl_green_gradient = const BoxDecoration(
   gradient: LinearGradient(
@@ -32,7 +30,10 @@ class _UploadOptionsContentState extends State<UploadOptionsContent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        QawlBackButton(),
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: QawlBackButton(),
+        ),
         Material(
           child: Container(
             child: Padding(
@@ -149,19 +150,19 @@ class UploadPageButton extends StatelessWidget {
             ),
             onPressed: () async {
               //here we need to navigate to track info content and select the surah etc
-                         debugPrint("picked file");
+              debugPrint("picked file");
               FilePickerResult? result = await FilePicker.platform.pickFiles();
               if (result != null) {
                 String? pickedFilePath = result.files.single.path;
-                
+
                 debugPrint(pickedFilePath);
-                 Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                       builder: (context) => TrackInfoContent(
-                         trackPath: pickedFilePath!,
-                       ),
-                     ));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TrackInfoContent(
+                        trackPath: pickedFilePath!,
+                      ),
+                    ));
 
                 // TaskSnapshot uploadTask = await FirebaseStorage.instance
                 //     .ref('recordings/$fileName')

@@ -26,10 +26,9 @@ class _CountryExploreContentState extends State<CountryExploreContent> {
       body: Column(
         children: [
           const SizedBox(height: 50),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child:
-                QawlBackButton(), // Assuming QawlBackButton is defined elsewhere
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: QawlBackButton(),
           ),
           Expanded(
             child: GridView.count(
@@ -45,7 +44,7 @@ class _CountryExploreContentState extends State<CountryExploreContent> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => QariNationContent(
-                            allcountries.countries[index]["countryName"]), 
+                            allcountries.countries[index]["countryName"]),
                       ),
                     );
                   },

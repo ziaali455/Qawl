@@ -274,8 +274,8 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 20, bottom: 100.0),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
                       child: QawlBackButton(),
                     ),
                     // AudioFileWaveforms(

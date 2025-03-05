@@ -29,12 +29,10 @@ class _AvailableProvidersRow extends StatefulWidget {
   final List<AuthProvider> providers;
   final VoidCallback onProviderLinked;
 
-
-
   const _AvailableProvidersRow({
     this.auth,
     required this.providers,
-    required this.onProviderLinked, 
+    required this.onProviderLinked,
   });
 
   @override
@@ -861,10 +859,10 @@ class MyProfileScreen extends MultiProviderScreen {
 
                     try {
                       print("now going back to login");
-                    //  await Navigator.of(context).pushAndRemoveUntil(
-                    //     MaterialPageRoute(builder: (context) => LoginPage()),
-                    //     (Route<dynamic> route) => false,
-                    //   );
+                      //  await Navigator.of(context).pushAndRemoveUntil(
+                      //     MaterialPageRoute(builder: (context) => LoginPage()),
+                      //     (Route<dynamic> route) => false,
+                      //   );
                       // First, delete the Firestore data
                       await FirebaseFirestore.instance
                           .collection('QawlUsers')
@@ -872,10 +870,10 @@ class MyProfileScreen extends MultiProviderScreen {
                           .delete();
 
                       // Then delete the user from Firebase Authentication
-                       await user.delete();
+                      await user.delete();
 
                       // Optionally sign out the user, though delete should handle this
-                     // await fba.FirebaseAuth.instance.signOut();
+                      // await fba.FirebaseAuth.instance.signOut();
                       print("going back to login page");
                       // Finally, navigate to the login page
 
@@ -907,7 +905,10 @@ class MyProfileScreen extends MultiProviderScreen {
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        QawlBackButton(),
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: QawlBackButton(),
+        ),
         Align(child: EditableUserDisplayName(auth: auth)),
         const SizedBox(height: 16),
         Padding(
@@ -953,10 +954,9 @@ class MyProfileScreen extends MultiProviderScreen {
 
         const SizedBox(height: 16),
         Padding(
-          padding: const EdgeInsets.only(left: 50.0,right: 50.0),
+          padding: const EdgeInsets.only(left: 50.0, right: 50.0),
           child: ElevatedButton(
             onPressed: () async {
-              
               await fba.FirebaseAuth.instance.signOut();
               print("clicked sign out");
 
@@ -978,61 +978,59 @@ class MyProfileScreen extends MultiProviderScreen {
         // steps for delete: get current user, navigate back to login, delete the user
 
         const SizedBox(height: 8),
-         Padding(
-           padding: const EdgeInsets.only(left: 50.0, right: 50.0),
-           child: ElevatedButton(
+        Padding(
+          padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+          child: ElevatedButton(
             onPressed: () async {
               // Sign out the user
               // await auth?.signOut();
               print("clicked Delete");
               fba.User? user = fba.FirebaseAuth.instance.currentUser;
-                    if (user != null) {
-                      final String uid = user.uid;
-                      // print("USER ID IS: " + uid);
-           
-                      try {
-                        print("now going back to login");
-                      //  await Navigator.of(context).pushAndRemoveUntil(
-                      //     MaterialPageRoute(builder: (context) => LoginPage()),
-                      //     (Route<dynamic> route) => false,
-                      //   );
-                        
-           
-                        // First delete the user from Firebase Authentication
-                        await user.delete();
-                        print("going back to login page");
-                        // Finally, navigate to the login page
-                        
-                        // then, delete the Firestore data
-                       await FirebaseFirestore.instance
-                           .collection('QawlUsers')
-                           .doc(uid)
-                           .delete();
-           
-                       await Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                          (Route<dynamic> route) => false,
-                        );
-           
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Account successfully deleted")),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(
-                                  "Failed to delete account: ${e.toString()}")),
-                        );
-                      }
-                    }
+              if (user != null) {
+                final String uid = user.uid;
+                // print("USER ID IS: " + uid);
+
+                try {
+                  print("now going back to login");
+                  //  await Navigator.of(context).pushAndRemoveUntil(
+                  //     MaterialPageRoute(builder: (context) => LoginPage()),
+                  //     (Route<dynamic> route) => false,
+                  //   );
+
+                  // First delete the user from Firebase Authentication
+                  await user.delete();
+                  print("going back to login page");
+                  // Finally, navigate to the login page
+
+                  // then, delete the Firestore data
+                  await FirebaseFirestore.instance
+                      .collection('QawlUsers')
+                      .doc(uid)
+                      .delete();
+
+                  await Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    (Route<dynamic> route) => false,
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Account successfully deleted")),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content:
+                            Text("Failed to delete account: ${e.toString()}")),
+                  );
+                }
+              }
             },
             child: Text('Delete Account'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red, // Text color
             ),
-                   ),
-         ),
- 
+          ),
+        ),
       ],
     );
 

@@ -264,7 +264,11 @@ class _ProfileContentState extends State<ProfileContent> {
               Positioned(top: 40, right: 30, child: QawlRecordButton()),
             if (!isPersonal)
               Positioned(top: 40, right: 30, child: DangerZone(user: user)),
-            if (!isPersonal) const QawlBackButton(),
+            if (!isPersonal)
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: QawlBackButton(),
+              ),
           ],
         ),
         // floatingActionButton: isPersonal ? const QawlRecordButton() : null,
