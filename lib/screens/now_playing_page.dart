@@ -60,6 +60,45 @@ class _NowPlayingContent extends StatefulWidget {
 
 class _NowPlayingContentState extends State<_NowPlayingContent> {
   bool _hasSwitchedTrack = false;
+  bool _isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFavorite();
+  }
+
+  Future<void> _checkIfFavorite() async {
+    QawlUser? user = await QawlUser.getCurrentQawlUser();
+    if (user != null) {
+      QawlPlaylist? favorites = await QawlPlaylist.getFavorites();
+      if (favorites != null) {
+        setState(() {
+          _isFavorite =
+              favorites.list.any((track) => track.id == widget.track.id);
+        });
+      }
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    QawlUser? user = await QawlUser.getCurrentQawlUser();
+    if (user != null) {
+      if (_isFavorite) {
+        // Get favorites playlist and remove track
+        QawlPlaylist? favorites = await QawlPlaylist.getFavorites();
+        if (favorites != null) {
+          await QawlPlaylist.removeTrackFromPlaylist(favorites, widget.track);
+        }
+      } else {
+        // Add to favorites
+        await QawlPlaylist.updateFavorites(user, widget.track);
+      }
+      setState(() {
+        _isFavorite = !_isFavorite;
+      });
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -341,6 +380,18 @@ class _NowPlayingContentState extends State<_NowPlayingContent> {
                           },
                         ),
                       ],
+                    ),
+
+                    // Heart Icon
+                    Center(
+                      child: IconButton(
+                        icon: Icon(
+                          _isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: Colors.green,
+                          size: 32,
+                        ),
+                        onPressed: _toggleFavorite,
+                      ),
                     ),
                   ],
                 ),
