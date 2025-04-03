@@ -207,7 +207,7 @@ class _MyAppState extends State<MyApp> {
         fontFamily: 'PPTelegraf',
       ),
       home: _isAuthenticated ? const HomePage() : LoginPage(),
-      // home: AuthGate(),
+      //home: AuthGate(),
     );
   }
 }

@@ -434,4 +434,119 @@ class QawlPlaylist {
       return null; // Handle error as necessary
     }
   }
+
+  static Future<String> createUserPlaylist(String userId, String playlistName, {List<String> trackIds = const []}) async {
+    try {
+      String uniqueID = Uuid().v4();
+      
+      // Create the playlist document in Firestore
+      await FirebaseFirestore.instance.collection('QawlPlaylists').add({
+        'userId': userId,
+        'author': userId,
+        'name': playlistName,
+        'id': uniqueID,
+        'tracklist': trackIds,
+        'isUserCreated': true, // Flag to identify user-created playlists
+        'createdAt': DateTime.now(),
+      });
+      
+      return uniqueID;
+    } catch (error) {
+      print("Error creating user playlist: $error");
+      return '';
+    }
+  }
+
+  static Future<List<QawlPlaylist>> getUserPlaylists(String userId) async {
+    try {
+      // Query Firestore for playlists created by the user
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('QawlPlaylists')
+          .where('userId', isEqualTo: userId)
+          .where('isUserCreated', isEqualTo: true)
+          .get();
+      
+      List<QawlPlaylist> playlists = [];
+      
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        List<dynamic> trackIds = data['tracklist'] ?? [];
+        List<Track> tracks = [];
+        
+        // Retrieve Track objects corresponding to trackIds
+        for (var trackId in trackIds) {
+          DocumentSnapshot trackDoc = await FirebaseFirestore.instance
+              .collection('QawlTracks')
+              .doc(trackId)
+              .get();
+          if (trackDoc.exists) {
+            dynamic trackData = trackDoc.data();
+            if (trackData is Map<String, dynamic>) {
+              Track track = Track.fromFirestore(trackData, trackDoc.id);
+              tracks.add(track);
+            }
+          }
+        }
+        
+        playlists.add(QawlPlaylist(
+          author: data['userId'],
+          name: data['name'],
+          list: tracks,
+          id: doc.id,
+        ));
+      }
+      
+      return playlists;
+    } catch (error) {
+      print("Error getting user playlists: $error");
+      return [];
+    }
+  }
+
+  static Future<void> addTrackToPlaylist(String playlistId, String trackId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('QawlPlaylists')
+          .doc(playlistId)
+          .update({
+        'tracklist': FieldValue.arrayUnion([trackId]),
+      });
+    } catch (error) {
+      print("Error adding track to playlist: $error");
+    }
+  }
+
+  static Future<List<QawlPlaylist>> getPlaylistsByUser(String userId) async {
+    try {
+      // Query Firestore for playlists created by the user
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('QawlPlaylists')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      // Convert each document to a QawlPlaylist object
+      List<QawlPlaylist> playlists = [];
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        
+        // Fetch the tracks for this playlist
+        List<String> trackIds = List<String>.from(data['tracklist'] ?? []);
+        List<Track> tracks = await Track.getTracksByIds(trackIds);
+        
+        playlists.add(QawlPlaylist(
+          id: doc.id,
+          author: data['author'] ?? '',
+          name: data['name'] ?? 'Untitled Playlist',
+          list: tracks,
+        ));
+      }
+      
+      return playlists;
+    } catch (e) {
+      print("Error fetching user playlists: $e");
+      return [];
+    }
+  }
+
+ 
 }

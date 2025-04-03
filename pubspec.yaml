@@ -119,6 +119,19 @@ flutter:
     - assets/Safaat_19_Hussary.mp3
     - assets/Mursalat_44_Hussary.mp3
     - assets/100-KB-MP3.mp3
+    - assets/qawl_adiyaat_correctv2.mp3
+    - assets/qawl_adiyaat_incorrect1v2.mp3
+    - assets/qawl_adiyaat_incorrect2v2.mp3
+    - assets/qawl_adiyaat_incorrect3v2.mp3
+    - assets/qawl_dukhan_incorrect1.mp3
+    - assets/qawl_dukhan_incorrect2.mp3
+    - assets/qawl_yunus_correct.mp3
+    - assets/qawl_yunus_incorrect1.mp3
+    - assets/qawl_adiyaat_correct.mp3
+    - assets/qawl_yunus_incorrect2.mp3
+    - assets/qawl_dukhan_correct.mp3
+    - assets/qawl_yunus_incorrect2-2.mp3
+    - assets/Qawl Dukhan Correct -2.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

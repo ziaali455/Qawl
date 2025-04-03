@@ -352,9 +352,9 @@ Future<List<Track>> getTracksBySearchQuery(String query) async {
         // bool matchesGender = trackUser.gender == currentUserGender;
         //bool matchesGender = true;
         bool matchesGender = currentUserGender == 'f' || trackUser.gender == 'm'; // male as default if not f or empty gender
-        bool isVerified = trackUser.isVerified == true;
+        // bool isVerified = trackUser.isVerified == true;
         //print("IS HE VERIFIED??: " + trackUser.isVerified.toString());
-        if (matchesQuery && matchesGender && notMe && isVerified) {
+        if (matchesQuery && matchesGender && notMe) {
           tracks.add(track);
         }
       }

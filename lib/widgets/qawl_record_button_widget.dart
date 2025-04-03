@@ -169,11 +169,10 @@ class QawlRecordButton extends StatelessWidget {
           }
 
           final int currentTimestamp = DateTime.now().millisecondsSinceEpoch;
-          // const int tenDaysInMillis = 10 * 24 * 60 * 60 * 1000;
-          const int twoMinInMillis = 2 * 60 * 1000; // = 120000 milliseconds
+           const int tenDaysInMillis = 10 * 24 * 60 * 60 * 1000;
+          //const int twoMinInMillis = 2 * 60 * 1000; // = 120000 milliseconds
 
-          return (currentTimestamp - lastAttempt) >=
-              twoMinInMillis; // CHANGE BACK TO 10 DAYS!!!
+          return (currentTimestamp - lastAttempt) >= tenDaysInMillis; // Use 10 days waiting period
         }
 
         // UPDATES TIMESTAMP LOCALLY
@@ -228,7 +227,7 @@ class QawlRecordButton extends StatelessWidget {
               //   ),
               // );
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("You must wait 10 days before retaking the quiz.")),
+                const SnackBar(content: Text("Please wait 10 days before retaking the quiz.")),
               );
             } else {
               await updateQuizTimestamp();
