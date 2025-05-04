@@ -331,7 +331,7 @@ class PlaceholderContent extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 10.0),
+            padding: const EdgeInsets.only(top: 50.0),
             child: QawlBackButton(),
           ),
         ]),
