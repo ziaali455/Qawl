@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:first_project/screens/auth_gate.dart';
 import 'package:first_project/screens/homepage.dart';
@@ -85,14 +86,18 @@ import 'package:uni_links/uni_links.dart';
 //final audioHandler = Provider.of<AudioHandler>(context);
 
 // import 'firebase_options.dart'; // Uncomment and use if you have this file
-
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await Firebase.initializeApp(
     name: 'qawl-io',
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
 
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.yourdomain.yourapp.channel.audio',
@@ -182,6 +187,9 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _checkAuthState();
+    FirebaseMessaging.instance.requestPermission();
+
+    
   }
 
   Future<void> _checkAuthState() async {
