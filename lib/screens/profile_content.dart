@@ -5,9 +5,11 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:first_project/model/player.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
+import 'package:first_project/screens/all_folders_screen.dart';
 import 'package:first_project/screens/danger_zone_widget.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/verification_quiz_content.dart';
+import 'package:first_project/widgets/playlist_manager_widget.dart';
 import 'package:first_project/widgets/playlist_preview_widget.dart';
 import 'package:first_project/widgets/profile_picture_widget.dart';
 import 'package:first_project/widgets/qawl_record_button_widget.dart';
@@ -19,6 +21,8 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:first_project/widgets/upload_popup_widget.dart';
 import '../screens/taken_from_firebaseui/profile_screen_firebaseui.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
+import 'package:first_project/widgets/playlist_manager_widget.dart';
+import 'package:first_project/widgets/playlist_list_widget.dart';
 
 class ProfileContent extends StatefulWidget {
   final bool isPersonal;
@@ -235,8 +239,55 @@ class _ProfileContentState extends State<ProfileContent> {
                       user: user,
                     ),
                   ),
+                PlaylistFoldersWidget(
+                  user: user,
+                  isPersonal: isPersonal,
+                ),
+                const SizedBox(height: 20),
+                FutureBuilder<List<QawlPlaylist>>(
+                  future: QawlPlaylist.getUserPlaylists(widget.user?.id ?? ""),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      List<QawlPlaylist> playlists = snapshot.data ?? [];
+                      
+                      // Limit to 4 playlists for display
+                      List<QawlPlaylist> displayedPlaylists = playlists.take(4).toList();
+                      
+                      return Column(
+                        children: [
+                          // Display the folders
+                          PlaylistListWidget(
+                            playlists_List: displayedPlaylists,
+                            isPersonal: true, // Assuming this is for personal folders
+                          ),
+                          if (playlists.length > 4) // Check if there are more than 4 playlists
+                            TextButton(
+                              onPressed: () {
+                                // Navigate to the screen that shows all folders
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AllFoldersScreen(playlists: playlists, isPersonal: true,),
+                                  ),
+                                );
+                              },
+                              child: const Text("See More"),
+                            ),
+                        ],
+                      );
+                    }
+                  },
+                ),
                 FutureBuilder<List<Track>>(
-                  future: Track.getTracksByUser(user),
+                  future: Track.getTracksByUser(user).then((tracks) {
+                    tracks
+                        .sort((a, b) => a.surahNumber.compareTo(b.surahNumber));
+                    return tracks;
+                  }),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -248,6 +299,9 @@ class _ProfileContentState extends State<ProfileContent> {
                       );
                     } else {
                       List<Track> uploadedTracks = snapshot.data ?? [];
+                      uploadedTracks.sort(
+                          (a, b) => a.surahNumber.compareTo(b.surahNumber));
+
                       // print("The tracks are " + uploadedTracks.toString());
                       return PlaylistPreviewWidget(
                         playlist: QawlPlaylist(

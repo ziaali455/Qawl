@@ -6,6 +6,7 @@ import 'package:first_project/model/question.dart';
 import 'package:first_project/model/question_bank.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/screens/quiz_homepage.dart' hide Question;
+import 'package:first_project/widgets/static_waveform_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -54,7 +55,7 @@ class QuizDescription extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Text(
       'To ensure quality recitation on Qawl, we\'ve added a Tajweed test for all new users before they can upload. '
-      'You will have 4 minutes to answer a series of MCQs on standard Tajweed concepts from the narration of Hafs. '
+      'You will have 8 minutes to answer a series of MCQs on standard Tajweed concepts. '
       'Choose the correct answer for each question and click Submit to proceed to the next question. '
       'Good luck!',
       style: TextStyle(fontSize: 25),
@@ -100,7 +101,7 @@ class _QuizPageState extends State<QuizPage> {
   int _correctAnswers = 0;
   int _selectedAnswerIndex = -1;
   bool _passedTest = false;
-  int _remainingTime = 300; // 5 minutes in seconds
+  int _remainingTime = 480; // 8 minutes in seconds
   Timer? _timer;
   Set<int> _selectedAnswers = {}; // For Select All
   Map<String, dynamic> _selectedMatches = {}; // For Matching
@@ -295,6 +296,8 @@ class _QuizPageState extends State<QuizPage> {
   //             child: Text('Play Option ${index + 1}'),
   //           ),
   //           leading: Radio<int>(
+  //             focusColor: Colors.green,
+  //             activeColor: Colors.green,
   //             value: index,
   //             groupValue: _selectedAnswerIndex,
   //             onChanged: (value) {
@@ -314,6 +317,52 @@ class _QuizPageState extends State<QuizPage> {
   //     ],
   //   );
   // }
+  Widget _buildMultipleChoiceAudio(SelectCorrectAudioQuestion question) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Center(
+          child: Text(
+            question.arabicText,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Amiri',
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ...question.audioURLs.asMap().entries.map((entry) {
+          final index = entry.key;
+          final audioUrl = entry.value ?? ''; // Ensure audio URL is not null
+
+          return ListTile(
+            title: WaveformPlayButton(
+              audioUrl: audioUrl,
+              audioPlayer: _quizAudioPlayer, // Pass the quiz's audio player
+              onPlayPause: (bool isPlaying) async {
+                // We don't need to manually handle audio playback here anymore
+                // The WaveformPlayButton now handles it with the shared audio player
+              },
+            ),
+            leading: Radio<int>(
+              focusColor: Colors.green,
+              activeColor: Colors.green,
+              value: index,
+              groupValue: _selectedAnswerIndex,
+              onChanged: (value) {
+                setState(() {
+                  _selectedAnswerIndex = value!;
+                });
+              },
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
 
   // Matching Widget
   Widget _buildMatching<T>(MatchingQuestion<T> question) {
@@ -369,7 +418,8 @@ class _QuizPageState extends State<QuizPage> {
   @override
   void dispose() {
     _timer?.cancel();
-    // _quizAudioPlayer.dispose();
+    _quizAudioPlayer.stop(); 
+    _quizAudioPlayer.dispose();
     super.dispose();
   }
 
@@ -388,6 +438,7 @@ class _QuizPageState extends State<QuizPage> {
 
   void _handleTimeUp() {
     // Called when the timer reaches 0
+    _quizAudioPlayer.stop(); 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -413,52 +464,87 @@ class _QuizPageState extends State<QuizPage> {
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
-  void _submitAnswer() {
-    final question = _questions[_currentQuestionIndex];
-    _quizAudioPlayer.stop();
-    // Check answer based on question type
-    if (question is MultipleChoiceQuestion) {
-      if (_selectedAnswerIndex == question.correctIndex) {
-        _correctAnswers++;
-      }
-    } else if (question is SelectAllQuestion ||
-        question is SelectFromSingleAudioQuestion) {
-      // For Select All questions, compare selected answers with the correct set
-      final correctIndexes = (question as dynamic).correctIndexes;
-      if (_selectedAnswers.toSet().containsAll(correctIndexes) &&
-          correctIndexes.toSet().containsAll(_selectedAnswers)) {
-        _correctAnswers++;
-      }
-    } else if (question is MatchingQuestion) {
-      // For Matching questions, ensure all matches are correct
-      bool isCorrect = question.correctMatches.entries.every((entry) {
-        final key = entry.key;
-        final value = entry.value;
-        return _selectedMatches[key] == value;
-      });
-      if (isCorrect) {
-        _correctAnswers++;
-      }
-    } else if (question is SelectCorrectAudioQuestion) {
-      if (_selectedAnswerIndex == question.correctAudioIndex) {
-        _correctAnswers++;
-      }
-    }
+  // void _submitAnswer() {
+  //   final question = _questions[_currentQuestionIndex];
+  //   _quizAudioPlayer.stop(); // Ensure audio is stopped before moving on
 
-    // Move to the next question or finish the quiz
-    if (_currentQuestionIndex < _questions.length - 1) {
-      setState(() {
-        _currentQuestionIndex++;
-        _selectedAnswerIndex = -1;
-        _selectedAnswers.clear();
-      });
-    } else {
-      _handleQuizCompletion();
-    }
+  //   // Check answer based on question type
+  //   if (question is MultipleChoiceQuestion) {
+  //     if (_selectedAnswerIndex == question.correctIndex) {
+  //       _correctAnswers++;
+  //     }
+  //   } else if (question is SelectAllQuestion ||
+  //       question is SelectFromSingleAudioQuestion) {
+  //     // For Select All questions, compare selected answers with the correct set
+  //     final correctIndexes = (question as dynamic).correctIndexes;
+  //     if (_selectedAnswers.toSet().containsAll(correctIndexes) &&
+  //         correctIndexes.toSet().containsAll(_selectedAnswers)) {
+  //       _correctAnswers++;
+  //     }
+  //   } else if (question is MatchingQuestion) {
+  //     // For Matching questions, ensure all matches are correct
+  //     bool isCorrect = question.correctMatches.entries.every((entry) {
+  //       final key = entry.key;
+  //       final value = entry.value;
+  //       return _selectedMatches[key] == value;
+  //     });
+  //     if (isCorrect) {
+  //       _correctAnswers++;
+  //     }
+  //   } else if (question is SelectCorrectAudioQuestion) {
+  //     if (_selectedAnswerIndex == question.correctAudioIndex) {
+  //       _correctAnswers++;
+  //     }
+  //   }
+  // }
+
+    void _submitAnswer() {
+      final question = _questions[_currentQuestionIndex];
+      _quizAudioPlayer.stop(); // Ensure audio is stopped before moving on
+      // Check answer based on question type
+      if (question is MultipleChoiceQuestion) {
+        if (_selectedAnswerIndex == question.correctIndex) {
+          _correctAnswers++;
+        }
+      } else if (question is SelectAllQuestion ||
+          question is SelectFromSingleAudioQuestion) {
+        // For Select All questions, compare selected answers with the correct set
+        final correctIndexes = (question as dynamic).correctIndexes;
+        if (_selectedAnswers.toSet().containsAll(correctIndexes) &&
+            correctIndexes.toSet().containsAll(_selectedAnswers)) {
+          _correctAnswers++;
+        }
+      } else if (question is MatchingQuestion) {
+        // For Matching questions, ensure all matches are correct
+        bool isCorrect = question.correctMatches.entries.every((entry) {
+          final key = entry.key;
+          final value = entry.value;
+          return _selectedMatches[key] == value;
+        });
+        if (isCorrect) {
+          _correctAnswers++;
+        }
+      } else if (question is SelectCorrectAudioQuestion) {
+        if (_selectedAnswerIndex == question.correctAudioIndex) {
+          _correctAnswers++;
+        }
+      }
+
+      // Move to the next question or finish the quiz
+      if (_currentQuestionIndex < _questions.length - 1) {
+        setState(() {
+          _currentQuestionIndex++;
+          _selectedAnswerIndex = -1;
+          _selectedAnswers.clear();
+        });
+      } else {
+        _handleQuizCompletion();
+      }
   }
 
   Future<void> _handleQuizCompletion() async {
-    final passingScore = (_questions.length * 0.9).ceil();
+    _quizAudioPlayer.stop(); 
+    final passingScore = (_questions.length * 0.8).ceil();
     _passedTest = _correctAnswers >= passingScore;
 
     if (_passedTest) {
@@ -512,7 +598,7 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
     final question = _questions[_currentQuestionIndex];
     return Scaffold(
@@ -550,19 +636,20 @@ class _QuizPageState extends State<QuizPage> {
               if (question is SelectAllQuestion) _buildSelectAll(question),
               if (question is SelectFromSingleAudioQuestion)
                 _buildAudioSelectAllQuestion(question),
-              // if (question is SelectCorrectAudioQuestion)
-              //   _buildMultipleChoiceAudio(question),
+              if (question is SelectCorrectAudioQuestion)
+                _buildMultipleChoiceAudio(question),
               if (question is MatchingQuestion) _buildMatching(question),
               const SizedBox(height: 20),
               Center(
-
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                   ),
                   onPressed: _canSubmitAnswer() ? _submitAnswer : null,
-                  
-                  child: const Text('Submit', style: TextStyle(fontSize: 20),),
+                  child: const Text(
+                    'Submit',
+                    style: TextStyle(fontSize: 20),
+                  ),
                 ),
               ),
             ],

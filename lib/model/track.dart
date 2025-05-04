@@ -348,6 +348,32 @@ class Track {
     return tracks;
   }
 
+   static Future<List<Track>> getTracksByIds(List<String> trackIds) async {
+    List<Track> tracks = [];
+    
+    if (trackIds.isEmpty) return tracks;
+    
+    try {
+      for (String id in trackIds) {
+        DocumentSnapshot doc = await FirebaseFirestore.instance
+            .collection('QawlTracks')
+            .doc(id)
+            .get();
+        
+        if (doc.exists) {
+          tracks.add(Track.fromFirestore(
+            doc.data() as Map<String, dynamic>, 
+            doc.id
+          ));
+        }
+      }
+    } catch (e) {
+      print("Error fetching tracks by IDs: $e");
+    }
+    
+    return tracks;
+  }
+
   // factory Track.fromMediaItem(MediaItem mediaItem) {
   //   String trackPath, trackURL;
   //   return Track(author: fakeuserdata.user0.name, id: mediaItem.id, trackName: mediaItem.title, plays: 0, surah: surah, audioFile: trackURL, coverImagePath: coverImagePath)
