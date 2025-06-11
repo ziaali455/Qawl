@@ -228,6 +228,7 @@ class _MyAppState extends State<MyApp> {
         ),
         home: _isAuthenticated ? const HomePage() : LoginPage(),
       ),
+      //home: AuthGate(),
     );
   }
 }

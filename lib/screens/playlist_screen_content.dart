@@ -36,6 +36,8 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+      List<Track> sortedTracks = List.from(playlist.list)
+    ..sort((a, b) => a.surahNumber.compareTo(b.surahNumber));
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -59,7 +61,7 @@ class _PlaylistScreenContentState extends State<PlaylistScreenContent> {
             ),
             const SizedBox(height: 20),
             //insert for loop that goes through playlist parameter and populates track widgets HERE.
-            for (Track track in playlist.list)
+            for (Track track in sortedTracks)
               Material(
                 child: Padding(
                   padding: const EdgeInsets.all(1.0),
