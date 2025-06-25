@@ -9,7 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
-import 'package:just_audio/just_audio.dart' hide PlayerState;
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
@@ -32,7 +31,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
   DateTime? recordingStartTime;
   late final RecorderController recorderController; // new recorder for waves
   late final PlayerController playerController;
-  AudioPlayer main_player = AudioPlayer();
   int _lastPosition =
       0; // This will hold the last playback position in milliseconds
 
@@ -67,7 +65,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     super.dispose();
     recorderController.dispose();
     playerController.dispose();
-    main_player.dispose();
   }
 
   Future<void> preparePlayerForReplay() async {
@@ -430,46 +427,57 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     if (doneRecording) {
       return Container(height: 0);
     } else {
-      return Stack(children: <Widget>[
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              gradient: const LinearGradient(
-                colors: <Color>[
-                  Color.fromARGB(255, 13, 161, 99),
-                  Color.fromARGB(255, 22, 181, 93),
-                  Color.fromARGB(255, 32, 220, 85),
-                ],
+      return Stack(
+        children: <Widget>[
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                // Make the container circular
+                shape: BoxShape.circle, // This makes the container a circle
+                gradient: LinearGradient(
+                  colors: <Color>[
+                    Color.fromARGB(255, 13, 161, 99),
+                    Color.fromARGB(255, 22, 181, 93),
+                    Color.fromARGB(255, 32, 220, 85),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        ElevatedButton(
-            child: isCapturing
-                ? const Icon(Icons.pause, size: 80.0)
-                : const Icon(Icons.mic, size: 80.0),
-            onPressed: () async {
-              if (isCapturing) {
-                stopRecording();
-              } else {
-                await start();
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              shadowColor: Colors.transparent,
-              backgroundColor: Colors.transparent,
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-            ))
-      ]);
+          Center(
+            // To center the button within the circular container
+            child: ElevatedButton(
+              child: isCapturing
+                  ? const Icon(Icons.pause, size: 80.0)
+                  : const Icon(Icons.mic, size: 80.0),
+              onPressed: () async {
+                if (isCapturing) {
+                  stopRecording();
+                } else {
+                  await start();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                shadowColor: Colors.transparent,
+                backgroundColor:
+                    Colors.transparent, // Transparent button background
+                padding: EdgeInsets.zero, // Remove extra padding
+                shape: const CircleBorder(), // Make the button circular
+                minimumSize: const Size(150, 150), // Button size as a circle
+              ),
+            ),
+          ),
+        ],
+      );
     }
   }
 
   Widget QawlPlayBackButton() {
     if (doneRecording) {
       return Ink(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
             colors: <Color>[
               Color.fromARGB(255, 13, 161, 99),
               Color.fromARGB(255, 22, 181, 93),
@@ -478,27 +486,24 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
-          borderRadius:
-              BorderRadius.circular(10), // Add some rounding to match button
         ),
         child: ElevatedButton(
           onPressed: () async {
             if (isPlaying) {
               pauseAudio();
             } else {
-              await playAudio();
+              playAudio();
             }
           },
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-            backgroundColor: Colors.transparent, // Make background transparent
             shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            backgroundColor: Colors.transparent,
+            padding: EdgeInsets.zero,
+            shape: const CircleBorder(),
+            minimumSize: const Size(150, 150),
           ),
           child: Icon(isPlaying ? Icons.pause : Icons.play_arrow,
-              size: 60.0, color: Colors.white),
+              size: 80.0, color: Colors.white),
         ),
       );
     }

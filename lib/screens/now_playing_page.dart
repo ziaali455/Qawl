@@ -159,10 +159,9 @@ class _NowPlayingContentState extends State<_NowPlayingContent> {
                         : track.trackName;
 
                     final appStoreLink =
-                        'https://apps.apple.com/us/app/qawl/id6483754850?mt=8&text=${Uri.encodeComponent('Check out "$displayTitle" by ${state.authorName ?? 'Unknown'}')}';
+                        'https://apps.apple.com/us/app/qawl/id6483754850?mt=8';
                     Share.share(
-                      'Check out "$displayTitle" by ${state.authorName ?? 'Unknown'} on Qawl\n\n'
-                      'Download the app: $appStoreLink',
+                      'Check out "$displayTitle" by ${state.authorName ?? 'Unknown'} on Qawl\n\nDownload the app:\n$appStoreLink',
                       subject: 'Check out this track on Qawl',
                     );
                   },
@@ -181,219 +180,231 @@ class _NowPlayingContentState extends State<_NowPlayingContent> {
               ),
             ),
             child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // Album Art
-                    Container(
-                      width: 325,
-                      height: 325,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Album Art
+                      Container(
+                        width: 325,
+                        height: 325,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: CachedNetworkImage(
+                            imageUrl: state.currentTrack!.coverImagePath,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.green,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Icon(
+                              Icons.question_mark_rounded,
+                              size: 100,
+                              color: Colors.grey[400],
+                            ),
                           ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Track Info
+                      Column(
+                        children: [
+                          Text(
+                            displayTitle,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          if (state.isLoadingAuthor)
+                            const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.green,
+                              ),
+                            )
+                          else
+                            GestureDetector(
+                              onTap: () async {
+                                final user = await QawlUser.getQawlUser(
+                                    state.currentTrack!.userId);
+                                if (user != null) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfileContent(
+                                        user: user,
+                                        isPersonal: false,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Text(
+                                state.authorName ?? 'Unknown',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Color.fromARGB(255, 86, 197, 90),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                         ],
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: CachedNetworkImage(
-                          imageUrl: state.currentTrack!.coverImagePath,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.green,
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Icon(
-                            Icons.question_mark_rounded,
-                            size: 100,
-                            color: Colors.grey[400],
-                          ),
-                        ),
-                      ),
-                    ),
 
-                    // Track Info
-                    Column(
-                      children: [
-                        Text(
-                          displayTitle,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
-                        if (state.isLoadingAuthor)
-                          const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.green,
-                            ),
-                          )
-                        else
-                          GestureDetector(
-                            onTap: () async {
-                              final user = await QawlUser.getQawlUser(
-                                  state.currentTrack!.userId);
-                              if (user != null) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProfileContent(
-                                      user: user,
-                                      isPersonal: false,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Text(
-                              state.authorName ?? 'Unknown',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Color.fromARGB(255, 86, 197, 90),
+                      const SizedBox(height: 32),
+
+                      // Progress Bar
+                      Column(
+                        children: [
+                          if (state.isLoadingAudio)
+                            const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.green,
                               ),
-                              textAlign: TextAlign.center,
+                            )
+                          else
+                            ProgressBar(
+                              progress: state.position,
+                              total: state.duration,
+                              onSeek: (duration) {
+                                context
+                                    .read<NowPlayingBloc>()
+                                    .add(SeekAudio(duration));
+                              },
+                              baseBarColor: Colors.grey[800],
+                              progressBarColor:
+                                  const Color.fromARGB(255, 32, 220, 85),
+                              bufferedBarColor: Colors.grey[600],
+                              thumbColor: const Color.fromARGB(255, 32, 220, 85),
                             ),
-                          ),
-                      ],
-                    ),
+                        ],
+                      ),
 
-                    // Progress Bar
-                    Column(
-                      children: [
-                        if (state.isLoadingAudio)
-                          const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.green,
-                            ),
-                          )
-                        else
-                          ProgressBar(
-                            progress: state.position,
-                            total: state.duration,
-                            onSeek: (duration) {
-                              context
-                                  .read<NowPlayingBloc>()
-                                  .add(SeekAudio(duration));
-                            },
-                            baseBarColor: Colors.grey[800],
-                            progressBarColor:
-                                const Color.fromARGB(255, 32, 220, 85),
-                            bufferedBarColor: Colors.grey[600],
-                            thumbColor: const Color.fromARGB(255, 32, 220, 85),
-                          ),
-                      ],
-                    ),
+                      const SizedBox(height: 32),
 
-                    // Playback Controls
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.shuffle,
-                            color: state.isShuffleEnabled
-                                ? Colors.green
-                                : Colors.grey[400],
-                          ),
-                          onPressed: () {
-                            context.read<NowPlayingBloc>().add(ToggleShuffle());
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.skip_previous,
-                              color: Colors.white),
-                          onPressed: state.isLoadingAudio
-                              ? null
-                              : () {
-                                  context
-                                      .read<NowPlayingBloc>()
-                                      .add(PlayPreviousTrack());
-                                },
-                        ),
-                        Container(
-                          width: 64,
-                          height: 64,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color.fromARGB(255, 13, 161, 99),
-                                Color.fromARGB(255, 22, 181, 93),
-                                Color.fromARGB(255, 32, 220, 85),
-                              ],
-                            ),
-                          ),
-                          child: IconButton(
+                      // Playback Controls
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconButton(
                             icon: Icon(
-                              state.isPlaying ? Icons.pause : Icons.play_arrow,
-                              color: Colors.white,
-                              size: 32,
+                              Icons.shuffle,
+                              color: state.isShuffleEnabled
+                                  ? Colors.green
+                                  : Colors.grey[400],
                             ),
+                            onPressed: () {
+                              context.read<NowPlayingBloc>().add(ToggleShuffle());
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.skip_previous,
+                                color: Colors.white),
                             onPressed: state.isLoadingAudio
                                 ? null
                                 : () {
-                                    if (state.isPlaying) {
-                                      context
-                                          .read<NowPlayingBloc>()
-                                          .add(PauseAudio());
-                                    } else {
-                                      context
-                                          .read<NowPlayingBloc>()
-                                          .add(PlayAudio());
-                                    }
+                                    context
+                                        .read<NowPlayingBloc>()
+                                        .add(PlayPreviousTrack());
                                   },
                           ),
-                        ),
-                        IconButton(
-                          icon:
-                              const Icon(Icons.skip_next, color: Colors.white),
-                          onPressed: state.isLoadingAudio
-                              ? null
-                              : () {
-                                  context
-                                      .read<NowPlayingBloc>()
-                                      .add(PlayNextTrack());
-                                },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.repeat,
-                            color: state.isLoopEnabled
-                                ? Colors.green
-                                : Colors.grey[400],
+                          Container(
+                            width: 64,
+                            height: 64,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color.fromARGB(255, 13, 161, 99),
+                                  Color.fromARGB(255, 22, 181, 93),
+                                  Color.fromARGB(255, 32, 220, 85),
+                                ],
+                              ),
+                            ),
+                            child: IconButton(
+                              icon: Icon(
+                                state.isPlaying ? Icons.pause : Icons.play_arrow,
+                                color: Colors.white,
+                                size: 32,
+                              ),
+                              onPressed: state.isLoadingAudio
+                                  ? null
+                                  : () {
+                                      if (state.isPlaying) {
+                                        context
+                                            .read<NowPlayingBloc>()
+                                            .add(PauseAudio());
+                                      } else {
+                                        context
+                                            .read<NowPlayingBloc>()
+                                            .add(PlayAudio());
+                                      }
+                                    },
+                            ),
                           ),
-                          onPressed: () {
-                            context.read<NowPlayingBloc>().add(ToggleLoop());
-                          },
-                        ),
-                      ],
-                    ),
-
-                    // Heart Icon
-                    Center(
-                      child: IconButton(
-                        icon: Icon(
-                          _isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: Colors.green,
-                          size: 32,
-                        ),
-                        onPressed: _toggleFavorite,
+                          IconButton(
+                            icon:
+                                const Icon(Icons.skip_next, color: Colors.white),
+                            onPressed: state.isLoadingAudio
+                                ? null
+                                : () {
+                                    context
+                                        .read<NowPlayingBloc>()
+                                        .add(PlayNextTrack());
+                                  },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.repeat,
+                              color: state.isLoopEnabled
+                                  ? Colors.green
+                                  : Colors.grey[400],
+                            ),
+                            onPressed: () {
+                              context.read<NowPlayingBloc>().add(ToggleLoop());
+                            },
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+
+                      const SizedBox(height: 32),
+
+                      // Heart Icon
+                      Center(
+                        child: IconButton(
+                          icon: Icon(
+                            _isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: Colors.green,
+                            size: 32,
+                          ),
+                          onPressed: _toggleFavorite,
+                        ),
+                      ),
+
+                      const SizedBox(height: 32),
+                    ],
+                  ),
                 ),
               ),
             ),

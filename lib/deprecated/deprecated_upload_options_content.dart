@@ -5,6 +5,8 @@ import 'package:first_project/widgets/qawl_back_button_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:first_project/blocs/now_playing/now_playing_bloc.dart';
+import 'package:first_project/blocs/now_playing/now_playing_event.dart';
 
 var qawl_green_gradient = const BoxDecoration(
   gradient: LinearGradient(
@@ -98,6 +100,12 @@ class RecordPageButton extends StatelessWidget {
               textStyle: const TextStyle(fontSize: 50),
             ),
             onPressed: () {
+              // Pause main audio before navigating to record page
+              final nowPlayingBloc = NowPlayingBloc.instance;
+              if (nowPlayingBloc.state.isPlaying) {
+                nowPlayingBloc.add(PauseAudio());
+              }
+              
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -149,6 +157,12 @@ class UploadPageButton extends StatelessWidget {
               textStyle: const TextStyle(fontSize: 50),
             ),
             onPressed: () async {
+              // Pause main audio before navigating to upload page
+              final nowPlayingBloc = NowPlayingBloc.instance;
+              if (nowPlayingBloc.state.isPlaying) {
+                nowPlayingBloc.add(PauseAudio());
+              }
+              
               //here we need to navigate to track info content and select the surah etc
               debugPrint("picked file");
               FilePickerResult? result = await FilePicker.platform.pickFiles();

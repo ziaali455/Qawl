@@ -68,16 +68,7 @@ class TrackWidget extends StatelessWidget {
                     ),
                     subtitle: Text(user.name,
                         style: TextStyle(overflow: TextOverflow.ellipsis)),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize
-                          .min, // Ensures the row takes up only the necessary space
-                      children: [
-                        if (isPersonal) TrashButtonWidget(track: track),
-                        if (playlist.getName() == 'Favorites')
-                          RemoveFromPlaylistButton(
-                              playlist: playlist, track: track),
-                      ],
-                    ),
+                    trailing: _buildTrailingButton(context),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16.0),
                   ),
@@ -104,6 +95,19 @@ class TrackWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildTrailingButton(BuildContext context) {
+    if (isPersonal && playlist.name == "Uploads") {
+      return TrashButtonWidget(track: track);
+    } else if (playlist.name == 'Favorites') {
+      return RemoveFromPlaylistButton(
+        playlist: playlist,
+        track: track,
+      );
+    } else {
+      return const SizedBox.shrink(); // Empty widget if none of the conditions match
+    }
+  }
+
   //boolean input not count
 }
 
@@ -125,11 +129,11 @@ class TrashButtonWidget extends StatelessWidget {
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
               title: const Text("Confirm Deletion"),
-              content: const Text("Are you sure you want to delete?"),
+              content: const Text("Are you sure you want to permanently delete this upload? This action cannot be undone."),
               actions: <Widget>[
                 CupertinoDialogAction(
                   child: const Text(
-                    "No",
+                    "Cancel",
                     style: TextStyle(color: Colors.green),
                   ),
                   onPressed: () {
@@ -138,15 +142,64 @@ class TrashButtonWidget extends StatelessWidget {
                 ),
                 CupertinoDialogAction(
                   child: const Text(
-                    "Yes",
+                    "Delete",
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: () {
-                    // Handle delete action here
-                    // For example:
-                    Track.deleteTrack(
-                        track); // Assuming you have a deleteTrack method
+                    // Handle delete action
+                    Track.deleteTrack(track);
                     Navigator.of(context).pop(); // Close the dialog
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+      splashColor: Colors.transparent,
+    );
+  }
+}
+
+class RemoveFromPlaylistButton extends StatelessWidget {
+  final QawlPlaylist playlist;
+  final Track track;
+
+  const RemoveFromPlaylistButton({
+    Key? key,
+    required this.playlist,
+    required this.track,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.remove_circle_outline, color: Colors.green),
+      onPressed: () {
+        showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: const Text("Remove from Playlist"),
+              content: Text("Remove '${SurahMapper.getSurahNameByNumber(track.surahNumber)}' from '${playlist.name}'?"),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.green),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                CupertinoDialogAction(
+                  child: const Text(
+                    "Remove",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () async {
+                    await QawlPlaylist.removeTrackFromPlaylist(playlist, track);
+                    Navigator.of(context).pop();
                   },
                 ),
               ],

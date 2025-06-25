@@ -1,5 +1,6 @@
 import 'package:first_project/deprecated/fake_playlists_data.dart';
 import 'package:first_project/model/playlist.dart';
+import 'package:first_project/model/track.dart';
 import 'package:first_project/widgets/playlist_list_widget.dart';
 import 'package:first_project/widgets/playlist_button_widget_block.dart';
 import 'package:first_project/widgets/search_field.dart';
@@ -94,6 +95,7 @@ class _HomePageContentState extends State<HomePageContent> {
             const SizedBox(
               height: 20,
             ),
+            // Favorites Playlist Section
             FutureBuilder<QawlPlaylist?>(
               future: QawlPlaylist.getFavorites(),
               builder: (context, snapshot) {
@@ -108,12 +110,13 @@ class _HomePageContentState extends State<HomePageContent> {
                   QawlPlaylist? favoritesPlaylist = snapshot.data;
                   // favoritesPlaylist!.coverImagePath =
                   //     "https://postimg.cc/N5YjLZ04";
-                  if (snapshot.data != null) {
-                    // If playlist is not null, display it
+                  if (favoritesPlaylist != null &&
+                      favoritesPlaylist.list.isNotEmpty) {
+                    // If playlist is not null and not empty, display it
                     return PlaylistListWidget(
-                        playlists_List: [favoritesPlaylist!], isPersonal: false,);
+                        playlists_List: [favoritesPlaylist], isPersonal: false,);
                   } else {
-                    // If playlist is null, display a message indicating no favorites playlist found
+                    // If playlist is null or empty, display a message indicating no favorites playlist found
                     return WidgetAnimator(
                       incomingEffect:
                           WidgetTransitionEffects.incomingSlideInFromBottom(),
@@ -124,20 +127,53 @@ class _HomePageContentState extends State<HomePageContent> {
                           text: const TextSpan(
                             children: [
                               TextSpan(
-                                text: "To start your library, add a track to your favorites with the ",
+                                text:
+                                    "To add to your library, add a track to your favorites with the ",
                               ),
                               WidgetSpan(
                                 child: Icon(Icons.favorite, size: 18),
                               ),
                               TextSpan(
-                                text: " button!",
+                                text:
+                                    " button and follow your favorite reciters! ",
                               ),
                             ],
                           ),
                         ),
+                      ),
+                    );
+                  }
+                }
+              },
+            ),
 
-                        // Text(
-                        //     'To start your library, add a track to your favorites with the'),
+            // Following Playlist Section
+            FutureBuilder<QawlPlaylist?>(
+              future: QawlPlaylist.getFollowingPlaylist(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(color: Colors.green);
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  QawlPlaylist? followingPlaylist = snapshot.data;
+                  if (followingPlaylist != null &&
+                      followingPlaylist.list.isNotEmpty) {
+                    return PlaylistListWidget(
+                      playlists_List: [followingPlaylist],
+                      isPersonal: false,
+                    );
+                  } else {
+                    return WidgetAnimator(
+                      incomingEffect:
+                          WidgetTransitionEffects.incomingSlideInFromBottom(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "No tracks available from the users you're following. Start following your favorite reciters to see their tracks here!",
+                          style: const TextStyle(fontSize: 16.0),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     );
                   }

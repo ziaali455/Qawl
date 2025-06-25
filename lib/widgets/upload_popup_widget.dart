@@ -4,6 +4,8 @@ import 'package:first_project/screens/record_audio_content.dart';
 import 'package:first_project/screens/track_info_content.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import 'package:first_project/blocs/now_playing/now_playing_bloc.dart';
+import 'package:first_project/blocs/now_playing/now_playing_event.dart';
 
 class UploadPopupWidget extends StatelessWidget {
   const UploadPopupWidget
@@ -24,6 +26,12 @@ class UploadPopupWidget extends StatelessWidget {
                   'Record'),
               leading: Icon(Icons.mic, color: Colors.green, size: 30.0),
               onTap: () {
+                // Pause main audio before navigating to record page
+                final nowPlayingBloc = NowPlayingBloc.instance;
+                if (nowPlayingBloc.state.isPlaying) {
+                  nowPlayingBloc.add(PauseAudio());
+                }
+                
                 Navigator.pop(context);
                 Navigator.push(
                     context,
@@ -39,6 +47,12 @@ class UploadPopupWidget extends StatelessWidget {
             leading: Icon(Icons.file_upload_outlined,
                 color: Colors.green, size: 30.0),
             onTap: () async {
+
+              // Pause main audio before navigating to upload page
+              final nowPlayingBloc = NowPlayingBloc.instance;
+              if (nowPlayingBloc.state.isPlaying) {
+                nowPlayingBloc.add(PauseAudio());
+              }
 
               FilePickerResult? result = await FilePicker.platform.pickFiles();
 

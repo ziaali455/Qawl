@@ -33,6 +33,7 @@ dependencies:
     sdk: flutter
   just_audio: ^0.9.33
   just_audio_background: ^0.0.1-beta.12
+  audio_session: ^0.1.16
   rxdart: ^0.27.5
   audio_video_progress_bar: ^1.0.1
   cached_network_image: ^3.2.2
@@ -112,6 +113,16 @@ flutter:
     - assets/google_logo.png
     - fonts/PPTelegraf-UltraBold.otf
     - fonts/PPTelegraf-Regular.otf
+    - assets/qawl_dukhan_correct.mp3
+    - assets/qawl_dukhan_incorrect.mp3
+    - assets/qawl_dukhan_incorrect2.mp3
+    - assets/qawl_yunus_incorrect1.mp3
+    - assets/qawl_yunus_correct.mp3
+    - assets/qawl_yunus_incorrect2.mp3
+    - assets/qawl_adiyaat_incorrect2v2.mp3
+    - assets/qawl_adiyaat_incorrect3v2.mp3
+    - assets/qawl_adiyaat_incorrect1v2.mp3
+    - assets/qawl_adiyaat_correctv2.mp3
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

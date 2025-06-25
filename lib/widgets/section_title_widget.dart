@@ -28,21 +28,22 @@ class PlaylistSectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: getProportionateScreenWidth(30),
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: getProportionateScreenWidth(28),
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-        ),
-        isPlaylist
-            ? SeeMoreButton(playlist: playlist, isPersonal: isPersonal,)
-            : SizedBox(
-                height: 0,
-              ),
-      ]),
+          isPlaylist
+              ? SeeMoreButton(playlist: playlist, isPersonal: isPersonal,)
+              : SizedBox(height: 0),
+        ],
+      ),
     );
   }
 }
@@ -90,16 +91,19 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: getProportionateScreenWidth(30),
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: getProportionateScreenWidth(28),
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }

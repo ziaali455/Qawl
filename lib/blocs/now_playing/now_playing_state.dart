@@ -13,6 +13,8 @@ class NowPlayingState {
   final QawlPlaylist? currentPlaylist;
   final bool isLoopEnabled;
   final bool isShuffleEnabled;
+  final bool isQuizAudioPlaying;
+  final String? currentQuizAudioPath;
 
   const NowPlayingState({
     this.isPlaying = false,
@@ -26,6 +28,8 @@ class NowPlayingState {
     this.currentPlaylist,
     this.isLoopEnabled = false,
     this.isShuffleEnabled = false,
+    this.isQuizAudioPlaying = false,
+    this.currentQuizAudioPath,
   });
 
   NowPlayingState copyWith({
@@ -40,6 +44,8 @@ class NowPlayingState {
     QawlPlaylist? currentPlaylist,
     bool? isLoopEnabled,
     bool? isShuffleEnabled,
+    bool? isQuizAudioPlaying,
+    String? currentQuizAudioPath,
   }) {
     return NowPlayingState(
       isPlaying: isPlaying ?? this.isPlaying,
@@ -53,6 +59,8 @@ class NowPlayingState {
       currentPlaylist: currentPlaylist ?? this.currentPlaylist,
       isLoopEnabled: isLoopEnabled ?? this.isLoopEnabled,
       isShuffleEnabled: isShuffleEnabled ?? this.isShuffleEnabled,
+      isQuizAudioPlaying: isQuizAudioPlaying ?? this.isQuizAudioPlaying,
+      currentQuizAudioPath: currentQuizAudioPath ?? this.currentQuizAudioPath,
     );
   }
 }

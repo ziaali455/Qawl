@@ -2,20 +2,28 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+// import 'package:first_project/model/player.dart';
 import 'package:first_project/model/playlist.dart';
 import 'package:first_project/model/track.dart';
+import 'package:first_project/screens/all_folders_screen.dart';
 import 'package:first_project/screens/danger_zone_widget.dart';
 import 'package:first_project/screens/now_playing_content.dart';
+import 'package:first_project/screens/verification_quiz_content.dart';
+import 'package:first_project/widgets/playlist_manager_widget.dart';
 import 'package:first_project/widgets/playlist_preview_widget.dart';
 import 'package:first_project/widgets/profile_picture_widget.dart';
 import 'package:first_project/widgets/qawl_back_button_widget.dart';
+import 'package:first_project/widgets/qawl_record_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:first_project/model/user.dart';
 import 'package:first_project/widgets/profile_stats_widget.dart';
+// import 'package:go_router/go_router.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:first_project/widgets/upload_popup_widget.dart';
 import '../screens/taken_from_firebaseui/profile_screen_firebaseui.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
+import 'package:first_project/widgets/playlist_manager_widget.dart';
+import 'package:first_project/widgets/playlist_list_widget.dart';
 
 class ProfileContent extends StatefulWidget {
   final bool isPersonal;
@@ -84,10 +92,7 @@ class _ProfileContentState extends State<ProfileContent> {
             );
           }
           // If user data is successfully fetched, display the content
-          return RefreshIndicator(
-            onRefresh: _refreshUserData,
-            child: _buildContent(user),
-          );
+          return _buildContent(user);
         }
       },
     );
@@ -95,183 +100,183 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Widget _buildContent(QawlUser user) {
     final bool isPersonal = widget.isPersonal;
-    // print("User image is " + user.imagePath);
+    
     return Container(
       padding: const EdgeInsets.only(top: 50),
       child: Scaffold(
         body: Stack(
           children: [
-            // Settings button positioned at the top right corner
-
-            ListView(
-              physics: const BouncingScrollPhysics(),
-              children: [
-                ProfilePictureWidget(
-                  imagePath: (user.imagePath.isEmpty)
-                      ? "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3"
-                      : user.imagePath,
-                  country: user.country,
-                  isPersonal: isPersonal,
-                  user: user,
-                ),
-                const SizedBox(height: 24),
-                if (isPersonal)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: buildPersonalName(),
-                  ),
-
-                if (!isPersonal)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: buildName(user),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: NumbersWidget(
+            // Main scrollable content
+            RefreshIndicator(
+              onRefresh: _refreshUserData,
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  ProfilePictureWidget(
+                    imagePath: (user.imagePath.isEmpty)
+                        ? "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3"
+                        : user.imagePath,
+                    country: user.country,
+                    isPersonal: isPersonal,
                     user: user,
                   ),
-                ),
-                if (isPersonal)
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 10, bottom: 10, left: 80, right: 80),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute<MyProfileScreen>(
-                            builder: (context) => MyProfileScreen(
-                              actions: [
-                                SignedOutAction((context) {
-                                  Navigator.of(context).pop();
-                                })
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          gradient: const LinearGradient(
-                            colors: <Color>[
-                              Color.fromARGB(255, 13, 161, 99),
-                              Color.fromARGB(255, 22, 181, 93),
-                              Color.fromARGB(255, 32, 220, 85),
-                            ],
-                          ),
-                        ),
-                        width: 80,
-                        height: 45,
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(width: 5), // Adjust the spacing as needed
-                            Text(
-                              "Edit Profile",
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                // Positioned(
-                //   top: 40.0,
-                //   right: 30.0,
-                //   child: IconButton(
-                //     onPressed: () {
-                //       Navigator.push(
-                //         context,
-                //         MaterialPageRoute<MyProfileScreen>(
-                //           builder: (context) => MyProfileScreen(
-                //             actions: [
-                //               SignedOutAction((context) {
-                //                 Navigator.of(context).pop();
-                //               })
-                //             ],
-                //           ),
-                //         ),
-                //       );
-                //     },
-                //     icon: Icon(Icons.settings),
-                //   ),
-                // ),
-                if (isPersonal)
+                  const SizedBox(height: 24),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: FutureBuilder<Widget>(
-                      future: buildPersonalAbout(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator(
-                              color: Colors.green);
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else {
-                          return snapshot.data ?? Container();
-                        }
-                      },
-                    ),
+                    child: isPersonal ? buildPersonalName() : buildName(user),
                   ),
-                // if (!isPersonal)
-                //   Padding(
-                //     padding: const EdgeInsets.only(top: 11.0),
-                //     child: buildAbout(user),
-                //   ),
-                if (!isPersonal)
                   Padding(
-                    padding: const EdgeInsets.only(top: 0.0),
-                    child: FollowButton(
+                    padding: const EdgeInsets.all(8.0),
+                    child: NumbersWidget(
                       user: user,
                     ),
                   ),
-                FutureBuilder<List<Track>>(
-                  future: Track.getTracksByUser(user),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      );
-                    } else {
-                      List<Track> uploadedTracks = snapshot.data ?? [];
-                      // print("The tracks are " + uploadedTracks.toString());
-                      return PlaylistPreviewWidget(
-                        playlist: QawlPlaylist(
-                          id: '0',
-                          author: user.name,
-                          name: "Uploads",
-                          list: uploadedTracks,
+                  if (isPersonal)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 10, bottom: 10, left: 80, right: 80),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<MyProfileScreen>(
+                              builder: (context) => MyProfileScreen(
+                                actions: [
+                                  SignedOutAction((context) {
+                                    Navigator.of(context).pop();
+                                  })
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            gradient: const LinearGradient(
+                              colors: <Color>[
+                                Color.fromARGB(255, 13, 161, 99),
+                                Color.fromARGB(255, 22, 181, 93),
+                                Color.fromARGB(255, 32, 220, 85),
+                              ],
+                            ),
+                          ),
+                          width: 80,
+                          height: 45,
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(width: 5), // Adjust the spacing as needed
+                              Text(
+                                "Edit Profile",
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        isPersonal: isPersonal,
-                      );
-                    }
-                  },
-                ),
-              ],
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: isPersonal
+                        ? FutureBuilder<Widget>(
+                            future: buildPersonalAbout(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator(
+                                    color: Colors.green);
+                              } else if (snapshot.hasError) {
+                                return Text('Error: \\${snapshot.error}');
+                              } else {
+                                return snapshot.data ?? Container();
+                              }
+                            },
+                          )
+                        : buildAbout(user),
+                  ),
+                  if (!isPersonal)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 0.0),
+                      child: FollowButton(
+                        user: user,
+                      ),
+                    ),
+                  if (!isPersonal)
+                    const SizedBox(height: 16),
+                  PlaylistFoldersWidget(
+                    user: user,
+                    isPersonal: isPersonal,
+                  ),
+                  const SizedBox(height: 8),
+                  FutureBuilder<List<Track>>(
+                    future: Track.getTracksByUser(user).then((tracks) {
+                      tracks
+                          .sort((a, b) => a.surahNumber.compareTo(b.surahNumber));
+                      return tracks;
+                    }),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Error: \\${snapshot.error}'),
+                        );
+                      } else {
+                        List<Track> uploadedTracks = snapshot.data ?? [];
+                        uploadedTracks.sort(
+                            (a, b) => a.surahNumber.compareTo(b.surahNumber));
+
+                        // print("The tracks are " + uploadedTracks.toString());
+                        return PlaylistPreviewWidget(
+                          playlist: QawlPlaylist(
+                            id: '0',
+                            author: user.name,
+                            name: "Uploads",
+                            list: uploadedTracks,
+                          ),
+                          isPersonal: isPersonal,
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
+            
+            // Fixed positioned elements - these will NOT scroll
             if (isPersonal)
-              Positioned(top: 40, right: 30, child: QawlRecordButton()),
+              Positioned(
+                top: 15,
+                right: 15,
+                child: SafeArea(
+                  child: QawlRecordButton(user: user),
+                ),
+              ),
             if (!isPersonal)
-              Positioned(top: 40, right: 30, child: DangerZone(user: user)),
-            if (!isPersonal)
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: QawlBackButton(),
+              Positioned(
+                top: 15,
+                right: 15,
+                child: SafeArea(
+                  child: DangerZone(user: user),
+                ),
+              ),
+            if (!isPersonal) 
+              Positioned(
+                top: 15,
+                left: 15,
+                child: SafeArea(
+                  child: QawlBackButton(),
+                ),
               ),
           ],
         ),
-        // floatingActionButton: isPersonal ? const QawlRecordButton() : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
@@ -332,145 +337,3 @@ class _ProfileContentState extends State<ProfileContent> {
     );
   }
 }
-
-class QawlRecordButton extends StatelessWidget {
-  const QawlRecordButton({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(3.0),
-      child: GestureDetector(
-        onTap: () {
-          showMaterialModalBottomSheet(
-            context: context,
-            builder: (context) => SingleChildScrollView(
-              controller: ModalScrollController.of(context),
-              child:
-                  const UploadPopupWidget(), // Replace with your content widget
-            ),
-          );
-        },
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.transparent, // Transparent background
-          ),
-          child: ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return LinearGradient(
-                colors: <Color>[
-                  Color.fromARGB(255, 13, 161, 99),
-                  Color.fromARGB(255, 22, 181, 93),
-                  Color.fromARGB(255, 32, 220, 85),
-                ],
-              ).createShader(bounds);
-            },
-            blendMode:
-                BlendMode.srcATop, // Ensures gradient only affects the icon
-            child: Row(
-              children: [
-                Center(
-                  child: Icon(
-                    Icons.add,
-                    size: 35,
-                    color: Colors.white, // Icon color
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-
-
-//old button that floats
-// class QawlRecordButton extends StatelessWidget {
-//   const QawlRecordButton({
-//     super.key,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(3.0),
-//       child: Container(
-//         width: 60,
-//         height: 60,
-//         child: Container(
-//           decoration: const BoxDecoration(
-//             shape: BoxShape.circle,
-//             gradient: LinearGradient(
-//               colors: <Color>[
-//                 Color.fromARGB(255, 13, 161, 99),
-//                 Color.fromARGB(255, 22, 181, 93),
-//                 Color.fromARGB(255, 32, 220, 85),
-//               ],
-//             ),
-//           ),
-//           child: FloatingActionButton(
-//             backgroundColor: Colors.transparent,
-//             splashColor: Colors.white,
-//             onPressed: () {
-//               showMaterialModalBottomSheet(
-//                 context: context,
-//                 builder: (context) => SingleChildScrollView(
-//                   controller: ModalScrollController.of(context),
-//                   child: const UploadPopupWidget(),
-//                 ),
-//               );
-//             },
-//             tooltip: 'Enter the record page',
-//             child: const Icon(
-//               Icons.add,
-//               size: 35,
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-// old implementation that doesnt work
-//  // FutureBuilder for PlaylistPreviewWidget
-//                 FutureBuilder<List<Track>>(
-//                   future: user.getUploadedTracks(),
-//                   builder: (context, snapshot) {
-//                     if (snapshot.connectionState == ConnectionState.waiting) {
-//                       return const Center(
-//                         child: CircularProgressIndicator(),
-//                       );
-//                     } else if (snapshot.hasError) {
-//                       return Center(
-//                         child: Text('Error: ${snapshot.error}'),
-//                       );
-//                     } else {
-//                       List<Track> uploadedTracks = snapshot.data ?? [];
-//                       print("The tracks are " + uploadedTracks.toString());
-//                       return PlaylistPreviewWidget(
-//                           playlist: Playlist(
-//                               author: user.name,
-//                               name: "Uploads",
-//                               list: uploadedTracks));
-//                     }
-//                   },
-//                 ),
-
-//WORKING LOOP BUTTON
-// IconButton(
-//                             icon: Icon(Icons.loop),
-//                             iconSize: 20.0,
-//                             onPressed: () {
-//                               // Add your onPressed code here!
-//                               audioHandler
-//                                   .setRepeatMode(AudioServiceRepeatMode.one);
-//                             },
-//                           ),

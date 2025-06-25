@@ -54,3 +54,13 @@ class SwitchPlaylist extends NowPlayingEvent {
 class ToggleLoop extends NowPlayingEvent {}
 
 class ToggleShuffle extends NowPlayingEvent {}
+
+// Quiz audio events
+class PlayQuizAudio extends NowPlayingEvent {
+  final String assetPath;
+  PlayQuizAudio(this.assetPath);
+}
+
+class StopQuizAudio extends NowPlayingEvent {}
+
+class ResumeMainAudio extends NowPlayingEvent {}

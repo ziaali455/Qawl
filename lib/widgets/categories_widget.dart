@@ -7,6 +7,7 @@ import 'package:first_project/screens/explore_content.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/playlist_screen_content.dart';
 import 'package:first_project/screens/profile_content.dart';
+import 'package:first_project/screens/styles_screen_content.dart';
 import 'package:first_project/widgets/qari_card_widget.dart';
 import 'package:first_project/widgets/qawl_back_button_widget.dart';
 import 'package:flutter/material.dart';
@@ -98,8 +99,7 @@ class CategoryCard extends StatelessWidget {
         } else if (text == "Styles") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PlaceholderContent()),
-            //PlaylistScreenContent(playlist: fake_playlist_data.following,)),
+            MaterialPageRoute(builder: (context) => StylesContent()),
           );
         } else if (text == "Following") {
           Navigator.push(
