@@ -88,12 +88,12 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     if (!status.isGranted) {
       status = await Permission.microphone.request();
       if (!status.isGranted) {
-        print('Mic permission not granted'); // Debug print
+        // print('Mic permission not granted');
       } else {
-        print('Mic permission granted'); // Debug print
+        // print('Mic permission granted');
       }
     } else {
-      print('Mic permission already granted'); // Debug print
+      // print('Mic permission already granted');
     }
   }
 
@@ -118,7 +118,6 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       showWaveforms = true;
       isCapturing = true;
     });
-    debugPrint("Recording started");
     // }  else {
     //    await initRecorder();
     //    if (await Permission.microphone.isGranted) {
@@ -139,10 +138,10 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
     try {
       if (await file.exists()) {
         await file.delete();
-        debugPrint("Local file deleted successfully.");
+        // debugPrint("Local file deleted successfully.");
       }
     } catch (e) {
-      debugPrint("Error deleting local file: $e");
+      // debugPrint("Error deleting local file: $e");
     }
   }
 
@@ -155,7 +154,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
 
   void stopRecording() async {
     await recorderController.stop();
-    debugPrint("Recording stopped");
+    // debugPrint("Recording stopped");
 
     // Prepare player controller with the recorded file path
     if (_recordedFilePath != null) {
@@ -176,17 +175,16 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       isPlaying = false;
       // isCapturing = false;
     });
-    debugPrint("Playback paused at position: $_lastPosition ms");
+    // debugPrint("Playback paused at position: $_lastPosition ms");
   }
 
   Future<void> playAudio() async {
     if (_recordedFilePath == null) {
-      debugPrint("No recording has been made yet");
+      // debugPrint("No recording has been made yet");
       return;
     }
     try {
       await playerController.seekTo(_lastPosition);
-      debugPrint("Seeking to position: $_lastPosition ms");
       // if (playerController.playerState == PlayerState.paused) {
       //   await playerController
       //       .seekTo(_lastPosition); // Seek to the last known position
@@ -195,9 +193,9 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
       setState(() {
         isPlaying = true;
       });
-      debugPrint("Playback started from position: $_lastPosition ms");
+      // debugPrint("Playback started from position: $_lastPosition ms");
     } catch (e) {
-      debugPrint("Error during playback: $e");
+      // debugPrint("Error during playback: $e");
     }
   }
 
@@ -348,7 +346,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                 Navigator.pop(context);
                 File file = File(_recordedFilePath!);
                 deleteLocalFile(file);
-                debugPrint(_recordedFilePath);
+                // debugPrint(_recordedFilePath);
               },
               child: const Align(
                   alignment: Alignment.center,
@@ -404,7 +402,7 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
                       ));
                 } else {
                   // Inform the user that the file path is not available
-                  debugPrint("Recorded file path is null");
+                  // debugPrint('Recorded file path is null');
                 }
               },
               child: const Align(
@@ -448,8 +446,8 @@ class _RecordAudioContentState extends State<RecordAudioContent> {
             // To center the button within the circular container
             child: ElevatedButton(
               child: isCapturing
-                  ? const Icon(Icons.pause, size: 80.0)
-                  : const Icon(Icons.mic, size: 80.0),
+                  ? const Icon(Icons.pause, size: 80.0, color: Colors.white)
+                  : const Icon(Icons.mic, size: 80.0, color: Colors.white),
               onPressed: () async {
                 if (isCapturing) {
                   stopRecording();

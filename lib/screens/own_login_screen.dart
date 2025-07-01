@@ -329,8 +329,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 25),
                   ElevatedButton(
-                    style: const ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll<Color>(Colors.green),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     onPressed: () async {
                       final message = await AuthService().login(
@@ -353,11 +357,13 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     child: const Text(
                       'Login',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
-                  const SizedBox(height: 10), // Add space between the buttons
-                  SignInWithGoogleWidget(),
+                  const SizedBox(height: 50), // Add space between the buttons
+                   SignInWithGoogleWidget(),
+                  const SizedBox(height: 20),
+                  SignInWithAppleWidget(),
                   const SizedBox(height: 30), // Spacing before the "New User" section
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -406,8 +412,12 @@ class SignInWithGoogleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
-        minimumSize: const Size(30, 40), // Button size
+        foregroundColor: Colors.black, 
+        backgroundColor: Colors.white,
+        minimumSize: const Size(100, 40),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
       ),
       icon: Image.asset(
         'assets/google_logo.png', // Path to your Google logo asset
@@ -431,6 +441,51 @@ class SignInWithGoogleWidget extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Google Sign-In failed'),
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+class SignInWithAppleWidget extends StatelessWidget {
+  const SignInWithAppleWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(221, 57, 54, 54),
+        minimumSize: const Size(100, 40),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      icon: Image.asset(
+        'assets/apple_logo.png', // Path to your Google logo asset
+        height: 20,
+        width: 20,
+      ),
+      label: const Text(
+        ' Sign in with Apple ',
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, ),
+      ),
+      onPressed: () async {
+        // note the LoginWithGoogle method already calls checkDetailsAndNavigate
+          String result = await AuthService().LoginWithApple(context); 
+        if (result.contains('Success')) {
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => const HomePage(), 
+          //   ),
+          // );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Apple Sign-In failed'),
             ),
           );
         }

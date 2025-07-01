@@ -202,7 +202,6 @@ class CancelPostButton extends StatelessWidget {
               textStyle: const TextStyle(fontSize: 50),
             ),
             onPressed: () async {
-              debugPrint(trackPath);
               File file = File(trackPath);
               await Track.deleteLocalFile(file);
 

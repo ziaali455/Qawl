@@ -82,7 +82,6 @@ class Track {
           .get();
       if (doc.exists) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        print('Firestore document data for track with ID $trackId: $data');
         return Track.fromFirestore(data, doc.id);
       } else {
         return null;
@@ -99,7 +98,6 @@ class Track {
           .collection('QawlTracks')
           .doc(track.id)
           .delete();
-      print('Track with ID ${track.id} deleted successfully');
     } catch (e) {
       print('Error deleting track: $e');
     }
@@ -117,7 +115,6 @@ class Track {
       // If any playlists contain this track, return true
       return querySnapshot.docs.isNotEmpty;
     } catch (e) {
-      print('Error checking if track is in collections: $e');
       // If there's an error, assume the track is in collections to be safe
       return true;
     }
@@ -170,8 +167,6 @@ class Track {
     uploader!.uploads.add(uniqueID);
     postUploads(uploader);
 
-    print(fileUrl);
-
     return uid;
   }
 
@@ -184,7 +179,6 @@ class Track {
             .collection('QawlUsers')
             .doc(user.id)
             .update({'uploads': uploadsList});
-        print('Uploads updated successfully.');
       } else {
         print('User is null. Uploads not updated.');
       }
@@ -247,7 +241,6 @@ class Track {
         inPlaylists = value as Set<QawlPlaylist>;
         break;
       default:
-        print("Field $field not recognized or not updatable.");
         return;
     }
 
@@ -261,9 +254,8 @@ class Track {
           .collection('QawlTracks')
           .doc(id)
           .update({field: value});
-      debugPrint("User $field updated successfully.");
     } catch (e) {
-      debugPrint("Error updating user $field: $e");
+      print("Error updating user $field: $e");
     }
   }
 
@@ -274,7 +266,6 @@ class Track {
   }
 
   static Future<String?> uploadRecordingToStorage(String? filePath) async {
-    debugPrint("Uploading recording...");
     File file;
     if (filePath != null) {
       file = File(filePath);
@@ -282,7 +273,6 @@ class Track {
       try {
         String fileName =
             'recordings/${DateTime.now().millisecondsSinceEpoch}.m4a';
-        // debugPrint(fileName);
 
         TaskSnapshot uploadTask =
             await FirebaseStorage.instance.ref(fileName).putFile(file);
@@ -291,11 +281,9 @@ class Track {
 
         return downloadUrl;
       } catch (e) {
-        debugPrint("Error uploading audio file: $e");
         return null;
       }
     } else {
-      debugPrint("null filepath parameter");
       return null;
     }
   }
@@ -304,10 +292,9 @@ class Track {
     try {
       if (await file.exists()) {
         await file.delete();
-        debugPrint("Local file deleted successfully.");
       }
     } catch (e) {
-      debugPrint("Error deleting local file: $e");
+      print("Error deleting local file: $e");
     }
   }
 

@@ -42,16 +42,16 @@ class UnifiedAudioManager {
     try {
       // Configure audio session
       _audioSession = await AudioSession.instance;
-      await _audioSession!.configure(const AudioSessionConfiguration(
-        avAudioSessionCategory: AVAudioSessionCategory.playback,
-        avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.allowBluetooth,
-        avAudioSessionMode: AVAudioSessionMode.defaultMode,
+      await _audioSession!.configure(AudioSessionConfiguration(
+        avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
+        avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.allowBluetooth | AVAudioSessionCategoryOptions.defaultToSpeaker,
+        avAudioSessionMode: AVAudioSessionMode.spokenAudio,
         avAudioSessionRouteSharingPolicy: AVAudioSessionRouteSharingPolicy.defaultPolicy,
         avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
         androidAudioAttributes: AndroidAudioAttributes(
-          contentType: AndroidAudioContentType.music,
+          contentType: AndroidAudioContentType.speech,
           flags: AndroidAudioFlags.none,
-          usage: AndroidAudioUsage.media,
+          usage: AndroidAudioUsage.voiceCommunication,
         ),
         androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
         androidWillPauseWhenDucked: true,
@@ -109,7 +109,6 @@ class UnifiedAudioManager {
 
       await _audioSession!.setActive(true);
       _isInitialized = true;
-      print('UnifiedAudioManager initialized successfully');
     } catch (e) {
       print('Error initializing UnifiedAudioManager: $e');
       _onErrorChanged?.call('Failed to initialize audio: $e');
@@ -151,7 +150,6 @@ class UnifiedAudioManager {
       );
 
       await audioPlayer.play();
-      print('Successfully started playing main audio: ${track.trackName}');
     } catch (e) {
       print('Error playing main audio: $e');
       _onErrorChanged?.call('Failed to play main audio: $e');
@@ -163,8 +161,6 @@ class UnifiedAudioManager {
     if (!_isInitialized) await initialize();
     
     try {
-      print('Attempting to play quiz audio: $assetPath');
-      
       // Stop any currently playing audio
       await audioPlayer.stop();
       
@@ -186,8 +182,6 @@ class UnifiedAudioManager {
         artUri: Uri.parse('https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3'),
       );
 
-      print('Setting audio source for: $assetPath');
-      
       // Set the audio source with better error handling
       await audioPlayer.setAudioSource(
         AudioSource.asset(
@@ -196,21 +190,9 @@ class UnifiedAudioManager {
         ),
       );
 
-      print('Audio source set successfully, attempting to play');
-      
       await audioPlayer.play();
-      print('Successfully started playing quiz audio: $assetPath');
     } catch (e) {
       print('Error playing quiz audio: $e');
-      print('Error details for file: $assetPath');
-      
-      // Provide more specific error information
-      if (e.toString().contains('Operation Stopped')) {
-        print('WARNING: Audio file may be corrupted or incompatible: $assetPath');
-        _onErrorChanged?.call('Audio file appears to be corrupted or incompatible: ${assetPath.split('/').last}');
-      } else {
-        _onErrorChanged?.call('Failed to play quiz audio: $e');
-      }
       
       // Reset state on error
       _currentAudioType = AudioType.main;
@@ -267,8 +249,6 @@ class UnifiedAudioManager {
   // Reset audio session completely
   Future<void> resetAudioSession() async {
     try {
-      print('Resetting audio session...');
-      
       // Stop and dispose current player
       await audioPlayer.stop();
       _audioPlayer?.dispose();
@@ -283,8 +263,6 @@ class UnifiedAudioManager {
       
       // Reinitialize
       await initialize();
-      
-      print('Audio session reset successfully');
     } catch (e) {
       print('Error resetting audio session: $e');
       _onErrorChanged?.call('Failed to reset audio session: $e');
@@ -294,14 +272,11 @@ class UnifiedAudioManager {
   // Reset quiz audio only (doesn't affect main audio)
   Future<void> resetQuizAudio() async {
     try {
-      print('Resetting quiz audio...');
-      
       // Only reset if we're currently playing quiz audio
       if (_currentAudioType == AudioType.quiz) {
         await audioPlayer.stop();
         _currentAudioType = AudioType.main;
         _currentQuizAudioPath = null;
-        print('Quiz audio reset successfully');
       }
     } catch (e) {
       print('Error resetting quiz audio: $e');
@@ -341,6 +316,5 @@ class UnifiedAudioManager {
     _audioPlayer?.dispose();
     _audioSession?.setActive(false);
     _isInitialized = false;
-    print('UnifiedAudioManager disposed');
   }
 } 

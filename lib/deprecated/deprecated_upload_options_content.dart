@@ -164,12 +164,9 @@ class UploadPageButton extends StatelessWidget {
               }
               
               //here we need to navigate to track info content and select the surah etc
-              debugPrint("picked file");
               FilePickerResult? result = await FilePicker.platform.pickFiles();
               if (result != null) {
                 String? pickedFilePath = result.files.single.path;
-
-                debugPrint(pickedFilePath);
                 Navigator.push(
                     context,
                     MaterialPageRoute(

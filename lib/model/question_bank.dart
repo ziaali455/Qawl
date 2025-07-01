@@ -22,7 +22,7 @@ class QuestionBank {
           "Select the correct pronunciation of the ayah",
           [
             "assets/qawl_dukhan_correct.mp3",
-            "assets/qawl_dukhan_incorrect.mp3",
+            "assets/qawl_dukhan_incorrect1.mp3",
             "assets/qawl_dukhan_incorrect2.mp3"
           ],
           0,

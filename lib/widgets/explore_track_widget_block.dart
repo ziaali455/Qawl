@@ -149,32 +149,38 @@ class TrackCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  alignment: Alignment.bottomLeft,
+                  alignment: Alignment.centerLeft,
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: getProportionateScreenWidth(12.0),
-                      vertical: getProportionateScreenWidth(12),
+                      vertical: getProportionateScreenWidth(6),
                     ),
                     child: Text.rich(
                       TextSpan(
                         style: const TextStyle(color: Colors.white),
                         children: [
                           TextSpan(
-                            text: "$title\n",
+                            text: title,
                             style: TextStyle(
                               fontSize: getProportionateScreenWidth(18),
                               fontWeight: FontWeight.bold,
+                              height: 1.0,
                             ),
                           ),
+                          WidgetSpan(
+                            child: SizedBox(height: getProportionateScreenWidth(6)),
+                          ),
                           TextSpan(
-                            text: "$author\n",
+                            text: '\n$author',
                             style: TextStyle(
-                              fontSize: getProportionateScreenWidth(18),
+                              fontSize: getProportionateScreenWidth(17),
                               fontWeight: FontWeight.normal,
+                              height: 1.0,
                             ),
                           ),
                         ],
                       ),
+                      textAlign: TextAlign.left,
                     ),
                   ),
                 ),

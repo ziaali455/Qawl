@@ -166,6 +166,7 @@ class QawlRecordButton extends StatelessWidget {
           const int tenDaysInMillis = 10 * 24 * 60 * 60 * 1000;
 
           return (currentTimestamp - lastAttempt) >= tenDaysInMillis;
+
         }
 
         Future<void> updateQuizTimestamp() async {

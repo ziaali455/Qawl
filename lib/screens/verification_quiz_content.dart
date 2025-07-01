@@ -22,23 +22,25 @@ class QuizHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Tajweed Quiz'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 50),
-            const QuizDescription(),
-            const SizedBox(height: 50),
-            Center(
-              child: StartQuizButton(
-                onStart: (context) async {
-                  // await _handleQuizAttempt();
-                  _navigateToQuiz(context);
-                },
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 50),
+              const QuizDescription(),
+              const SizedBox(height: 50),
+              Center(
+                child: StartQuizButton(
+                  onStart: (context) async {
+                    // await _handleQuizAttempt();
+                    _navigateToQuiz(context);
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -81,15 +83,23 @@ class StartQuizButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        onPressed: () => onStart(context),
-        child: const Text(
-          'Start Quiz',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      onPressed: () => onStart(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
         ),
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all(Colors.green),
-          fixedSize: WidgetStateProperty.all(const Size(200, 50)),
-        ));
+        textStyle: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        minimumSize: const Size(140, 50),
+      ),
+      child: const Text(
+        'Start Quiz',
+      ),
+    );
   }
 }
 
@@ -612,11 +622,19 @@ class _QuizPageState extends State<QuizPage> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    minimumSize: const Size(140, 50),
                   ),
                   onPressed: _canSubmitAnswer() ? _submitAnswer : null,
                   child: const Text(
                     'Submit',
-                    style: TextStyle(fontSize: 20),
                   ),
                 ),
               ),

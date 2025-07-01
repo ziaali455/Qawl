@@ -91,6 +91,7 @@ class _AllFoldersScreenState extends State<AllFoldersScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(foregroundColor: Colors.green),
             child: const Text('Cancel'),
           ),
         ],

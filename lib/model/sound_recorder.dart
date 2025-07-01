@@ -20,7 +20,6 @@ class SoundRecorder {
 
   Future toggleRecording() async {
     if (_audioRecorder!.isStopped) {
-      print("recording started");
       await _record();
     } else {
       await _stop();
@@ -31,7 +30,6 @@ class SoundRecorder {
     _audioRecorder = FlutterSoundRecorder();
     final status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {
-      print("no permission");
       throw RecordingPermissionException('Microphone permission needed');
     }
     await _audioRecorder!.openAudioSession();

@@ -235,10 +235,12 @@ class _PlaylistFoldersWidgetState extends State<PlaylistFoldersWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(foregroundColor: Colors.green),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: _createPlaylist,
+            style: TextButton.styleFrom(foregroundColor: Colors.green),
             child: const Text('Create'),
           ),
         ],
@@ -321,6 +323,7 @@ class _PlaylistFoldersWidgetState extends State<PlaylistFoldersWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(foregroundColor: Colors.green),
             child: const Text('Cancel'),
           ),
         ],
@@ -504,6 +507,7 @@ class FolderListItem extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(foregroundColor: Colors.green),
             child: const Text('Done'),
           ),
         ],
@@ -529,6 +533,7 @@ class FolderListItem extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(foregroundColor: Colors.green),
             child: const Text('Cancel'),
           ),
           TextButton(
@@ -548,6 +553,7 @@ class FolderListItem extends StatelessWidget {
                 );
               }
             },
+            style: TextButton.styleFrom(foregroundColor: Colors.green),
             child: const Text('Save'),
           ),
         ],
@@ -565,6 +571,7 @@ class FolderListItem extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(foregroundColor: Colors.green),
             child: const Text('Cancel'),
           ),
           TextButton(

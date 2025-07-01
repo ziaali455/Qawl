@@ -141,7 +141,6 @@ class QawlUser {
 
         // Iterate through each track ID in the uploads
         for (String trackId in userUploads) {
-          // print('Fetching track with ID: $trackId'); // Add debug print
           DocumentSnapshot trackSnapshot = await FirebaseFirestore.instance
               .collection('QawlTracks')
               .doc(trackId)
@@ -163,17 +162,12 @@ class QawlUser {
                 style: data['style'] ?? 'Hafs \'an Asim',
                 timeStamp: data['timeStamp']);
             uploadedTracks.add(track);
-            print(
-                'Track with ID $trackId found and added to uploadedTracks.'); // Add debug print
-          } else {
-            print('Track with ID $trackId not found.');
           }
         }
-      } else {
-        print('QawlUser with ID $id not found.');
       }
     } catch (e) {
-      print('Error fetching uploaded tracks: $e');
+      // Handle errors
+      throw e;
     }
 
     return uploadedTracks;
@@ -300,7 +294,6 @@ class QawlUser {
         users.add(QawlUser.fromFirestore(doc));
       });
     } catch (error) {
-      print("Error fetching users by country: $error");
       // Handle error as necessary
     }
 
@@ -336,11 +329,10 @@ class QawlUser {
             .update({
           'uploads': currentUser.uploads.toList(),
         });
-      } else {
-        print('Error: Current user not found.');
       }
     } catch (e) {
-      print('Error updating user uploads: $e');
+      // Handle errors
+      throw e;
     }
   }
 
@@ -362,11 +354,9 @@ class QawlUser {
       if (userDoc.exists) {
         return userDoc.get('imagePath');
       } else {
-        debugPrint("No user found for UID: $uid");
         return null;
       }
     } catch (e) {
-      debugPrint("Error fetching user profile picture: $e");
       return null;
     }
   }
@@ -396,11 +386,9 @@ class QawlUser {
       if (userDoc.exists) {
         return userDoc.get('name');
       } else {
-        debugPrint("No user found for UID: $uid");
         return null;
       }
     } catch (e) {
-      debugPrint("Error fetching user profile picture: $e");
       return null;
     }
   }
@@ -504,7 +492,6 @@ class QawlUser {
     await FirebaseFirestore.instance.collection('QawlUsers').doc(uid).update({
       'imagePath': newPath,
     });
-    // debugPrint("\nImage path: " + imagePath + '\n');
     debugPrint("\n UPLOADING IMAGE TO STORAGE\n");
     Reference storageRef = FirebaseStorage.instance
         .ref()
@@ -516,13 +503,10 @@ class QawlUser {
       final url = await storageRef.getDownloadURL();
       imagePath = url;
       updateQawlUserImagePath(imagePath);
-      // print("THE DOWNLOAD URL IS: " + imagePath + '\n');
-      // print("Image uploaded successfully. URL: $url");
     } on FirebaseException catch (e) {
       String defaultPath =
           "https://firebasestorage.googleapis.com/v0/b/qawl-io-8c4ff.appspot.com/o/images%2Fdefault_images%2FEDA16247-B9AB-43B1-A85B-2A0B890BB4B3_converted.png?alt=media&token=6e7f0344-d88d-4946-a6de-92b19111fee3";
       updateQawlUserImagePath(defaultPath);
-      print("Error uploading image: ${e.message}");
     }
     debugPrint("Image path updated successfully.");
   }
@@ -539,9 +523,9 @@ class QawlUser {
           .collection('QawlUsers')
           .doc(uid)
           .update({field: value});
-      debugPrint("User $field updated successfully.");
     } catch (e) {
-      debugPrint("Error updating user $field: $e");
+      // Handle errors
+      throw e;
     }
   }
 
@@ -640,8 +624,6 @@ class QawlUser {
       });
     } catch (e) {
       // Handle errors
-      print("Error toggling follow: $e");
-      // You might want to throw or handle the error appropriately
       throw e;
     }
   }

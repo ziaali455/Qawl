@@ -483,16 +483,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       isLoading
                           ? CircularProgressIndicator(color: Colors.green)
                           : ElevatedButton(
-                              style: const ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll<Color>(
-                                        Colors.green),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
                               onPressed: () => registerUser(context),
                               child: const Text(
                                 'Create Account',
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                             ),
                       const SizedBox(height: 10),

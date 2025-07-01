@@ -10,10 +10,9 @@ import 'package:firebase_ui_localizations/firebase_ui_localizations.dart';
 import 'package:firebase_ui_oauth/firebase_ui_oauth.dart'
     hide OAuthProviderButtonBase;
 import 'package:firebase_ui_shared/firebase_ui_shared.dart';
-// import 'package:first_project/model/audio_handler.dart';
-// import 'package:first_project/model/player.dart';
 import 'package:first_project/screens/now_playing_content.dart';
 import 'package:first_project/screens/own_login_screen.dart';
+import 'package:first_project/screens/homepage.dart';
 import 'package:first_project/screens/taken_from_firebaseui/multi_provider_screen_firebaseui.dart';
 import 'package:first_project/widgets/qawl_back_button_widget.dart';
 import 'package:flutter/cupertino.dart' hide Title;
@@ -25,19 +24,32 @@ import 'package:firebase_ui_auth/src/widgets/internal/subtitle.dart';
 import 'package:firebase_ui_auth/src/widgets/internal/universal_icon_button.dart';
 import 'package:image_picker/image_picker.dart';
 
+// Add this function to return IconData for provider icons
+IconData providerIcon(BuildContext context, String providerId) {
+  switch (providerId) {
+    case 'password':
+      return Icons.email;
+    case 'phone':
+      return Icons.phone;
+    case 'google.com':
+      return Icons.g_mobiledata;
+    case 'apple.com':
+      return Icons.apple;
+    default:
+      return Icons.account_circle;
+  }
+}
+
 class _AvailableProvidersRow extends StatefulWidget {
   /// {@macro ui.auth.auth_controller.auth}
   final fba.FirebaseAuth? auth;
   final List<AuthProvider> providers;
   final VoidCallback onProviderLinked;
-  // final MyAudioHandler audioHandler;
-
 
   const _AvailableProvidersRow({
     this.auth,
     required this.providers,
-    required this.onProviderLinked, 
-    // required this.audioHandler,
+    required this.onProviderLinked,
   });
 
   @override
@@ -802,18 +814,14 @@ class MyProfileScreen extends MultiProviderScreen {
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    print("clicked picker");
 
     if (pickedFile != null) {
       String? uid = QawlUser.getCurrentUserUid();
       if (uid != null) {
-        debugPrint("HERE");
         String imagePath = pickedFile.path;
         QawlUser? currUser = await QawlUser.getQawlUser(uid);
 
         await currUser!.updateImagePath(uid, imagePath);
-      } else {
-        print("No signed-in user found.");
       }
     }
   }
@@ -860,27 +868,14 @@ class MyProfileScreen extends MultiProviderScreen {
 
                   if (user != null) {
                     final String uid = user.uid;
-                    // print("USER ID IS: " + uid);
 
                     try {
-                      print("now going back to login");
-                    //  await Navigator.of(context).pushAndRemoveUntil(
-                    //     MaterialPageRoute(builder: (context) => LoginPage()),
-                    //     (Route<dynamic> route) => false,
-                    //   );
-                      // First, delete the Firestore data
                       await FirebaseFirestore.instance
                           .collection('QawlUsers')
                           .doc(uid)
                           .delete();
 
-                      // Then delete the user from Firebase Authentication
-                       await user.delete();
-
-                      // Optionally sign out the user, though delete should handle this
-                     // await fba.FirebaseAuth.instance.signOut();
-                      print("going back to login page");
-                      // Finally, navigate to the login page
+                      await user.delete();
 
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context) => LoginPage()),
@@ -907,109 +902,14 @@ class MyProfileScreen extends MultiProviderScreen {
       );
     }
 
-    // final avatarWidget = avatar ??
-    //     Align(
-    //       child: UserAvatar(
-    //         auth: auth,
-    //         placeholderColor: Colors.green,
-    //         shape: avatarShape,
-    //         size: avatarSize,
-    //       ),
-    //     );
-
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        QawlBackButton(),
-        // avatarWidget,
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: QawlBackButton(),
+        ),
         Align(child: EditableUserDisplayName(auth: auth)),
-        //This is for changing your email provider. Save for later
-        // if (!user.emailVerified) ...[
-        //   RebuildScope(
-        //     builder: (context) {
-        //       if (user.emailVerified) {
-        //         return const SizedBox.shrink();
-        //       }
-
-        //       return _EmailVerificationBadge(
-        //         auth: auth,
-        //         actionCodeSettings: actionCodeSettings,
-        //       );
-        //     },
-        //     scopeKey: emailVerificationScopeKey,
-        //   ),
-        // ],
-        // RebuildScope(
-        //   builder: (context) {
-        //     final user = auth.currentUser!;
-        //     final linkedProviders = getLinkedProviders(user);
-
-        //     if (linkedProviders.isEmpty) {
-        //       return const SizedBox.shrink();
-        //     }
-
-        //     return Padding(
-        //       padding: const EdgeInsets.only(top: 32),
-        //       child: _LinkedProvidersRow(
-        //         auth: auth,
-        //         providers: linkedProviders,
-        //         onProviderUnlinked: providersScopeKey.rebuild,
-        //         showUnlinkConfirmationDialog: showUnlinkConfirmationDialog,
-        //       ),
-        //     );
-        //   },
-        //   scopeKey: providersScopeKey,
-        // ),
-        // RebuildScope(
-        //   builder: (context) {
-        //     final user = auth.currentUser!;
-        //     final availableProviders = getAvailableProviders(context, user);
-
-        //     if (availableProviders.isEmpty) {
-        //       return const SizedBox.shrink();
-        //     }
-
-        //     return Padding(
-        //       padding: const EdgeInsets.only(top: 32),
-        //       child: _AvailableProvidersRow(
-        //         auth: auth,
-        //         providers: availableProviders,
-        //         onProviderLinked: providersScopeKey.rebuild,
-        //       ),
-        //     );
-        //   },
-        //   scopeKey: providersScopeKey,
-        // ),
-        // if (showMFATile)
-        //   RebuildScope(
-        //     builder: (context) {
-        //       final user = auth.currentUser!;
-        //       final mfa = user.multiFactor;
-
-        //       return FutureBuilder<List<fba.MultiFactorInfo>>(
-        //         future: mfa.getEnrolledFactors(),
-        //         builder: (context, snapshot) {
-        //           if (!snapshot.hasData) {
-        //             return const SizedBox.shrink();
-        //           }
-
-        //           final enrolledFactors = snapshot.requireData;
-
-        //           return Padding(
-        //             padding: const EdgeInsets.only(top: 8.0),
-        //             child: _MFABadge(
-        //               providers: providers,
-        //               enrolled: enrolledFactors.isNotEmpty,
-        //               auth: auth,
-        //               onToggled: mfaScopeKey.rebuild,
-        //             ),
-        //           );
-        //         },
-        //       );
-        //     },
-        //     scopeKey: mfaScopeKey,
-        //   ),
-        // ...children,
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.only(left: 50.0, right: 50.0),
@@ -1020,13 +920,7 @@ class MyProfileScreen extends MultiProviderScreen {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
-                gradient: const LinearGradient(
-                  colors: <Color>[
-                    Color.fromARGB(255, 13, 161, 99),
-                    Color.fromARGB(255, 22, 181, 93),
-                    Color.fromARGB(255, 32, 220, 85),
-                  ],
-                ),
+                color: Color.fromARGB(255, 13, 161, 99),
               ),
               width: 120,
               height: 40,
@@ -1054,130 +948,109 @@ class MyProfileScreen extends MultiProviderScreen {
 
         const SizedBox(height: 16),
         Padding(
-          padding: const EdgeInsets.only(left: 50.0,right: 50.0),
-          child: ElevatedButton(
-            onPressed: () async {
-              // audioHandler.pause;
-              
+          padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+          child: GestureDetector(
+            onTap: () async {
               await fba.FirebaseAuth.instance.signOut();
-              print("clicked sign out");
 
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => LoginPage()),
                 (Route<dynamic> route) => false,
               );
             },
-            child: Text('Sign Out'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Text color
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: Color.fromARGB(255, 220, 38, 38),
+              ),
+              width: 120,
+              height: 40,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.logout,
+                    color: Colors.white,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    "Sign Out",
+                    style: TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-        // SignOutButton(
-        //   auth: auth,
-        //   variant: ButtonVariant.outlined,
-        // ),
-        // steps for delete: get current user, navigate back to login, delete the user
-
+        // Delete Account Button
         const SizedBox(height: 8),
-         Padding(
-           padding: const EdgeInsets.only(left: 50.0, right: 50.0),
-           child: ElevatedButton(
-            onPressed: () async {
-              // Sign out the user
-              // await auth?.signOut();
-              print("clicked Delete");
+        Padding(
+          padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+          child: GestureDetector(
+            onTap: () async {
               fba.User? user = fba.FirebaseAuth.instance.currentUser;
-                    if (user != null) {
-                      final String uid = user.uid;
-                      // print("USER ID IS: " + uid);
-           
-                      try {
-                        print("now going back to login");
-                      //  await Navigator.of(context).pushAndRemoveUntil(
-                      //     MaterialPageRoute(builder: (context) => LoginPage()),
-                      //     (Route<dynamic> route) => false,
-                      //   );
-                        
-           
-                        // First delete the user from Firebase Authentication
-                        await user.delete();
-                        print("going back to login page");
-                        // Finally, navigate to the login page
-                        
-                        // then, delete the Firestore data
-                       await FirebaseFirestore.instance
-                           .collection('QawlUsers')
-                           .doc(uid)
-                           .delete();
-           
-                       await Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                          (Route<dynamic> route) => false,
-                        );
-           
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Account successfully deleted")),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(
-                                  "Failed to delete account: ${e.toString()}")),
-                        );
-                      }
-                    }
+
+              if (user != null) {
+                final String uid = user.uid;
+
+                try {
+                  // First, delete the Firestore data
+                  await FirebaseFirestore.instance
+                      .collection('QawlUsers')
+                      .doc(uid)
+                      .delete();
+
+                  // Then delete the user from Firebase Authentication
+                  await user.delete();
+
+                  // Finally, navigate to the login page
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    (Route<dynamic> route) => false,
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Account successfully deleted")),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Failed to delete account: ${e.toString()}")),
+                  );
+                }
+              }
             },
-            child: Text('Delete Account'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Text color
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: Color.fromARGB(255, 220, 38, 38),
+              ),
+              width: 160,
+              height: 40,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    "Delete Account",
+                    style: TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
-                   ),
-         ),
-        // ElevatedButton(
-        //   onPressed: () => _showConfirmationDialog(context),
-        //   child: Text('Delete Account'),
-        //   style: ElevatedButton.styleFrom(
-        //     backgroundColor: Colors.red, // Background color
-        //   ),
-        // ),
-        // const SizedBox(height: 8),
-        // ElevatedButton(
-        //   onPressed: () async {
-        //     fba.User? user = fba.FirebaseAuth.instance.currentUser;
-
-        //     if (user != null) {
-        //       final String uid = user.uid;
-        //       print("USER ID IS: " + uid);
-
-        //       // delete firebase authentication
-        //       user.delete();
-        //       // delete from firestore collection
-        //       await FirebaseFirestore.instance
-        //           .collection('QawlUsers')
-        //           .doc(uid)
-        //           .delete();
-        //       //navigate back to login page
-        //       Navigator.of(context).pushAndRemoveUntil(
-        //         MaterialPageRoute(builder: (context) => LoginPage()),
-        //         (Route<dynamic> route) => false,
-        //       );
-        //     }
-        //     // Sign out the user
-        //     print("clicked delete");
-        //   },
-        //   child: Text('Delete Account'),
-        //   style: ElevatedButton.styleFrom(
-        //     backgroundColor: Colors.red, // Text color
-        //   ),
-        // ),
-
-        // DeleteAccountButton(
-        //   auth: auth,
-        //   onSignInRequired: () {
-        //     return _reauthenticate(context);
-        //   },
-        // ),
+          ),
+        ),
       ],
     );
 

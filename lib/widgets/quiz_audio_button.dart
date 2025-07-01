@@ -78,8 +78,6 @@ class _QuizAudioButtonState extends State<QuizAudioButton>
       }
       widget.onPressed?.call();
     } catch (e) {
-      print('Error in QuizAudioButton tap handler: $e');
-      
       // Show user-friendly error message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
