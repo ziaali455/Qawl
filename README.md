@@ -14,7 +14,7 @@ Backed by University of Maryland and Prev @ Columbia Startup Accelarator
 
 Primary contributors: Ali Zia, Musa Waseem
 
-Secondary contributors: Abdulamad Sulayman, Hashim Abdullahi
+Secondary contributors: Abdulsamad Sulayman, Hashim Abdullahi
 
 Contact: qawlapp@gmail.com
 
@@ -26,7 +26,7 @@ PRs into dev require code reviews by **at least two engineers** your senior. Eac
 
 When a new feature is pushed to prod that is over 200 lines of code, **it has to be documented** in the `docs/` folder before it gets into prod. Any AI documentation must be labeled as such. Attempts to push to prod without documentation will be **rejected** in code review. 
 
-This repo is actively managed by Musa.
+_This repo is now primarily managed by Musa._
 
 
 ## File Structure
