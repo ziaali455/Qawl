@@ -27,7 +27,7 @@ graph TD
   Ali --> Ebrahim
   Musa --> Ebrahim
   Soreti --> Ebrahim
-
+```
 
 Backed by University of Maryland and Prev @ Columbia Startup Accelarator
 
