@@ -8,6 +8,7 @@ Created by Ali Zia and Musa Waseem in 2022.
 
 Ali (CEO), Musa (CTO), Soreti (Communications), Abdulsamad (Product), Hashim (SWE Intern), Ebrahim (Media Intern)
 
+<pre>
 ```mermaid
 graph TD
   Ali[Ali (CEO)]
@@ -15,7 +16,7 @@ graph TD
   Soreti[Soreti (CCO)]
 
   Samad[Samad (Product)]
-  Hashim[Hashim]
+  Hashim[Hashim (SWE Intern)]
   Ebrahim[Ebrahim (Media Intern)]
 
   Ali --> Hashim
@@ -28,6 +29,8 @@ graph TD
   Musa --> Ebrahim
   Soreti --> Ebrahim
 ```
+</pre>
+
 
 Backed by University of Maryland and Prev @ Columbia Startup Accelarator
 
