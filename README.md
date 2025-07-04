@@ -17,6 +17,8 @@ Contact: qawlapp@gmail.com
 - Model: Any OOP logic, backend, and machine learning integration
 - Deprecated: Inactive files in the app
 
+## Pushing Code
+PRs into dev require code reviews by at least two engineers your senior. Each new branch must be named with the format `firstname/feature-branch-name`. The process is simple: push to your branch, get reviewed, push to dev. If it gets approved by the App Store, it'll go to prod. 
 
 ## The Stack
 
