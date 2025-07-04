@@ -8,6 +8,27 @@ Created by Ali Zia and Musa Waseem in 2022.
 
 Ali (CEO), Musa (CTO), Soreti (Communications), Abdulsamad (Product), Hashim (SWE Intern), Ebrahim (Media Intern)
 
+```mermaid
+graph TD
+  Ali[Ali (CEO)]
+  Musa[Musa (CTO)]
+  Soreti[Soreti (CCO)]
+
+  Samad[Samad (Product)]
+  Hashim[Hashim]
+  Ebrahim[Ebrahim (Media Intern)]
+
+  Ali --> Hashim
+  Musa --> Hashim
+
+  Musa --> Samad
+  Soreti --> Samad
+
+  Ali --> Ebrahim
+  Musa --> Ebrahim
+  Soreti --> Ebrahim
+
+
 Backed by University of Maryland and Prev @ Columbia Startup Accelarator
 
 ## About
