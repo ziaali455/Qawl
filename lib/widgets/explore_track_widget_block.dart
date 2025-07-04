@@ -16,7 +16,8 @@ class ExploreTrackWidgetRow extends StatelessWidget {
   const ExploreTrackWidgetRow({
     Key? key,
     required this.title,
-    required this.playlist, required this.isPersonal,
+    required this.playlist,
+    required this.isPersonal,
   }) : super(key: key);
   final String title;
   final QawlPlaylist playlist;
@@ -24,6 +25,11 @@ class ExploreTrackWidgetRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // If playlist is empty, don't show anything
+    if (playlist.list.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       children: [
         Padding(
@@ -33,7 +39,8 @@ class ExploreTrackWidgetRow extends StatelessWidget {
             title: title,
             isPlaylist: true,
             playlist: playlist,
-            press: () {}, isPersonal: isPersonal,
+            press: () {},
+            isPersonal: isPersonal,
           ),
         ),
         SingleChildScrollView(
@@ -44,7 +51,8 @@ class ExploreTrackWidgetRow extends StatelessWidget {
                 future: getPlaybackContents(track),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator(color: Colors.green); // Placeholder while loading
+                    return CircularProgressIndicator(
+                        color: Colors.green); // Placeholder while loading
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
@@ -115,7 +123,8 @@ class TrackCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NowPlayingPage(track: track, playlist: playlist),
+              builder: (context) =>
+                  NowPlayingPage(track: track, playlist: playlist),
             ),
           );
         },
@@ -168,7 +177,8 @@ class TrackCard extends StatelessWidget {
                             ),
                           ),
                           WidgetSpan(
-                            child: SizedBox(height: getProportionateScreenWidth(6)),
+                            child: SizedBox(
+                                height: getProportionateScreenWidth(6)),
                           ),
                           TextSpan(
                             text: '\n$author',
