@@ -33,6 +33,9 @@ Any code that goes into `prod` must be reviewed by Musa or someone he gives dire
 
 _This repo is now primarily managed by Musa._
 
+## Expectations
+
+Try your best. Our app is the result of consistent communication atop a mountain of trial and error. It's much better to say you're busy than to keep us in an uncertain state about what you're status is. New hires who are not upfront will be weeded out. It's the single most important part of Qawl's culture.
 
 ## File Structure
 
