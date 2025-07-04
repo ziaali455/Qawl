@@ -20,7 +20,9 @@ Contact: qawlapp@gmail.com
 - Deprecated: Inactive files in the app
 
 ## Pushing Code
-PRs into dev require code reviews by at least two engineers your senior. Each new branch must be named with the format `firstname/feature-branch-name`. The process is simple: push to your branch, get reviewed, push to dev. If it gets approved by the App Store, it'll go to prod. 
+PRs into dev require code reviews by **at least two engineers** your senior. Each new branch must be named with the format `firstname/feature-branch-name`. The process is simple: push to your branch, get reviewed, push to dev. If it gets approved by the App Store, it'll go to prod. 
+
+When a new feature is pushed to prod that is over 200 lines of code, **it has to be documented** in the `docs/` folder before it gets into prod. Any AI documentation must be labeled as such. Attempts to push to prod without documentation will be **rejected** in code review. 
 
 ## The Stack
 
