@@ -4,7 +4,7 @@ A Quran app for everyone.
 
 Primary contributors: Ali Zia, Musa Waseem
 
-Secondary: Samad Sulayman, Hashim Abdullahi
+Secondary contributors: Samad Sulayman, Hashim Abdullahi
 
 Contact: qawlapp@gmail.com
 
