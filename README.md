@@ -1,16 +1,36 @@
-# Qawl
+# 🕌 Qawl
 
 A Quran app for everyone.
 
-## Getting Started
+Primary contributors: Ali Zia, Musa Waseem
 
-This project is a starting point for a Flutter application.
+Contact: qawlapp@gmail.com
 
-A few resources to get you started if this is your first Flutter project:
+**Made with love!**
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## File Structure
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+📁 Folders
+
+- Screens: All of the primary pages on the app. "Content" is used to denote files containing what you actually see on every screen.
+- Widgets: Any of the UI components in a screen
+- Model: Any OOP logic, backend, and machine learning integration
+- Deprecated: Inactive files in the app
+
+
+## The Stack
+
+Frontend - Purely Flutter 
+
+Backend - Firebase and hopefully AWS soon
+
+## Release
+Available on iOS. Just type "Qawl" on the App Store
+
+## Quickstart
+
+1. Install Flutter
+2. Install packages, pod install, etc
+3. Type "flutter run" in terminal
+
+
