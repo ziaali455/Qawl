@@ -42,6 +42,8 @@ _This repo is now primarily managed by Musa._
 - Model: Any OOP logic, backend, and machine learning integration
 - Deprecated: Inactive files in the app
 
+Learn this before you push any code. Your code will be rejected if it does not follow this schema unless given explicit permission by the CTO.
+
 ## The Stack
 
 Frontend - Purely Flutter 
