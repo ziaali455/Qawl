@@ -2,9 +2,17 @@
 
 A Quran app for everyone.
 
+Created by Ali Zia and Musa Waseem in 2022.
+
+## Org 
+
+Ali (CEO), Musa (CTO), Soreti (Product Marketing), Abdulsamad (Media), Hashim (SWE Intern), Ebrahim (Media Intern)
+
+## About
+
 Primary contributors: Ali Zia, Musa Waseem
 
-Secondary contributors: Samad Sulayman, Hashim Abdullahi
+Secondary contributors: Abdulamad Sulayman, Hashim Abdullahi
 
 Contact: qawlapp@gmail.com
 
