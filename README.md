@@ -6,7 +6,7 @@ Created by Ali Zia and Musa Waseem in 2022.
 
 ## Org 
 
-Ali (CEO), Musa (CTO), Soreti (Product Marketing), Abdulsamad (Media), Hashim (SWE Intern), Ebrahim (Media Intern)
+Ali (CEO), Musa (CTO), Soreti (Product Marketing), Abdulsamad (Product), Hashim (SWE Intern), Ebrahim (Media Intern)
 
 Backed by University of Maryland and Prev @ Columbia Startup Accelarator
 
