@@ -26,7 +26,7 @@ PRs into dev require code reviews by at least two engineers your senior. Each ne
 
 Frontend - Purely Flutter 
 
-Backend - Firebase and hopefully AWS soon
+Backend - Firebase
 
 ## Release
 Available on iOS. Just type "Qawl" on the App Store
